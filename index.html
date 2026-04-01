@@ -10,7 +10,7 @@
             --gold: #c5a059;
             --dark: #1a1a1a;
             --light: #fdfbf8;
-            --gray: #888;
+            --white: #ffffff;
         }
 
         body {
@@ -18,196 +18,215 @@
             margin: 0;
             background-color: var(--light);
             color: var(--dark);
+            scroll-behavior: smooth;
         }
 
         header {
             text-align: center;
-            padding: 40px 20px;
-            background: white;
+            padding: 60px 20px;
+            background: var(--white);
             border-bottom: 1px solid #eee;
         }
 
         .logo {
-            font-size: 2rem;
-            letter-spacing: 4px;
+            font-size: 2.2rem;
+            letter-spacing: 5px;
             text-transform: uppercase;
             font-weight: 300;
+            margin: 0;
+        }
+
+        /* Category Navigation */
+        .cat-nav {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 0;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .cat-nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Section Headings */
+        .category-section {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--gold);
+            display: inline-block;
+            margin-bottom: 30px;
         }
 
         /* Product Grid */
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
+        .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 30px;
         }
 
         .perfume-card {
-            background: white;
+            background: var(--white);
             padding: 15px;
             border-radius: 8px;
             text-align: center;
             transition: transform 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        .perfume-card:hover {
-            transform: translateY(-5px);
-        }
+        .perfume-card:hover { transform: translateY(-5px); }
 
         .perfume-card img {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
             border-radius: 4px;
             margin-bottom: 15px;
         }
 
-        .price {
-            font-weight: bold;
-            color: var(--gold);
-            margin: 10px 0;
-        }
-
-        .stock-tag {
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-        }
-
-        .out-of-stock {
-            opacity: 0.6;
-            filter: grayscale(1);
-        }
-
-        .oos-label {
-            color: #d9534f;
-            font-weight: bold;
-        }
+        .price { font-weight: bold; color: var(--gold); font-size: 1.1rem; }
+        .stock-tag { font-size: 0.85rem; margin: 10px 0; }
+        .out-of-stock { opacity: 0.5; filter: grayscale(1); }
+        .oos-label { color: #d9534f; font-weight: bold; }
 
         button {
             background: var(--dark);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px;
             cursor: pointer;
             width: 100%;
             border-radius: 4px;
-            transition: 0.2s;
+            font-weight: 600;
         }
 
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+        button:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Modal Styling */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            align-items: center;
-            justify-content: center;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center; justify-content: center;
         }
 
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
+            padding: 40px;
+            border-radius: 12px;
             max-width: 400px;
-            width: 90%;
+            width: 85%;
             text-align: center;
-        }
-
-        .close-btn {
-            float: right;
-            cursor: pointer;
-            font-size: 1.5rem;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">Perfume Collection _na</div>
-    <p>Elegant Scents for Every Occasion</p>
+    <h1 class="logo">Perfume Collection _na</h1>
+    <p>Find your essence in our curated categories</p>
 </header>
 
-<div class="container" id="product-grid">
-    </div>
+<div class="cat-nav">
+    <a href="#masculine">Masculine</a>
+    <a href="#feminine">Feminine</a>
+    <a href="#unisex">Unisex</a>
+</div>
+
+<div id="main-content">
+    <section id="masculine" class="category-section">
+        <h2 class="category-title">Masculine Perfumes</h2>
+        <div class="grid" id="grid-masculine"></div>
+    </section>
+
+    <section id="feminine" class="category-section">
+        <h2 class="category-title">Feminine Perfumes</h2>
+        <div class="grid" id="grid-feminine"></div>
+    </section>
+
+    <section id="unisex" class="category-section">
+        <h2 class="category-title">Unisex Perfumes</h2>
+        <div class="grid" id="grid-unisex"></div>
+    </section>
+</div>
 
 <div id="orderModal" class="modal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Order Item</h2>
-        <p id="modalPrice"></p>
+        <h2 id="modalTitle"></h2>
+        <p id="modalPrice" class="price"></p>
         <p id="modalStock"></p>
-        <hr>
-        <p>To complete your order, please contact us via WhatsApp with this product name.</p>
+        <p style="font-size: 0.9rem; color: #666;">Send a screenshot of this to order via WhatsApp.</p>
         <button onclick="closeModal()">Close</button>
     </div>
 </div>
 
 <script>
-    /* --- DATA: Add all 80 perfumes here --- */
+    /* --- DATA: Add your 80 perfumes here --- */
+    // Categories MUST be: 'masculine', 'feminine', or 'unisex'
     const perfumes = [
-        { id: 1, name: "Midnight Bloom", price: "$85", stock: 5, img: "p1.jpg" },
-        { id: 2, name: "Velvet Rose", price: "$90", stock: 0, img: "p2.jpg" },
-        { id: 3, name: "Golden Amber", price: "$110", stock: 12, img: "p3.jpg" },
-        { id: 4, name: "Ocean Breeze", price: "$75", stock: 2, img: "p4.jpg" },
-        // ... You can add up to 80 items following this format
+        { name: "Blue Cedar", price: "$95", stock: 4, cat: "masculine", img: "m1.jpg" },
+        { name: "Rose Noir", price: "$110", stock: 0, cat: "feminine", img: "f1.jpg" },
+        { name: "Urban Oud", price: "$130", stock: 8, cat: "unisex", img: "u1.jpg" },
+        { name: "Wild Spice", price: "$80", stock: 12, cat: "masculine", img: "m2.jpg" },
+        // Continue adding your 80 items here...
     ];
 
-    const grid = document.getElementById('product-grid');
-
-    /* --- RENDER PRODUCTS --- */
-    function displayProducts() {
-        grid.innerHTML = perfumes.map(p => `
-            <div class="perfume-card ${p.stock === 0 ? 'out-of-stock' : ''}">
+    function createCard(p) {
+        const isOOS = p.stock === 0;
+        return `
+            <div class="perfume-card ${isOOS ? 'out-of-stock' : ''}">
                 <img src="${p.img}" alt="${p.name}">
                 <h3>${p.name}</h3>
                 <p class="price">${p.price}</p>
                 <div class="stock-tag">
-                    ${p.stock > 0 ? `In Stock: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+                    ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
                 </div>
-                <button 
-                    ${p.stock === 0 ? 'disabled' : ''} 
-                    onclick="openModal('${p.name}', '${p.price}', ${p.stock})">
-                    ${p.stock > 0 ? 'Order Now' : 'Unavailable'}
+                <button ${isOOS ? 'disabled' : ''} onclick="openModal('${p.name}', '${p.price}', ${p.stock})">
+                    ${isOOS ? 'Unavailable' : 'Order Now'}
                 </button>
             </div>
-        `).join('');
+        `;
     }
 
-    /* --- MODAL LOGIC --- */
-    const modal = document.getElementById('orderModal');
+    function displayProducts() {
+        const mGrid = document.getElementById('grid-masculine');
+        const fGrid = document.getElementById('grid-feminine');
+        const uGrid = document.getElementById('grid-unisex');
+
+        mGrid.innerHTML = perfumes.filter(p => p.cat === 'masculine').map(createCard).join('');
+        fGrid.innerHTML = perfumes.filter(p => p.cat === 'feminine').map(createCard).join('');
+        uGrid.innerHTML = perfumes.filter(p => p.cat === 'unisex').map(createCard).join('');
+    }
 
     function openModal(name, price, stock) {
         document.getElementById('modalTitle').innerText = name;
-        document.getElementById('modalPrice').innerText = "Price: " + price;
-        document.getElementById('modalStock').innerText = "Quantity available: " + stock;
-        modal.style.display = "flex";
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalStock').innerText = "Stock Remaining: " + stock;
+        document.getElementById('orderModal').style.display = "flex";
     }
 
     function closeModal() {
-        modal.style.display = "none";
+        document.getElementById('orderModal').style.display = "none";
     }
 
-    // Close modal if user clicks outside of it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            closeModal();
-        }
-    }
+    window.onclick = (e) => { if(e.target.className === 'modal') closeModal(); }
 
-    // Initialize the page
     displayProducts();
 </script>
 
