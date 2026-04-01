@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfume Collection _na</title>
+    <style>
+        /* --- CSS STYLING --- */
+        :root {
+            --gold: #c5a059;
+            --dark: #1a1a1a;
+            --light: #fdfbf8;
+            --gray: #888;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            font-size: 2rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        /* Product Grid */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+        }
+
+        .perfume-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .perfume-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .perfume-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: var(--gold);
+            margin: 10px 0;
+        }
+
+        .stock-tag {
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .out-of-stock {
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+
+        .oos-label {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        button {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .close-btn {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Perfume Collection _na</div>
+    <p>Elegant Scents for Every Occasion</p>
+</header>
+
+<div class="container" id="product-grid">
+    </div>
+
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Order Item</h2>
+        <p id="modalPrice"></p>
+        <p id="modalStock"></p>
+        <hr>
+        <p>To complete your order, please contact us via WhatsApp with this product name.</p>
+        <button onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>
+    /* --- DATA: Add all 80 perfumes here --- */
+    const perfumes = [
+        { id: 1, name: "Midnight Bloom", price: "$85", stock: 5, img: "p1.jpg" },
+        { id: 2, name: "Velvet Rose", price: "$90", stock: 0, img: "p2.jpg" },
+        { id: 3, name: "Golden Amber", price: "$110", stock: 12, img: "p3.jpg" },
+        { id: 4, name: "Ocean Breeze", price: "$75", stock: 2, img: "p4.jpg" },
+        // ... You can add up to 80 items following this format
+    ];
+
+    const grid = document.getElementById('product-grid');
+
+    /* --- RENDER PRODUCTS --- */
+    function displayProducts() {
+        grid.innerHTML = perfumes.map(p => `
+            <div class="perfume-card ${p.stock === 0 ? 'out-of-stock' : ''}">
+                <img src="${p.img}" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <p class="price">${p.price}</p>
+                <div class="stock-tag">
+                    ${p.stock > 0 ? `In Stock: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+                </div>
+                <button 
+                    ${p.stock === 0 ? 'disabled' : ''} 
+                    onclick="openModal('${p.name}', '${p.price}', ${p.stock})">
+                    ${p.stock > 0 ? 'Order Now' : 'Unavailable'}
+                </button>
+            </div>
+        `).join('');
+    }
+
+    /* --- MODAL LOGIC --- */
+    const modal = document.getElementById('orderModal');
+
+    function openModal(name, price, stock) {
+        document.getElementById('modalTitle').innerText = name;
+        document.getElementById('modalPrice').innerText = "Price: " + price;
+        document.getElementById('modalStock').innerText = "Quantity available: " + stock;
+        modal.style.display = "flex";
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Close modal if user clicks outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Initialize the page
+    displayProducts();
+</script>
+
+</body>
+</html>
