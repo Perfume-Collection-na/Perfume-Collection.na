@@ -166,6 +166,24 @@
             display: block;
         }
 
+        /* Footer Divider */
+        .footer-divider {
+            height: 1px;
+            background-color: var(--gold);
+            opacity: 0.3;
+            width: 80%;
+            margin: 25px auto;
+        }
+
+        .admin-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.75rem;
+            opacity: 0.6;
+        }
+
         /* Highlight Section Styling */
         .new-collection {
             background: #fff8f0;
@@ -225,17 +243,18 @@
     <span class="footer-logo">Perfume Collection _na</span>
     <p>Premium Fragrance Boutique</p>
     <p>Follow us on Instagram: @perfumecollection_na</p>
+    
+    <div class="footer-divider"></div>
+    
     <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
+    <a href="admin.html" class="admin-link">Admins Portal</a>
 </footer>
 
 <script>
-    /* --- DATA --- */
-    const perfumes = [
-        // Feminine
+    // Initial data
+    const defaultPerfumes = [
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
         { name: "Ur Way by Fragrance World", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg" },
-        
-        // Masculine
         { name: "Aventos Blue For Him", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg" },
         { name: "Brown Orchid Oud Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg" },
         { name: "Gorgio Black Special Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg" },
@@ -260,10 +279,11 @@
         { name: "Emperor II", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/EMPEROR II (100ml).jpg" },
         { name: "Club De Nuit Intense Man", price: "N$ 1200.00", stock: 1, cat: "masculine", img: "masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg" },
         { name: "Bavarria Man Intense", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg" },
-
-        // Unisex
         { name: "Barrakat Satin Oud", price: "N$ 400.00", stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
     ];
+
+    // Fetch from localStorage if exists, otherwise use defaults
+    let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
 
     function createCard(p) {
         const isOOS = p.stock === 0;
@@ -288,9 +308,7 @@
         const fGrid = document.getElementById('grid-feminine');
         const uGrid = document.getElementById('grid-unisex');
 
-        // Logic for New Arrival section: remains blank for now
         nGrid.innerHTML = perfumes.filter(p => p.isNew).map(createCard).join('');
-        
         mGrid.innerHTML = perfumes.filter(p => p.cat === 'masculine').map(createCard).join('');
         fGrid.innerHTML = perfumes.filter(p => p.cat === 'feminine').map(createCard).join('');
         uGrid.innerHTML = perfumes.filter(p => p.cat === 'unisex').map(createCard).join('');
@@ -311,6 +329,5 @@
 
     displayProducts();
 </script>
-
 </body>
 </html>
