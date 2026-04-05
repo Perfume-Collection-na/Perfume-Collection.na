@@ -21,7 +21,6 @@
             min-height: 100vh;
         }
 
-        /* Header Styling */
         header {
             background: var(--dark);
             color: var(--white);
@@ -69,7 +68,6 @@
             color: var(--dark);
         }
 
-        /* Modal Styling */
         .modal {
             display: none;
             position: fixed;
@@ -119,6 +117,23 @@
             align-items: center; 
             padding: 15px; 
             border-bottom: 1px solid #eee; 
+        }
+
+        .contact-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .wa-btn {
+            display: inline-block;
+            margin-left: 10px;
+            color: #25D366;
+            text-decoration: none;
+            font-size: 0.8rem;
+            border: 1px solid #25D366;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
 
         .stock-control {
@@ -229,13 +244,42 @@
 </footer>
 
 <script>
-    let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || [];
+    const defaultPerfumes = [
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
+        { name: "Ur Way by Fragrance World", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg" },
+        { name: "Aventos Blue For Him", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg" },
+        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg" },
+        { name: "Gorgio Black Special Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg" },
+        { name: "Oud Al Layl", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL_(100ml)[1].jpg" },
+        { name: "Zara Man", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ZARA MAN (100ml).jpg" },
+        { name: "Wayfarer Homme", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg" },
+        { name: "Suave", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/SUAVE (100ml).jpg" },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg" },
+        { name: "Oniro", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ONIRO (100ml).jpg" },
+        { name: "Odyssey Homme", price: "N$ 700.00", stock: 1, cat: "masculine", img: "masculine/ODYSSEY HOMME (100ml).jpg" },
+        { name: "Now Rave", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/NOW RAVE (100ml).jpg" },
+        { name: "Midnight Oud", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/MIDNIGHT OUD (100ml).jpg" },
+        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", stock: 1, cat: "masculine", img: "masculine/KHAMRA QAHWA BY LATTAFA (100ml).jpg" },
+        { name: "Invicto Legend", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INVICTO LEGEND (100ml).jpg" },
+        { name: "Invicto Intense", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INVICTO INTENSE.jpg" },
+        { name: "Invicto Elixir", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INVICTO ELIXIR.jpg" },
+        { name: "Intense Wood", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INTENSE WOOD (100ml).jpg" },
+        { name: "Intense Wayfarer Homme", price: "N$ 500.00", stock: 1, cat: "masculine", img: "masculine/INTENSE WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg" },
+        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/INTENSE OUD BY ARABIAN ORYX (100ml).jpg" },
+        { name: "Intense Noir", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/INTENSE NOIR (100ml).jpg" },
+        { name: "Genius Victory Amper", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/GENIUS VICTORY AMPER (100ml).jpg" },
+        { name: "Emperor II", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/EMPEROR II (100ml).jpg" },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", stock: 1, cat: "masculine", img: "masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg" },
+        { name: "Bavarria Man Intense", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg" },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
+    ];
+
+    let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
     let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // Policy Check: Handle outside clicks without logout/redirect
     window.onclick = function(event) {
         if (event.target.className === 'modal') {
             event.target.style.display = "none";
@@ -246,7 +290,6 @@
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const img = document.getElementById('pImg').value;
-        
         if(!name || !price || !img) return alert("Fill required fields.");
 
         perfumes.push({
@@ -260,7 +303,6 @@
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
         renderLists();
         closeModal('productModal');
-        
         document.getElementById('pName').value = '';
         document.getElementById('pPrice').value = '';
         document.getElementById('pImg').value = '';
@@ -269,7 +311,6 @@
     function updateStock(index, newStock) {
         perfumes[index].stock = parseInt(newStock);
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-        // Soft render to avoid losing focus if needed, but here we just refresh
         renderLists();
     }
 
@@ -299,7 +340,7 @@
         invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
             <div class="product-item">
                 <div style="flex: 1;">
-                    <strong>${p.name}</strong> (${p.cat})
+                    <strong>${p.name}</strong> <small style="color: #888;">(${p.cat})</small>
                 </div>
                 <div class="stock-control">
                     <label style="font-size: 0.7rem;">Stock:</label>
@@ -310,15 +351,25 @@
         `).join('') : "<p>No products.</p>";
 
         const ordDiv = document.getElementById('orderList');
-        ordDiv.innerHTML = orders.length ? orders.map((o, i) => `
-            <div class="order-item">
-                <div><b>${o.product}</b><br><small>${o.customer} (${o.contact})</small></div>
-                <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
-            </div>
-        `).join('') : "<p>No orders.</p>";
+        ordDiv.innerHTML = orders.length ? orders.map((o, i) => {
+            const cleanPhone = o.contact.replace(/\D/g, '');
+            return `
+                <div class="order-item">
+                    <div>
+                        <b>${o.product}</b><br>
+                        <small>Customer: ${o.customer}</small><br>
+                        <small>Contact: 
+                            <a href="tel:${cleanPhone}" class="contact-link">${o.contact}</a>
+                            <a href="https://wa.me/${cleanPhone}" target="_blank" class="wa-btn">WhatsApp</a>
+                        </small>
+                    </div>
+                    <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
+                </div>
+            `;
+        }).join('') : "<p>No orders.</p>";
     }
 
     renderLists();
 </script>
 </body>
-</html>
+    </html>
