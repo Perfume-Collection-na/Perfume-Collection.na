@@ -22,6 +22,7 @@
             color: var(--dark);
             line-height: 1.6;
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
         /* Promotion Banner */
@@ -37,6 +38,7 @@
             position: sticky;
             top: 0;
             z-index: 1001;
+            width: 100%;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             animation: slideDown 0.5s ease-out;
         }
@@ -62,6 +64,7 @@
             padding: 40px 20px;
             text-align: center;
             border-bottom: 3px solid var(--gold);
+            width: 100%;
         }
 
         .logo {
@@ -83,7 +86,7 @@
             position: sticky;
             top: 0;
             background: white;
-            padding: 15px 0;
+            padding: 15px 20px;
             text-align: center;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -91,25 +94,22 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
+            width: 100%;
         }
 
         nav.sticky-adjust { top: 45px; } 
 
         nav a {
-            margin: 0 15px;
             text-decoration: none;
             color: var(--dark);
             font-weight: 600;
             font-size: 0.9rem;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         nav a:hover { color: var(--gold); }
-
-        #nav-new-link {
-            display: none;
-            color: #d9534f;
-        }
 
         .nav-separator {
             width: 1px;
@@ -295,6 +295,7 @@
             padding: 40px 20px;
             margin-top: 60px;
             border-top: 1px solid var(--gold);
+            width: 100%;
         }
 
         footer p {
@@ -345,6 +346,8 @@
             .logo { font-size: 1.8rem; }
             .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
             .perfume-card img { height: 200px; }
+            nav { padding: 10px; gap: 10px; }
+            nav a { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -360,14 +363,7 @@
 </header>
 
 <nav id="mainNav">
-    <a href="#new-section" id="nav-new-link">New Arrivals</a>
-    <div class="nav-separator" id="nav-new-sep" style="display:none;"></div>
-    <a href="#masculine">Masculine</a>
-    <div class="nav-separator"></div>
-    <a href="#feminine">Feminine</a>
-    <div class="nav-separator"></div>
-    <a href="#unisex">Unisex</a>
-</nav>
+    </nav>
 
 <div class="container">
     <section id="new-section" class="category-section" style="display:none;">
@@ -429,9 +425,7 @@
     <span class="footer-logo">Perfume Collection _na</span>
     <p>Premium Fragrance Boutique</p>
     <p><a href="https://www.instagram.com/perfume_collection_na?igsh=Z2p3YXZvc3A3ZzV2" target="_blank">Follow us on Instagram: @perfumecollection_na</a></p>
-    
     <div class="footer-divider"></div>
-    
     <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
     <a onclick="openAdminLogin()" class="admin-link">Admin</a>
 </footer>
@@ -493,26 +487,40 @@
         `;
     }
 
+    function renderNavigation() {
+        const nav = document.getElementById('mainNav');
+        const hasNew = perfumes.some(p => p.isNew);
+        
+        const navLinks = [];
+        if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrivals" });
+        navLinks.push({ href: "#masculine", text: "Masculine" });
+        navLinks.push({ href: "#feminine", text: "Feminine" });
+        navLinks.push({ href: "#unisex", text: "Unisex" });
+
+        nav.innerHTML = navLinks.map((link, index) => {
+            const linkHTML = `<a href="${link.href}">${link.text}</a>`;
+            const separator = (index < navLinks.length - 1) ? '<div class="nav-separator"></div>' : '';
+            return linkHTML + separator;
+        }).join('');
+    }
+
     function renderProducts() {
         const isPromoActive = checkPromo();
         const cats = ['masculine', 'feminine', 'unisex'];
         
+        // Navigation update
+        renderNavigation();
+
         // Render New Arrivals Logic
         const newItems = perfumes.filter(p => p.isNew);
         const newSection = document.getElementById('new-section');
         const newGrid = document.getElementById('grid-new');
-        const navNewLink = document.getElementById('nav-new-link');
-        const navNewSep = document.getElementById('nav-new-sep');
 
         if (newItems.length > 0) {
             newSection.style.display = 'block';
-            navNewLink.style.display = 'inline-block';
-            navNewSep.style.display = 'inline-block';
             newGrid.innerHTML = newItems.map(p => createCardHTML(p, isPromoActive)).join('');
         } else {
             newSection.style.display = 'none';
-            navNewLink.style.display = 'none';
-            navNewSep.style.display = 'none';
         }
 
         // Render Gender Categories
