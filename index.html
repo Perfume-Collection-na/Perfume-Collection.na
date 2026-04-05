@@ -169,19 +169,15 @@
 
         .product-image-container {
             width: 100%;
-            height: 350px; 
+            height: 350px; /* Standardized height for Club De Nuit look */
             overflow: hidden;
             background: var(--white);
             padding: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        /* Image sizing fix that doesn't affect layout */
         .product-image-container img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             display: block;
         }
@@ -364,8 +360,6 @@
 </header>
 
 <nav id="mainNav">
-    <a href="#new-arrivals" id="nav-new" style="display:none;">New Arrivals</a>
-    <div class="nav-separator" id="sep-new" style="display:none;"></div>
     <a href="#masculine">Masculine</a>
     <div class="nav-separator"></div>
     <a href="#feminine">Feminine</a>
@@ -374,11 +368,6 @@
 </nav>
 
 <div class="container">
-    <section id="new-arrivals" style="display:none; margin-bottom: 60px;">
-        <h2 class="section-title">New in Our Collection</h2>
-        <div class="product-grid" id="grid-new"></div>
-    </section>
-
     <section id="masculine">
         <h2 class="section-title">Masculine Collection</h2>
         <div class="product-grid" id="grid-masculine"></div>
@@ -400,8 +389,8 @@
         <h2 class="section-title">Contact Us</h2>
         <p>Questions about a scent? Reach out to our boutique directly.</p>
         <div class="contact-info">
-            <a href="https://wa.me/264813557282" class="contact-item">WhatsApp: +264 81 355 7282</a>
-            <a href="mailto:jakobloide44@gmail.com" class="contact-item">Email: jakobloide44@gmail.com</a>
+            <a href="https://wa.me/264812345678" class="contact-item">WhatsApp: +264 81 234 5678</a>
+            <a href="mailto:info@perfumecollection.na" class="contact-item">Email: info@perfumecollection.na</a>
         </div>
     </div>
 </section>
@@ -432,9 +421,9 @@
 
 <script>
     const defaultPerfumes = [
-        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: false },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg", isNew: false },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT_INTENSE_MAN(100ml).jpg", isNew: true }
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT_INTENSE_MAN(100ml).jpg" }
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
@@ -454,6 +443,11 @@
         } else {
             banner.style.display = 'none';
             nav.classList.remove('sticky-adjust');
+            if (perfumes.some(p => p.onSale)) {
+                perfumes.forEach(p => p.onSale = false);
+                localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+                renderProducts();
+            }
             return false;
         }
     }
@@ -462,54 +456,33 @@
         const isPromoActive = checkPromo();
         const cats = ['masculine', 'feminine', 'unisex'];
         
-        // Handle "New Collection" logic
-        const newArrivals = perfumes.filter(p => p.isNew === true);
-        const newSec = document.getElementById('new-arrivals');
-        const navNew = document.getElementById('nav-new');
-        const sepNew = document.getElementById('sep-new');
-        const gridNew = document.getElementById('grid-new');
-
-        if (newArrivals.length > 0) {
-            newSec.style.display = 'block';
-            navNew.style.display = 'inline-block';
-            sepNew.style.display = 'inline-block';
-            gridNew.innerHTML = generateGridHTML(newArrivals, isPromoActive);
-        } else {
-            newSec.style.display = 'none';
-            navNew.style.display = 'none';
-            sepNew.style.display = 'none';
-        }
-
         cats.forEach(cat => {
             const grid = document.getElementById(`grid-${cat}`);
             const filtered = perfumes.filter(p => p.cat === cat);
-            grid.innerHTML = generateGridHTML(filtered, isPromoActive);
-        });
-    }
-
-    function generateGridHTML(items, isPromoActive) {
-        return items.map(p => {
-            const showSale = isPromoActive && p.onSale && p.salePrice;
-            return `
-            <div class="product-card ${showSale ? 'sale-active' : ''}">
-                ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
-                <div class="product-image-container">
-                    <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
-                </div>
-                <div class="product-info">
-                    <div class="product-name">${p.name}</div>
-                    <div class="price-container">
-                        ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
-                        <span class="current-price">${showSale ? p.salePrice : p.price}</span>
+            
+            grid.innerHTML = filtered.map(p => {
+                const showSale = isPromoActive && p.onSale && p.salePrice;
+                return `
+                <div class="product-card ${showSale ? 'sale-active' : ''}">
+                    ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
+                    <div class="product-image-container">
+                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
                     </div>
-                    <button class="btn-order ${p.stock <= 0 ? 'out-of-stock' : ''}" 
-                            onclick="openModal('${p.name}')" 
-                            ${p.stock <= 0 ? 'disabled' : ''}>
-                        ${p.stock <= 0 ? 'Out of Stock' : 'Order Now'}
-                    </button>
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="price-container">
+                            ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
+                            <span class="current-price">${showSale ? p.salePrice : p.price}</span>
+                        </div>
+                        <button class="btn-order ${p.stock <= 0 ? 'out-of-stock' : ''}" 
+                                onclick="openModal('${p.name}')" 
+                                ${p.stock <= 0 ? 'disabled' : ''}>
+                            ${p.stock <= 0 ? 'Out of Stock' : 'Order Now'}
+                        </button>
+                    </div>
                 </div>
-            </div>
-        `}).join('');
+            `}).join('');
+        });
     }
 
     function openModal(name) {
@@ -532,8 +505,16 @@
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
         if (!name || !phone) return alert("Please fill in your details.");
+        const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
+        orders.push({
+            product: selectedProduct,
+            customer: name,
+            contact: phone,
+            date: new Date().toLocaleString()
+        });
+        localStorage.setItem('perfumeOrders', JSON.stringify(orders));
         const waMessage = `Hello Perfume Collection _na, I would like to order: ${selectedProduct}. My name is ${name}.`;
-        window.open(`https://wa.me/264813557282?text=${encodeURIComponent(waMessage)}`, '_blank');
+        window.open(`https://wa.me/264812345678?text=${encodeURIComponent(waMessage)}`, '_blank');
         closeModal();
     }
 
@@ -541,4 +522,4 @@
     renderProducts();
 </script>
 </body>
-</html>
+</html>u
