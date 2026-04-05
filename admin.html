@@ -131,6 +131,8 @@
             border-radius: 12px;
             max-width: 500px;
             width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .form-group { margin-bottom: 15px; text-align: left; }
@@ -143,9 +145,6 @@
             border-radius: 4px; 
             box-sizing: border-box; 
         }
-
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .checkbox-group input { width: auto; }
 
         .btn { 
             background: var(--dark); 
@@ -170,21 +169,13 @@
             border-bottom: 1px solid #eee; 
         }
 
-        .contact-link {
-            color: var(--gold);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .wa-btn {
-            display: inline-block;
-            margin-left: 10px;
-            color: #25D366;
-            text-decoration: none;
-            font-size: 0.8rem;
-            border: 1px solid #25D366;
-            padding: 2px 6px;
+        .thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
             border-radius: 4px;
+            margin-right: 15px;
+            border: 1px solid #ddd;
         }
 
         .stock-control {
@@ -271,7 +262,6 @@
             <label>Duration (Seconds)</label>
             <input type="number" id="promoDuration" value="10">
         </div>
-        <p style="font-size: 0.8rem; color: #666;">*This will automatically apply sale prices to all items with a "Sale Price" set, then revert them when finished.</p>
         <button class="btn btn-save" onclick="startPromotion()">Trigger Animation & Sales</button>
         <button class="btn" style="background:none; color:#666;" onclick="closeModal('promoModal')">Cancel</button>
     </div>
@@ -289,8 +279,12 @@
             <input type="text" id="pPrice" placeholder="N$ 400.00">
         </div>
         <div class="form-group">
-            <label>Sale Price (Hidden until Promo starts)</label>
+            <label>Sale Price (Used during Promo)</label>
             <input type="text" id="pSalePrice" placeholder="N$ 350.00">
+        </div>
+        <div class="form-group">
+            <label>Upload Product Image</label>
+            <input type="file" id="pImageFile" accept="image/*">
         </div>
         <div class="form-group">
             <label>Stock Count</label>
@@ -303,10 +297,6 @@
                 <option value="feminine">Feminine</option>
                 <option value="unisex">Unisex</option>
             </select>
-        </div>
-        <div class="form-group">
-            <label>Image Filename</label>
-            <input type="text" id="pImg" placeholder="folder/image.jpg">
         </div>
         <div class="form-group">
             <label>New Arrival?</label>
@@ -377,36 +367,24 @@
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    /* Time-Bound Promotion Logic */
     function startPromotion() {
         const msg = document.getElementById('promoMsg').value;
         let secondsLeft = parseInt(document.getElementById('promoDuration').value);
-        
         if(!msg || isNaN(secondsLeft)) return alert("Please enter message and duration.");
 
-        // 1. Activate 'onSale' for all products that have a sale price
-        perfumes.forEach(p => {
-            if(p.salePrice) p.onSale = true;
-        });
+        perfumes.forEach(p => { if(p.salePrice) p.onSale = true; });
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
         renderLists();
 
-        // 2. Show Animation Banner
         const banner = document.getElementById('promoBanner');
-        const text = document.getElementById('promoText');
-        const timerDisplay = document.getElementById('promoTimer');
-        
-        text.innerText = msg;
+        document.getElementById('promoText').innerText = msg;
         banner.style.display = 'block';
         closeModal('promoModal');
 
-        // 3. Start Countdown
         if(promoTimerInterval) clearInterval(promoTimerInterval);
-        
         promoTimerInterval = setInterval(() => {
             secondsLeft--;
-            timerDisplay.innerText = `Reverting to normal prices in: ${secondsLeft}s`;
-            
+            document.getElementById('promoTimer').innerText = `Ends in: ${secondsLeft}s`;
             if(secondsLeft <= 0) {
                 clearInterval(promoTimerInterval);
                 endPromotion();
@@ -415,50 +393,41 @@
     }
 
     function endPromotion() {
-        const banner = document.getElementById('promoBanner');
-        banner.style.display = 'none';
-
-        // Revert all products to normal price
-        perfumes.forEach(p => {
-            p.onSale = false;
-        });
-        
+        document.getElementById('promoBanner').style.display = 'none';
+        perfumes.forEach(p => p.onSale = false);
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
         renderLists();
-        alert("Promotion ended. Prices have been reverted to normal.");
-    }
-
-    window.onclick = function(event) {
-        if (event.target.className === 'modal') {
-            event.target.style.display = "none";
-        }
     }
 
     function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const sPrice = document.getElementById('pSalePrice').value;
-        const img = document.getElementById('pImg').value;
-        if(!name || !price || !img) return alert("Fill required fields.");
+        const fileInput = document.getElementById('pImageFile');
+        
+        if(!name || !price || !fileInput.files[0]) return alert("Name, Price, and Image are required.");
 
-        perfumes.push({
-            name, 
-            price,
-            salePrice: sPrice || null,
-            onSale: false,
-            stock: parseInt(document.getElementById('pStock').value),
-            cat: document.getElementById('pCat').value,
-            img,
-            isNew: document.getElementById('pNew').value === 'yes'
-        });
-
-        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-        renderLists();
-        closeModal('productModal');
-        document.getElementById('pName').value = '';
-        document.getElementById('pPrice').value = '';
-        document.getElementById('pSalePrice').value = '';
-        document.getElementById('pImg').value = '';
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            perfumes.push({
+                name, 
+                price,
+                salePrice: sPrice || null,
+                onSale: false,
+                stock: parseInt(document.getElementById('pStock').value),
+                cat: document.getElementById('pCat').value,
+                img: e.target.result,
+                isNew: document.getElementById('pNew').value === 'yes'
+            });
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            renderLists();
+            closeModal('productModal');
+            document.getElementById('pName').value = '';
+            document.getElementById('pPrice').value = '';
+            document.getElementById('pSalePrice').value = '';
+            fileInput.value = '';
+        };
+        reader.readAsDataURL(fileInput.files[0]);
     }
 
     function updateStock(index, newStock) {
@@ -469,7 +438,7 @@
 
     function editPrice(index) {
         const newPrice = prompt("Regular Price:", perfumes[index].price);
-        const newSale = prompt("Sale Price (leave blank for none):", perfumes[index].salePrice || "");
+        const newSale = prompt("Sale Price:", perfumes[index].salePrice || "");
         if (newPrice !== null) {
             perfumes[index].price = newPrice;
             perfumes[index].salePrice = newSale || null;
@@ -488,7 +457,7 @@
 
     function clearOrder(index) {
         const order = orders[index];
-        if(confirm(`Mark order for "${order.product}" as done and update stock?`)) {
+        if(confirm(`Mark order for "${order.product}" as done?`)) {
             const perfumeIndex = perfumes.findIndex(p => p.name === order.product);
             if (perfumeIndex !== -1 && perfumes[perfumeIndex].stock > 0) {
                 perfumes[perfumeIndex].stock -= 1;
@@ -517,11 +486,14 @@
         const invDiv = document.getElementById('listItems');
         invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
             <div class="product-item">
-                <div style="flex: 1;">
-                    <strong>${p.name}</strong> 
-                    <br><small style="${p.onSale ? 'color: red; font-weight: bold;' : 'color: #888;'}">
-                        ${p.onSale ? `SALE: ${p.salePrice}` : p.price}
-                    </small>
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <img src="${p.img}" class="thumb">
+                    <div>
+                        <strong>${p.name}</strong> 
+                        <br><small style="${p.onSale ? 'color: red;' : 'color: #888;'}">
+                            ${p.onSale ? `SALE: ${p.salePrice}` : p.price}
+                        </small>
+                    </div>
                 </div>
                 <div class="stock-control">
                     <button class="price-btn" onclick="editPrice(${i})">Edit Price</button>
@@ -538,8 +510,7 @@
                 <div class="order-item">
                     <div>
                         <b>${o.product}</b><br>
-                        <small>Customer: ${o.customer}</small><br>
-                        <small>Contact: <a href="tel:${cleanPhone}" class="contact-link">${o.contact}</a></small>
+                        <small>Customer: ${o.customer}</small>
                     </div>
                     <div class="action-group">
                         <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
