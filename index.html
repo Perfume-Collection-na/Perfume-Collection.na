@@ -165,6 +165,14 @@
             margin-bottom: 15px;
             display: block;
         }
+
+        /* Highlight Section Styling */
+        .new-collection {
+            background: #fff8f0;
+            padding: 40px 0;
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+        }
     </style>
 </head>
 <body>
@@ -175,12 +183,18 @@
 </header>
 
 <div class="cat-nav">
+    <a href="#new-arrival">New Arrivals</a>
     <a href="#masculine">Masculine</a>
     <a href="#feminine">Feminine</a>
     <a href="#unisex">Unisex</a>
 </div>
 
 <div id="main-content">
+    <section id="new-arrival" class="new-collection category-section">
+        <h2 class="category-title">New in Our Collection</h2>
+        <div class="grid" id="grid-new"></div>
+    </section>
+
     <section id="masculine" class="category-section">
         <h2 class="category-title">Masculine Perfumes</h2>
         <div class="grid" id="grid-masculine"></div>
@@ -215,9 +229,7 @@
 </footer>
 
 <script>
-    /* --- DATA: Add your 80 perfumes here --- */
-    // Categories MUST be: 'masculine', 'feminine', or 'unisex'
-    // Ensure images are placed in folders: /masculine/, /feminine/, or /unisex/
+    /* --- DATA --- */
     const perfumes = [
         // Feminine
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
@@ -271,10 +283,14 @@
     }
 
     function displayProducts() {
+        const nGrid = document.getElementById('grid-new');
         const mGrid = document.getElementById('grid-masculine');
         const fGrid = document.getElementById('grid-feminine');
         const uGrid = document.getElementById('grid-unisex');
 
+        // Logic for New Arrival section: remains blank for now
+        nGrid.innerHTML = perfumes.filter(p => p.isNew).map(createCard).join('');
+        
         mGrid.innerHTML = perfumes.filter(p => p.cat === 'masculine').map(createCard).join('');
         fGrid.innerHTML = perfumes.filter(p => p.cat === 'feminine').map(createCard).join('');
         uGrid.innerHTML = perfumes.filter(p => p.cat === 'unisex').map(createCard).join('');
