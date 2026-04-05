@@ -140,7 +140,7 @@
 
         .perfume-card {
             background: var(--white);
-            padding: 15px;
+            padding: 0 0 15px 0; /* Removed side padding to let image touch edges */
             border-radius: 8px;
             text-align: center;
             transition: transform 0.3s ease;
@@ -148,21 +148,23 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            overflow: hidden; /* Ensures image does not extend beyond card borders */
         }
 
         .perfume-card:hover { transform: translateY(-5px); }
 
         .perfume-card img {
             width: 100%;
-            height: 220px;
-            object-fit: contain;
-            border-radius: 4px;
+            height: 250px;
+            object-fit: cover; /* Forces image to fill the width/height entirely */
             margin-bottom: 15px;
             background: var(--white);
+            display: block;
         }
 
         .perfume-card h3 {
             font-size: 1rem;
+            padding: 0 15px;
             margin-bottom: 10px;
             font-weight: 600;
             min-height: 2.5em;
@@ -203,6 +205,10 @@
             text-transform: uppercase;
             z-index: 10;
             border-radius: 2px;
+        }
+
+        .card-action-area {
+            padding: 0 15px;
         }
 
         button {
@@ -334,7 +340,7 @@
         @media (max-width: 768px) {
             .logo { font-size: 1.8rem; }
             .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-            .perfume-card img { height: 180px; }
+            .perfume-card img { height: 200px; }
         }
     </style>
 </head>
@@ -468,16 +474,18 @@
                     ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
                     <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
                     <h3>${p.name}</h3>
-                    <p class="price">
-                        ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
-                        ${showSale ? p.salePrice : p.price}
-                    </p>
-                    <div class="stock-tag">
-                        ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+                    <div class="card-action-area">
+                        <p class="price">
+                            ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
+                            ${showSale ? p.salePrice : p.price}
+                        </p>
+                        <div class="stock-tag">
+                            ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+                        </div>
+                        <button ${isOOS ? 'disabled' : ''} onclick="openOrderModal('${p.name}', '${showSale ? p.salePrice : p.price}')">
+                            ${isOOS ? 'Unavailable' : 'Order Now'}
+                        </button>
                     </div>
-                    <button ${isOOS ? 'disabled' : ''} onclick="openOrderModal('${p.name}', '${showSale ? p.salePrice : p.price}')">
-                        ${isOOS ? 'Unavailable' : 'Order Now'}
-                    </button>
                 </div>
             `}).join('');
         });
