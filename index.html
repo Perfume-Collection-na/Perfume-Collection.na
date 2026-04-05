@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfume Collection _na</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@600&display=swap" rel="stylesheet">
     <style>
         /* --- CSS STYLING --- */
         :root {
@@ -37,9 +38,15 @@
             color: var(--gold);
         }
 
+        /* Styled and Bolded Slogan */
         header p {
             color: var(--white);
-            opacity: 0.8;
+            opacity: 0.9;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 15px;
         }
 
         /* Category Navigation */
@@ -275,11 +282,8 @@
 <script>
     /* --- DATA --- */
     const defaultPerfumes = [
-        // Feminine
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
         { name: "Ur Way by Fragrance World", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg" },
-        
-        // Masculine
         { name: "Aventos Blue For Him", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg" },
         { name: "Brown Orchid Oud Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg" },
         { name: "Gorgio Black Special Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg" },
@@ -304,8 +308,6 @@
         { name: "Emperor II", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/EMPEROR II (100ml).jpg" },
         { name: "Club De Nuit Intense Man", price: "N$ 1200.00", stock: 1, cat: "masculine", img: "masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg" },
         { name: "Bavarria Man Intense", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg" },
-
-        // Unisex
         { name: "Barrakat Satin Oud", price: "N$ 400.00", stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
     ];
 
