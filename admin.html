@@ -109,6 +109,9 @@
             box-sizing: border-box; 
         }
 
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .checkbox-group input { width: auto; }
+
         .btn { 
             background: var(--dark); 
             color: white; 
@@ -170,6 +173,15 @@
             border-radius: 4px; 
         }
 
+        .price-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
         .action-group {
             display: flex;
             gap: 5px;
@@ -215,7 +227,15 @@
         </div>
         <div class="form-group">
             <label>Price</label>
-            <input type="text" id="pPrice" placeholder="N$ 0.00">
+            <input type="text" id="pPrice" placeholder="N$ 400.00">
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="pOnSale" onchange="toggleSaleField()">
+            <label for="pOnSale">On Promotion?</label>
+        </div>
+        <div id="saleField" class="form-group" style="display:none; margin-top:10px;">
+            <label>Sale Price</label>
+            <input type="text" id="pSalePrice" placeholder="N$ 350.00">
         </div>
         <div class="form-group">
             <label>Stock Count</label>
@@ -275,7 +295,7 @@
         { name: "Zara Man", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ZARA MAN (100ml).jpg" },
         { name: "Wayfarer Homme", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg" },
         { name: "Suave", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/SUAVE (100ml).jpg" },
-        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE Al OUD BY LATTAFA(100ml).jpg" },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg" },
         { name: "Oniro", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ONIRO (100ml).jpg" },
         { name: "Odyssey Homme", price: "N$ 700.00", stock: 1, cat: "masculine", img: "masculine/ODYSSEY HOMME (100ml).jpg" },
         { name: "Now Rave", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/NOW RAVE (100ml).jpg" },
@@ -299,7 +319,18 @@
     let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function closeModal(id) { 
+        document.getElementById(id).style.display = 'none'; 
+        if(id === 'productModal') {
+            document.getElementById('pOnSale').checked = false;
+            document.getElementById('saleField').style.display = 'none';
+        }
+    }
+
+    function toggleSaleField() {
+        const field = document.getElementById('saleField');
+        field.style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
+    }
 
     window.onclick = function(event) {
         if (event.target.className === 'modal') {
@@ -313,8 +344,14 @@
         const img = document.getElementById('pImg').value;
         if(!name || !price || !img) return alert("Fill required fields.");
 
+        const onSale = document.getElementById('pOnSale').checked;
+        const salePrice = onSale ? document.getElementById('pSalePrice').value : null;
+
         perfumes.push({
-            name, price,
+            name, 
+            price,
+            onSale,
+            salePrice,
             stock: parseInt(document.getElementById('pStock').value),
             cat: document.getElementById('pCat').value,
             img,
@@ -327,6 +364,7 @@
         document.getElementById('pName').value = '';
         document.getElementById('pPrice').value = '';
         document.getElementById('pImg').value = '';
+        document.getElementById('pSalePrice').value = '';
     }
 
     function updateStock(index, newStock) {
@@ -335,8 +373,23 @@
         renderLists();
     }
 
+    function editPrice(index) {
+        const newPrice = prompt("Enter new Regular Price (e.g. N$ 450.00):", perfumes[index].price);
+        if (newPrice) {
+            perfumes[index].price = newPrice;
+            const toggleSale = confirm("Is this product currently on Promotion?");
+            perfumes[index].onSale = toggleSale;
+            if(toggleSale) {
+                const sPrice = prompt("Enter Sale Price:", perfumes[index].salePrice || "N$ 350.00");
+                if(sPrice) perfumes[index].salePrice = sPrice;
+            }
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            renderLists();
+        }
+    }
+
     function deletePerfume(index) {
-        if(confirm("Remove product?")) {
+        if(confirm("Remove product from catalog?")) {
             perfumes.splice(index, 1);
             localStorage.setItem('perfumeData', JSON.stringify(perfumes));
             renderLists();
@@ -346,14 +399,12 @@
     function clearOrder(index) {
         const order = orders[index];
         if(confirm(`Mark order for "${order.product}" as done and update stock?`)) {
-            // Logic to update stock automatically
             const perfumeIndex = perfumes.findIndex(p => p.name === order.product);
             if (perfumeIndex !== -1) {
                 if (perfumes[perfumeIndex].stock > 0) {
                     perfumes[perfumeIndex].stock -= 1;
                 }
             }
-            
             orders.splice(index, 1);
             localStorage.setItem('perfumeData', JSON.stringify(perfumes));
             localStorage.setItem('perfumeOrders', JSON.stringify(orders));
@@ -379,10 +430,11 @@
         invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
             <div class="product-item">
                 <div style="flex: 1;">
-                    <strong>${p.name}</strong> <small style="color: #888;">(${p.cat})</small>
+                    <strong>${p.name}</strong> 
+                    <br><small style="color: #c5a059;">${p.onSale ? `PROMO: ${p.salePrice} (Was ${p.price})` : p.price}</small>
                 </div>
                 <div class="stock-control">
-                    <label style="font-size: 0.7rem;">Stock:</label>
+                    <button class="price-btn" onclick="editPrice(${i})">Price/Sale</button>
                     <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock(${i}, this.value)">
                     <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
                 </div>
@@ -414,4 +466,4 @@
     renderLists();
 </script>
 </body>
-    </html>
+</html>
