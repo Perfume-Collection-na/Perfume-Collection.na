@@ -242,9 +242,12 @@
     <div class="modal-content">
         <h2 id="modalTitle"></h2>
         <p id="modalPrice" class="price"></p>
-        <p id="modalStock"></p>
-        <p style="font-size: 0.9rem; color: #666;">Send a screenshot of this to order via WhatsApp.</p>
-        <button onclick="closeModal('orderModal')">Close</button>
+        <div style="text-align: left; margin: 20px 0;">
+            <input type="text" id="custName" class="login-input" placeholder="Your Name">
+            <input type="text" id="custPhone" class="login-input" placeholder="WhatsApp Number">
+        </div>
+        <button style="background: #25D366; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; font-weight: 600;" onclick="submitOrder()">Confirm Order</button>
+        <button style="margin-top: 10px; background: none; color: #666; border: none; cursor: pointer;" onclick="closeModal('orderModal')">Cancel</button>
     </div>
 </div>
 
@@ -307,6 +310,7 @@
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
+    let selectedItem = {};
 
     function createCard(p) {
         const isOOS = p.stock === 0;
@@ -338,19 +342,36 @@
     }
 
     function openOrderModal(name, price, stock) {
+        selectedItem = { name, price };
         document.getElementById('modalTitle').innerText = name;
         document.getElementById('modalPrice').innerText = price;
-        document.getElementById('modalStock').innerText = "Stock Remaining: " + stock;
         document.getElementById('orderModal').style.display = "flex";
     }
 
-    function openLogin() {
-        document.getElementById('loginModal').style.display = "flex";
+    function submitOrder() {
+        const cName = document.getElementById('custName').value;
+        const cPhone = document.getElementById('custPhone').value;
+        if(!cName || !cPhone) return alert("Fill your details.");
+
+        const order = {
+            customer: cName,
+            contact: cPhone,
+            product: selectedItem.name,
+            price: selectedItem.price,
+            time: new Date().toLocaleString()
+        };
+
+        let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
+        orders.push(order);
+        localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+
+        alert("Order sent to Admin. WhatsApp opening...");
+        window.open(`https://wa.me/26481xxxxxxx?text=Order:${selectedItem.name}`, '_blank');
+        closeModal('orderModal');
     }
 
-    function closeModal(id) {
-        document.getElementById(id).style.display = "none";
-    }
+    function openLogin() { document.getElementById('loginModal').style.display = "flex"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
     function checkAccess() {
         const u = document.getElementById('adminUser').value;
@@ -358,19 +379,11 @@
         if(u === "LNJ_Admin" && p === "J@cob/CEO.PCna") {
             sessionStorage.setItem('adminAuth', 'true');
             window.location.href = 'admin.html';
-        } else {
-            alert("Invalid credentials. Access denied.");
-        }
+        } else { alert("Denied."); }
     }
 
-    window.onclick = (e) => { 
-        if(e.target.className === 'modal') {
-            e.target.style.display = "none";
-        }
-    }
-
+    window.onclick = (e) => { if(e.target.className === 'modal') e.target.style.display = "none"; }
     displayProducts();
 </script>
-
 </body>
 </html>
