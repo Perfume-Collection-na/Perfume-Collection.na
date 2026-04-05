@@ -6,7 +6,6 @@
     <title>Perfume Collection _na</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@600&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS STYLING --- */
         :root {
             --gold: #c5a059;
             --dark: #1a1a1a;
@@ -38,7 +37,6 @@
             color: var(--gold);
         }
 
-        /* Styled and Bolded Slogan */
         header p {
             color: var(--white);
             opacity: 0.9;
@@ -49,7 +47,6 @@
             margin-top: 15px;
         }
 
-        /* Category Navigation */
         .cat-nav {
             position: sticky;
             top: 0;
@@ -58,6 +55,9 @@
             text-align: center;
             z-index: 100;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .cat-nav a {
@@ -69,7 +69,14 @@
             text-transform: uppercase;
         }
 
-        /* Section Headings */
+        /* Nav Separator Logic */
+        .nav-separator {
+            width: 1px;
+            height: 15px;
+            background-color: var(--dark);
+            opacity: 0.2;
+        }
+
         .category-section {
             max-width: 1200px;
             margin: 60px auto;
@@ -85,7 +92,6 @@
             margin-bottom: 30px;
         }
 
-        /* Product Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -129,7 +135,6 @@
 
         button:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -157,7 +162,6 @@
             box-sizing: border-box;
         }
 
-        /* Footer */
         footer {
             background: var(--dark);
             color: var(--white);
@@ -200,7 +204,6 @@
             cursor: pointer;
         }
 
-        /* Highlight Section Styling */
         .new-collection {
             background: #fff8f0;
             padding: 40px 0;
@@ -218,8 +221,11 @@
 
 <div class="cat-nav">
     <a href="#new-arrival">New Arrivals</a>
+    <div class="nav-separator"></div>
     <a href="#masculine">Masculine</a>
+    <div class="nav-separator"></div>
     <a href="#feminine">Feminine</a>
+    <div class="nav-separator"></div>
     <a href="#unisex">Unisex</a>
 </div>
 
@@ -272,15 +278,12 @@
     <span class="footer-logo">Perfume Collection _na</span>
     <p>Premium Fragrance Boutique</p>
     <p>Follow us on Instagram: @perfumecollection_na</p>
-    
     <div class="footer-divider"></div>
-    
     <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
     <span class="admin-link" onclick="openLogin()">Admin</span>
 </footer>
 
 <script>
-    /* --- DATA --- */
     const defaultPerfumes = [
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
         { name: "Ur Way by Fragrance World", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg" },
@@ -388,4 +391,4 @@
     displayProducts();
 </script>
 </body>
-</html>
+                                            </html>
