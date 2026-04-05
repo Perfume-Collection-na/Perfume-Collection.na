@@ -2,34 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Portal - PCna</title>
+    <title>Admin Portal - Perfume Collection_na</title>
     <style>
         :root { --gold: #c5a059; --dark: #1a1a1a; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
         h2 { border-bottom: 2px solid var(--gold); padding-bottom: 10px; color: var(--dark); }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .btn { background: var(--dark); color: white; border: none; padding: 12px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; width: 100%; margin-top: 10px; }
         .btn-save { background: var(--gold); }
-        .product-list { margin-top: 40px; }
-        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        .delete-btn { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .product-item, .order-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <script>
-    if (sessionStorage.getItem('adminAuth') !== 'true') {
-        window.location.href = 'index.html';
-    }
+    if (sessionStorage.getItem('adminAuth') !== 'true') window.location.href = 'index.html';
 </script>
 
 <div class="container">
     <h2>Administrative Portal</h2>
-    <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">Store Management & Inventory Control</p>
-    
     <div class="form-group">
         <label>Perfume Name</label>
         <input type="text" id="pName">
@@ -55,7 +49,7 @@
         <input type="text" id="pImg" placeholder="folder/image.jpg">
     </div>
     <div class="form-group">
-        <label>Show in "New Arrivals"?</label>
+        <label>New Arrival?</label>
         <select id="pNew">
             <option value="no">No</option>
             <option value="yes">Yes</option>
@@ -63,66 +57,59 @@
     </div>
     <button class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
     <button class="btn" onclick="logout()">Logout</button>
+</div>
 
-    <div class="product-list">
-        <h2>Live Inventory</h2>
-        <div id="listItems"></div>
-    </div>
+<div class="container">
+    <h2>Customer Orders Queue</h2>
+    <div id="orderList"></div>
+</div>
+
+<div class="container">
+    <h2>Live Inventory</h2>
+    <div id="listItems"></div>
 </div>
 
 <script>
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || [];
+    let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
 
     function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
-        const stock = parseInt(document.getElementById('pStock').value);
-        const cat = document.getElementById('pCat').value;
         const img = document.getElementById('pImg').value;
-        const isNew = document.getElementById('pNew').value === 'yes';
+        if(!name || !price || !img) return alert("Missing fields");
 
-        if(!name || !price || !img) {
-            alert("Please provide name, price, and image path.");
-            return;
-        }
-
-        perfumes.push({ name, price, stock, cat, img, isNew });
-        saveAndRefresh();
-        
-        document.getElementById('pName').value = '';
-        document.getElementById('pPrice').value = '';
-        document.getElementById('pImg').value = '';
+        perfumes.push({
+            name, price,
+            stock: parseInt(document.getElementById('pStock').value),
+            cat: document.getElementById('pCat').value,
+            img,
+            isNew: document.getElementById('pNew').value === 'yes'
+        });
+        save();
     }
 
-    function deletePerfume(index) {
-        if(confirm("Remove this item?")) {
-            perfumes.splice(index, 1);
-            saveAndRefresh();
-        }
-    }
-
-    function logout() {
-        sessionStorage.removeItem('adminAuth');
-        window.location.href = 'index.html';
-    }
-
-    function saveAndRefresh() {
+    function save() {
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-        renderList();
+        render();
     }
 
-    function renderList() {
-        const list = document.getElementById('listItems');
-        list.innerHTML = perfumes.map((p, index) => `
-            <div class="product-item">
-                <span><strong>${p.name}</strong> [${p.cat}]</span>
-                <button class="delete-btn" onclick="deletePerfume(${index})">Remove</button>
+    function logout() { sessionStorage.removeItem('adminAuth'); window.location.href = 'index.html'; }
+
+    function render() {
+        document.getElementById('listItems').innerHTML = perfumes.map((p, i) => `
+            <div class="product-item"><span>${p.name}</span><button onclick="perfumes.splice(${i},1);save()">X</button></div>
+        `).join('');
+
+        document.getElementById('orderList').innerHTML = orders.map((o, i) => `
+            <div class="order-item">
+                <div><strong>${o.product}</strong><br><small>${o.customer} - ${o.contact}</small></div>
+                <button onclick="orders.splice(${i},1);localStorage.setItem('perfumeOrders',JSON.stringify(orders));render()">Clear</button>
             </div>
         `).join('');
     }
 
-    renderList();
+    render();
 </script>
-
 </body>
 </html>
