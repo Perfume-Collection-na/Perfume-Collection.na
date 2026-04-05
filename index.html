@@ -106,6 +106,11 @@
 
         nav a:hover { color: var(--gold); }
 
+        #nav-new-link {
+            display: none;
+            color: #d9534f;
+        }
+
         .nav-separator {
             width: 1px;
             height: 12px;
@@ -140,7 +145,7 @@
 
         .perfume-card {
             background: var(--white);
-            padding: 0 0 15px 0; /* Removed side padding to let image touch edges */
+            padding: 15px;
             border-radius: 8px;
             text-align: center;
             transition: transform 0.3s ease;
@@ -148,7 +153,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow: hidden; /* Ensures image does not extend beyond card borders */
+            overflow: hidden;
         }
 
         .perfume-card:hover { transform: translateY(-5px); }
@@ -156,7 +161,7 @@
         .perfume-card img {
             width: 100%;
             height: 250px;
-            object-fit: cover; /* Forces image to fill the width/height entirely */
+            object-fit: contain;
             margin-bottom: 15px;
             background: var(--white);
             display: block;
@@ -164,7 +169,6 @@
 
         .perfume-card h3 {
             font-size: 1rem;
-            padding: 0 15px;
             margin-bottom: 10px;
             font-weight: 600;
             min-height: 2.5em;
@@ -208,7 +212,7 @@
         }
 
         .card-action-area {
-            padding: 0 15px;
+            width: 100%;
         }
 
         button {
@@ -356,6 +360,8 @@
 </header>
 
 <nav id="mainNav">
+    <a href="#new-section" id="nav-new-link">New Arrivals</a>
+    <div class="nav-separator" id="nav-new-sep" style="display:none;"></div>
     <a href="#masculine">Masculine</a>
     <div class="nav-separator"></div>
     <a href="#feminine">Feminine</a>
@@ -364,6 +370,11 @@
 </nav>
 
 <div class="container">
+    <section id="new-section" class="category-section" style="display:none;">
+        <h2 class="category-title">New in Our Collection</h2>
+        <div class="grid" id="grid-new"></div>
+    </section>
+
     <section id="masculine" class="category-section">
         <h2 class="category-title">Masculine Collection</h2>
         <div class="grid" id="grid-masculine"></div>
@@ -427,9 +438,9 @@
 
 <script>
     const defaultPerfumes = [
-        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT_INTENSE_MAN(100ml).jpg" }
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: true },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg", isNew: false },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT_INTENSE_MAN(100ml).jpg", isNew: true }
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
@@ -458,36 +469,57 @@
         }
     }
 
+    function createCardHTML(p, isPromoActive) {
+        const showSale = isPromoActive && p.onSale && p.salePrice;
+        const isOOS = p.stock <= 0;
+        return `
+            <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
+                ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
+                <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
+                <h3>${p.name}</h3>
+                <div class="card-action-area">
+                    <p class="price">
+                        ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
+                        ${showSale ? p.salePrice : p.price}
+                    </p>
+                    <div class="stock-tag">
+                        ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+                    </div>
+                    <button ${isOOS ? 'disabled' : ''} onclick="openOrderModal('${p.name}', '${showSale ? p.salePrice : p.price}')">
+                        ${isOOS ? 'Unavailable' : 'Order Now'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     function renderProducts() {
         const isPromoActive = checkPromo();
         const cats = ['masculine', 'feminine', 'unisex'];
         
+        // Render New Arrivals Logic
+        const newItems = perfumes.filter(p => p.isNew);
+        const newSection = document.getElementById('new-section');
+        const newGrid = document.getElementById('grid-new');
+        const navNewLink = document.getElementById('nav-new-link');
+        const navNewSep = document.getElementById('nav-new-sep');
+
+        if (newItems.length > 0) {
+            newSection.style.display = 'block';
+            navNewLink.style.display = 'inline-block';
+            navNewSep.style.display = 'inline-block';
+            newGrid.innerHTML = newItems.map(p => createCardHTML(p, isPromoActive)).join('');
+        } else {
+            newSection.style.display = 'none';
+            navNewLink.style.display = 'none';
+            navNewSep.style.display = 'none';
+        }
+
+        // Render Gender Categories
         cats.forEach(cat => {
             const grid = document.getElementById(`grid-${cat}`);
             const filtered = perfumes.filter(p => p.cat === cat);
-            
-            grid.innerHTML = filtered.map(p => {
-                const showSale = isPromoActive && p.onSale && p.salePrice;
-                const isOOS = p.stock <= 0;
-                return `
-                <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
-                    ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
-                    <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
-                    <h3>${p.name}</h3>
-                    <div class="card-action-area">
-                        <p class="price">
-                            ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
-                            ${showSale ? p.salePrice : p.price}
-                        </p>
-                        <div class="stock-tag">
-                            ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
-                        </div>
-                        <button ${isOOS ? 'disabled' : ''} onclick="openOrderModal('${p.name}', '${showSale ? p.salePrice : p.price}')">
-                            ${isOOS ? 'Unavailable' : 'Order Now'}
-                        </button>
-                    </div>
-                </div>
-            `}).join('');
+            grid.innerHTML = filtered.map(p => createCardHTML(p, isPromoActive)).join('');
         });
     }
 
