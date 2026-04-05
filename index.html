@@ -178,12 +178,10 @@
             justify-content: center;
         }
 
+        /* Image sizing fix that doesn't affect layout */
         .product-image-container img {
             max-width: 100%;
             max-height: 100%;
-            width: auto;
-            height: auto;
-            aspect-ratio: 1 / 1;
             object-fit: contain;
             display: block;
         }
@@ -367,7 +365,7 @@
 
 <nav id="mainNav">
     <a href="#new-arrivals" id="nav-new" style="display:none;">New Arrivals</a>
-    <div class="nav-separator" id="nav-sep-new" style="display:none;"></div>
+    <div class="nav-separator" id="sep-new" style="display:none;"></div>
     <a href="#masculine">Masculine</a>
     <div class="nav-separator"></div>
     <a href="#feminine">Feminine</a>
@@ -468,18 +466,18 @@
         const newArrivals = perfumes.filter(p => p.isNew === true);
         const newSec = document.getElementById('new-arrivals');
         const navNew = document.getElementById('nav-new');
-        const navSep = document.getElementById('nav-sep-new');
+        const sepNew = document.getElementById('sep-new');
         const gridNew = document.getElementById('grid-new');
 
         if (newArrivals.length > 0) {
             newSec.style.display = 'block';
             navNew.style.display = 'inline-block';
-            navSep.style.display = 'inline-block';
+            sepNew.style.display = 'inline-block';
             gridNew.innerHTML = generateGridHTML(newArrivals, isPromoActive);
         } else {
             newSec.style.display = 'none';
             navNew.style.display = 'none';
-            navSep.style.display = 'none';
+            sepNew.style.display = 'none';
         }
 
         cats.forEach(cat => {
@@ -534,7 +532,6 @@
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
         if (!name || !phone) return alert("Please fill in your details.");
-        
         const waMessage = `Hello Perfume Collection _na, I would like to order: ${selectedProduct}. My name is ${name}.`;
         window.open(`https://wa.me/264813557282?text=${encodeURIComponent(waMessage)}`, '_blank');
         closeModal();
