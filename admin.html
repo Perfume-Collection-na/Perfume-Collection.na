@@ -41,6 +41,12 @@
             display: block;
         }
 
+        nav.admin-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         nav.admin-nav a {
             color: var(--white);
             text-decoration: none;
@@ -52,6 +58,14 @@
         }
 
         nav.admin-nav a:hover { color: var(--gold); }
+
+        /* Nav Separator */
+        .nav-separator {
+            width: 1px;
+            height: 12px;
+            background-color: var(--gold);
+            opacity: 0.4;
+        }
 
         .container { 
             max-width: 900px; 
@@ -179,8 +193,11 @@
     <span class="admin-logo">Perfume Collection _na</span>
     <nav class="admin-nav">
         <a href="#orders">Orders</a>
+        <div class="nav-separator"></div>
         <a href="#inventory">Inventory</a>
+        <div class="nav-separator"></div>
         <a onclick="openModal('productModal')">Product Entry</a>
+        <div class="nav-separator"></div>
         <a onclick="logout()">Logout</a>
     </nav>
 </header>
@@ -372,4 +389,4 @@
     renderLists();
 </script>
 </body>
-    </html>
+                </html>
