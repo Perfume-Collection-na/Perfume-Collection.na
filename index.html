@@ -3,392 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfume Collection _na</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@600&display=swap" rel="stylesheet">
+    <title>Perfume Collection _na - Premium Fragrance Boutique</title>
     <style>
         :root {
             --gold: #c5a059;
             --dark: #1a1a1a;
-            --light: #fdfbf8;
+            --light: #f4f4f4;
             --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light);
             color: var(--dark);
-            scroll-behavior: smooth;
+            line-height: 1.6;
+        }
+
+        /* Promotion Banner */
+        #promoBanner {
+            display: none;
+            background: var(--gold);
+            color: var(--dark);
+            text-align: center;
+            padding: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .promo-pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
 
         header {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 40px 20px;
             text-align: center;
-            padding: 60px 20px;
-            background: var(--dark);
-            border-bottom: 1px solid var(--gold);
+            border-bottom: 3px solid var(--gold);
         }
 
         .logo {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             letter-spacing: 5px;
             text-transform: uppercase;
-            font-weight: 300;
-            margin: 0;
-            color: var(--gold);
+            margin-bottom: 10px;
+            display: block;
         }
 
-        header p {
-            color: var(--white);
-            opacity: 0.9;
-            font-family: 'Playfair Display', serif;
+        .tagline {
             font-style: italic;
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-top: 15px;
+            color: var(--gold);
+            font-size: 1rem;
+            letter-spacing: 2px;
         }
 
-        .cat-nav {
-            position: sticky;
-            top: 0;
-            background: white;
+        nav {
+            background: var(--white);
             padding: 15px 0;
             text-align: center;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
         }
 
-        .cat-nav a {
+        nav.sticky-adjust { top: 45px; } /* Adjusts if promo banner is visible */
+
+        nav a {
             margin: 0 15px;
             text-decoration: none;
             color: var(--dark);
             font-weight: 600;
-            font-size: 0.9rem;
             text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
         }
 
-        /* Nav Separator Logic */
-        .nav-separator {
-            width: 1px;
-            height: 15px;
-            background-color: var(--dark);
-            opacity: 0.2;
-        }
+        nav a:hover { color: var(--gold); }
 
-        .category-section {
+        .container {
             max-width: 1200px;
-            margin: 60px auto;
+            margin: 40px auto;
             padding: 0 20px;
         }
 
-        .category-title {
-            font-size: 1.8rem;
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid var(--gold);
-            display: inline-block;
-            margin-bottom: 30px;
+            letter-spacing: 3px;
         }
 
-        .grid {
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--gold);
+            margin: 10px auto;
+        }
+
+        .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 30px;
         }
 
-        .perfume-card {
+        .product-card {
             background: var(--white);
-            padding: 15px;
             border-radius: 8px;
-            text-align: center;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        .perfume-card:hover { transform: translateY(-5px); }
+        .product-card:hover { transform: translateY(-5px); }
 
-        .perfume-card img {
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .product-image-container {
             width: 100%;
-            height: 220px;
-            object-fit: contain;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            height: 300px;
+            overflow: hidden;
+            background: #eee;
         }
 
-        .price { font-weight: bold; color: var(--gold); font-size: 1.1rem; }
-        .stock-tag { font-size: 0.85rem; margin: 10px 0; }
-        .out-of-stock { opacity: 0.5; filter: grayscale(1); }
-        .oos-label { color: #d9534f; font-weight: bold; }
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures images are not cropped */
+            display: block;
+        }
 
-        button {
+        .product-info {
+            padding: 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            height: 3em;
+            overflow: hidden;
+        }
+
+        .price-container { margin-bottom: 15px; }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        .current-price {
+            color: var(--dark);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .sale-active .current-price { color: #d9534f; }
+
+        .btn-order {
             background: var(--dark);
-            color: white;
+            color: var(--white);
             border: none;
             padding: 12px;
-            cursor: pointer;
             width: 100%;
-            border-radius: 4px;
-            font-weight: 600;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s;
         }
 
-        button:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-order:hover { background: var(--gold); color: var(--dark); }
 
+        .out-of-stock {
+            background: #ccc !important;
+            cursor: not-allowed !important;
+            color: #666 !important;
+        }
+
+        /* Order Modal */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0; top: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
             align-items: center; justify-content: center;
         }
 
         .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
             max-width: 400px;
-            width: 85%;
             text-align: center;
         }
 
-        .login-input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+        .modal-content h3 { margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; 
         }
 
         footer {
             background: var(--dark);
             color: var(--white);
+            padding: 60px 20px;
             text-align: center;
-            padding: 40px 20px;
             margin-top: 60px;
-            border-top: 1px solid var(--gold);
         }
 
-        footer p {
-            margin: 5px 0;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .footer-logo {
-            color: var(--gold);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .footer-divider {
-            height: 1px;
-            background-color: var(--gold);
-            opacity: 0.3;
-            width: 80%;
-            margin: 25px auto;
-        }
+        .social-links { margin-bottom: 20px; }
+        .social-links a { color: var(--gold); margin: 0 10px; text-decoration: none; font-size: 1.2rem; }
 
         .admin-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: var(--gold);
+            display: block;
+            margin-top: 40px;
+            color: #444;
             text-decoration: none;
-            font-size: 0.75rem;
-            opacity: 0.6;
-            cursor: pointer;
+            font-size: 0.7rem;
         }
 
-        .new-collection {
-            background: #fff8f0;
-            padding: 40px 0;
-            border-top: 1px solid var(--gold);
-            border-bottom: 1px solid var(--gold);
+        @media (max-width: 768px) {
+            .logo { font-size: 1.8rem; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+            .product-image-container { height: 200px; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 class="logo">Perfume Collection _na</h1>
-    <p>Find your essence in our curated categories</p>
-</header>
-
-<div class="cat-nav">
-    <a href="#new-arrival">New Arrivals</a>
-    <div class="nav-separator"></div>
-    <a href="#masculine">Masculine</a>
-    <div class="nav-separator"></div>
-    <a href="#feminine">Feminine</a>
-    <div class="nav-separator"></div>
-    <a href="#unisex">Unisex</a>
+<div id="promoBanner">
+    <span id="promoText" class="promo-pulse"></span>
 </div>
 
-<div id="main-content">
-    <section id="new-arrival" class="new-collection category-section">
-        <h2 class="category-title">New in Our Collection</h2>
-        <div class="grid" id="grid-new"></div>
+<header>
+    <span class="logo">Perfume Collection _na</span>
+    <span class="tagline">Affordable Luxury in Every Drop</span>
+</header>
+
+<nav id="mainNav">
+    <a href="#masculine">Masculine</a>
+    <a href="#feminine">Feminine</a>
+    <a href="#unisex">Unisex</a>
+</nav>
+
+<div class="container">
+    <section id="masculine">
+        <h2 class="section-title">Masculine Collection</h2>
+        <div class="product-grid" id="grid-masculine"></div>
     </section>
 
-    <section id="masculine" class="category-section">
-        <h2 class="category-title">Masculine Perfumes</h2>
-        <div class="grid" id="grid-masculine"></div>
+    <section id="feminine" style="margin-top: 60px;">
+        <h2 class="section-title">Feminine Collection</h2>
+        <div class="product-grid" id="grid-feminine"></div>
     </section>
 
-    <section id="feminine" class="category-section">
-        <h2 class="category-title">Feminine Perfumes</h2>
-        <div class="grid" id="grid-feminine"></div>
-    </section>
-
-    <section id="unisex" class="category-section">
-        <h2 class="category-title">Unisex Perfumes</h2>
-        <div class="grid" id="grid-unisex"></div>
+    <section id="unisex" style="margin-top: 60px;">
+        <h2 class="section-title">Unisex Collection</h2>
+        <div class="product-grid" id="grid-unisex"></div>
     </section>
 </div>
 
 <div id="orderModal" class="modal">
     <div class="modal-content">
-        <h2 id="modalTitle"></h2>
-        <p id="modalPrice" class="price"></p>
-        <div style="text-align: left; margin: 20px 0;">
-            <input type="text" id="custName" class="login-input" placeholder="Your Name">
-            <input type="text" id="custPhone" class="login-input" placeholder="WhatsApp Number">
+        <h3 id="modalProductName">Place Order</h3>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="custName" placeholder="Enter your name">
         </div>
-        <button style="background: #25D366; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; font-weight: 600;" onclick="submitOrder()">Confirm Order</button>
-        <button style="margin-top: 10px; background: none; color: #666; border: none; cursor: pointer;" onclick="closeModal('orderModal')">Cancel</button>
-    </div>
-</div>
-
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <h2>Admin Access</h2>
-        <input type="text" id="adminUser" class="login-input" placeholder="Username">
-        <input type="password" id="adminPass" class="login-input" placeholder="Password">
-        <button style="background: var(--dark); color: white; padding: 10px; width: 100%; border: none; border-radius: 4px; font-weight: 600;" onclick="checkAccess()">Login</button>
-        <button style="margin-top: 10px; background: none; color: #666; border: none; cursor: pointer;" onclick="closeModal('loginModal')">Cancel</button>
+        <div class="form-group">
+            <label>Phone Number / WhatsApp</label>
+            <input type="text" id="custPhone" placeholder="e.g. +264 81...">
+        </div>
+        <button class="btn-order" onclick="submitOrder()">Confirm via WhatsApp</button>
+        <button class="btn-order" style="background:none; color:#888; margin-top:10px;" onclick="closeModal()">Cancel</button>
     </div>
 </div>
 
 <footer>
-    <span class="footer-logo">Perfume Collection _na</span>
-    <p>Premium Fragrance Boutique</p>
-    <p>Follow us on Instagram: @perfumecollection_na</p>
-    <div class="footer-divider"></div>
-    <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
-    <span class="admin-link" onclick="openLogin()">Admin</span>
+    <div class="social-links">
+        <a href="https://www.instagram.com/perfumecollection_na" target="_blank">Instagram</a>
+    </div>
+    <p>&copy; 2026 Perfume Collection _na. All Rights Reserved.</p>
+    <a href="admin.html" class="admin-link">Admins Portal</a>
 </footer>
 
 <script>
     const defaultPerfumes = [
-        { name: "My Way by Giorgio Armani", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
-        { name: "Ur Way by Fragrance World", price: "N$ 400.00", stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg" },
-        { name: "Aventos Blue For Him", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg" },
-        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg" },
-        { name: "Gorgio Black Special Edition", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg" },
-        { name: "Oud Al Layl", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL_(100ml)[1].jpg" },
-        { name: "Zara Man", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ZARA MAN (100ml).jpg" },
-        { name: "Wayfarer Homme", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg" },
-        { name: "Suave", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/SUAVE (100ml).jpg" },
-        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg" },
-        { name: "Oniro", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ONIRO (100ml).jpg" },
-        { name: "Odyssey Homme", price: "N$ 700.00", stock: 1, cat: "masculine", img: "masculine/ODYSSEY HOMME (100ml).jpg" },
-        { name: "Now Rave", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/NOW RAVE (100ml).jpg" },
-        { name: "Midnight Oud", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/MIDNIGHT OUD (100ml).jpg" },
-        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", stock: 1, cat: "masculine", img: "masculine/KHAMRA QAHWA BY LATTAFA (100ml).jpg" },
-        { name: "Invicto Legend", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INVICTO LEGEND (100ml).jpg" },
-        { name: "Invicto Intense", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INVICTO INTENSE.jpg" },
-        { name: "Invicto Elixir", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INVICTO ELIXIR.jpg" },
-        { name: "Intense Wood", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/INTENSE WOOD (100ml).jpg" },
-        { name: "Intense Wayfarer Homme", price: "N$ 500.00", stock: 1, cat: "masculine", img: "masculine/INTENSE WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg" },
-        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/INTENSE OUD BY ARABIAN ORYX (100ml).jpg" },
-        { name: "Intense Noir", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/INTENSE NOIR (100ml).jpg" },
-        { name: "Genius Victory Amper", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/GENIUS VICTORY AMPER (100ml).jpg" },
-        { name: "Emperor II", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/EMPEROR II (100ml).jpg" },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", stock: 1, cat: "masculine", img: "masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg" },
-        { name: "Bavarria Man Intense", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg" },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
+        // Note: Full list is maintained via localStorage from Admin Portal
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
-    let selectedItem = {};
+    let selectedProduct = null;
 
-    function createCard(p) {
-        const isOOS = p.stock === 0;
-        return `
-            <div class="perfume-card ${isOOS ? 'out-of-stock' : ''}">
-                <img src="${p.img}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <p class="price">${p.price}</p>
-                <div class="stock-tag">
-                    ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+    function checkPromo() {
+        const promo = JSON.parse(localStorage.getItem('activePromo'));
+        const banner = document.getElementById('promoBanner');
+        const nav = document.getElementById('mainNav');
+        const now = new Date().getTime();
+
+        if (promo && now < promo.expires) {
+            banner.style.display = 'block';
+            document.getElementById('promoText').innerText = promo.message;
+            nav.classList.add('sticky-adjust');
+            return true;
+        } else {
+            banner.style.display = 'none';
+            nav.classList.remove('sticky-adjust');
+            // If promo expired but products still marked onSale, revert them
+            if (perfumes.some(p => p.onSale)) {
+                perfumes.forEach(p => p.onSale = false);
+                localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+                renderProducts();
+            }
+            return false;
+        }
+    }
+
+    function renderProducts() {
+        const isPromoActive = checkPromo();
+        const cats = ['masculine', 'feminine', 'unisex'];
+        
+        cats.forEach(cat => {
+            const grid = document.getElementById(`grid-${cat}`);
+            const filtered = perfumes.filter(p => p.cat === cat);
+            
+            grid.innerHTML = filtered.map(p => {
+                const showSale = isPromoActive && p.onSale && p.salePrice;
+                return `
+                <div class="product-card ${showSale ? 'sale-active' : ''}">
+                    ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
+                    <div class="product-image-container">
+                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="price-container">
+                            ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
+                            <span class="current-price">${showSale ? p.salePrice : p.price}</span>
+                        </div>
+                        <button class="btn-order ${p.stock <= 0 ? 'out-of-stock' : ''}" 
+                                onclick="openModal('${p.name}')" 
+                                ${p.stock <= 0 ? 'disabled' : ''}>
+                            ${p.stock <= 0 ? 'Out of Stock' : 'Order Now'}
+                        </button>
+                    </div>
                 </div>
-                <button ${isOOS ? 'disabled' : ''} onclick="openOrderModal('${p.name}', '${p.price}', ${p.stock})">
-                    ${isOOS ? 'Unavailable' : 'Order Now'}
-                </button>
-            </div>
-        `;
+            `}).join('');
+        });
     }
 
-    function displayProducts() {
-        const nGrid = document.getElementById('grid-new');
-        const mGrid = document.getElementById('grid-masculine');
-        const fGrid = document.getElementById('grid-feminine');
-        const uGrid = document.getElementById('grid-unisex');
-
-        nGrid.innerHTML = perfumes.filter(p => p.isNew).map(createCard).join('');
-        mGrid.innerHTML = perfumes.filter(p => p.cat === 'masculine').map(createCard).join('');
-        fGrid.innerHTML = perfumes.filter(p => p.cat === 'feminine').map(createCard).join('');
-        uGrid.innerHTML = perfumes.filter(p => p.cat === 'unisex').map(createCard).join('');
+    function openModal(name) {
+        selectedProduct = name;
+        document.getElementById('modalProductName').innerText = name;
+        document.getElementById('orderModal').style.display = 'flex';
     }
 
-    function openOrderModal(name, price, stock) {
-        selectedItem = { name, price };
-        document.getElementById('modalTitle').innerText = name;
-        document.getElementById('modalPrice').innerText = price;
-        document.getElementById('orderModal').style.display = "flex";
+    function closeModal() {
+        document.getElementById('orderModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            closeModal();
+        }
     }
 
     function submitOrder() {
-        const cName = document.getElementById('custName').value;
-        const cPhone = document.getElementById('custPhone').value;
-        if(!cName || !cPhone) return alert("Fill your details.");
+        const name = document.getElementById('custName').value;
+        const phone = document.getElementById('custPhone').value;
 
-        const order = {
-            customer: cName,
-            contact: cPhone,
-            product: selectedItem.name,
-            price: selectedItem.price,
-            time: new Date().toLocaleString()
-        };
+        if (!name || !phone) return alert("Please fill in your details.");
 
-        let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
-        orders.push(order);
+        // Log order for Admin
+        const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
+        orders.push({
+            product: selectedProduct,
+            customer: name,
+            contact: phone,
+            date: new Date().toLocaleString()
+        });
         localStorage.setItem('perfumeOrders', JSON.stringify(orders));
 
-        alert("Order sent to Admin. WhatsApp opening...");
-        window.open(`https://wa.me/26481xxxxxxx?text=Order:${selectedItem.name}`, '_blank');
-        closeModal('orderModal');
+        // WhatsApp redirect
+        const waMessage = `Hello Perfume Collection _na, I would like to order: ${selectedProduct}. My name is ${name}.`;
+        window.open(`https://wa.me/264812345678?text=${encodeURIComponent(waMessage)}`, '_blank');
+        
+        closeModal();
     }
 
-    function openLogin() { document.getElementById('loginModal').style.display = "flex"; }
-    function closeModal(id) { document.getElementById(id).style.display = "none"; }
-
-    function checkAccess() {
-        const u = document.getElementById('adminUser').value;
-        const p = document.getElementById('adminPass').value;
-        if(u === "LNJ_Admin" && p === "J@cob/CEO.PCna") {
-            sessionStorage.setItem('adminAuth', 'true');
-            window.location.href = 'admin.html';
-        } else { alert("Denied."); }
-    }
-
-    window.onclick = (e) => { if(e.target.className === 'modal') e.target.style.display = "none"; }
-    displayProducts();
+    // Refresh promo status every minute
+    setInterval(checkPromo, 60000);
+    renderProducts();
 </script>
+
 </body>
-                                            </html>
+</html>
