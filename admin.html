@@ -59,7 +59,6 @@
 
         nav.admin-nav a:hover { color: var(--gold); }
 
-        /* Nav Separator */
         .nav-separator {
             width: 1px;
             height: 12px;
@@ -171,6 +170,11 @@
             border-radius: 4px; 
         }
 
+        .action-group {
+            display: flex;
+            gap: 5px;
+        }
+
         footer {
             background: var(--dark);
             color: var(--white);
@@ -271,7 +275,7 @@
         { name: "Zara Man", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ZARA MAN (100ml).jpg" },
         { name: "Wayfarer Homme", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg" },
         { name: "Suave", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/SUAVE (100ml).jpg" },
-        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg" },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE Al OUD BY LATTAFA(100ml).jpg" },
         { name: "Oniro", price: "N$ 400.00", stock: 1, cat: "masculine", img: "masculine/ONIRO (100ml).jpg" },
         { name: "Odyssey Homme", price: "N$ 700.00", stock: 1, cat: "masculine", img: "masculine/ODYSSEY HOMME (100ml).jpg" },
         { name: "Now Rave", price: "N$ 450.00", stock: 1, cat: "masculine", img: "masculine/NOW RAVE (100ml).jpg" },
@@ -326,7 +330,7 @@
     }
 
     function updateStock(index, newStock) {
-        perfumes[index].stock = parseInt(newStock);
+        perfumes[index].stock = Math.max(0, parseInt(newStock));
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
         renderLists();
     }
@@ -340,7 +344,25 @@
     }
 
     function clearOrder(index) {
-        if(confirm("Mark order as done?")) {
+        const order = orders[index];
+        if(confirm(`Mark order for "${order.product}" as done and update stock?`)) {
+            // Logic to update stock automatically
+            const perfumeIndex = perfumes.findIndex(p => p.name === order.product);
+            if (perfumeIndex !== -1) {
+                if (perfumes[perfumeIndex].stock > 0) {
+                    perfumes[perfumeIndex].stock -= 1;
+                }
+            }
+            
+            orders.splice(index, 1);
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+            renderLists();
+        }
+    }
+
+    function deleteOrder(index) {
+        if(confirm("Delete this order? (Stock will NOT be affected)")) {
             orders.splice(index, 1);
             localStorage.setItem('perfumeOrders', JSON.stringify(orders));
             renderLists();
@@ -380,7 +402,10 @@
                             <a href="https://wa.me/${cleanPhone}" target="_blank" class="wa-btn">WhatsApp</a>
                         </small>
                     </div>
-                    <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
+                    <div class="action-group">
+                        <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
+                        <button class="delete-btn" onclick="deleteOrder(${i})">Delete</button>
+                    </div>
                 </div>
             `;
         }).join('') : "<p>No orders.</p>";
@@ -389,4 +414,4 @@
     renderLists();
 </script>
 </body>
-                </html>
+    </html>
