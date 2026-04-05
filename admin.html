@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Portal - Loide Ndapewa Jacob</title>
+    <title>Admin Portal - PCna</title>
     <style>
         :root { --gold: #c5a059; --dark: #1a1a1a; }
-        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h2 { border-bottom: 2px solid var(--gold); padding-bottom: 10px; color: var(--dark); }
         .form-group { margin-bottom: 15px; }
@@ -21,16 +21,14 @@
 <body>
 
 <script>
-    // Security check
     if (sessionStorage.getItem('adminAuth') !== 'true') {
-        alert("Unauthorized access. Please login.");
         window.location.href = 'index.html';
     }
 </script>
 
 <div class="container">
-    <h2>Welcome, Loide Ndapewa Jacob</h2>
-    <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">Use this panel to manage the public storefront.</p>
+    <h2>Administrative Portal</h2>
+    <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">Store Management & Inventory Control</p>
     
     <div class="form-group">
         <label>Perfume Name</label>
@@ -53,17 +51,17 @@
         </select>
     </div>
     <div class="form-group">
-        <label>Image Filename (e.g. masculine/perfume.jpg)</label>
-        <input type="text" id="pImg">
+        <label>Image Filename</label>
+        <input type="text" id="pImg" placeholder="folder/image.jpg">
     </div>
     <div class="form-group">
-        <label>Show in "New in Our Collection"?</label>
+        <label>Show in "New Arrivals"?</label>
         <select id="pNew">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select>
     </div>
-    <button class="btn btn-save" onclick="addPerfume()">Add to Storefront</button>
+    <button class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
     <button class="btn" onclick="logout()">Logout</button>
 
     <div class="product-list">
@@ -84,7 +82,7 @@
         const isNew = document.getElementById('pNew').value === 'yes';
 
         if(!name || !price || !img) {
-            alert("Please provide the name, price, and image path.");
+            alert("Please provide name, price, and image path.");
             return;
         }
 
@@ -97,7 +95,7 @@
     }
 
     function deletePerfume(index) {
-        if(confirm("Confirm removal of this item?")) {
+        if(confirm("Remove this item?")) {
             perfumes.splice(index, 1);
             saveAndRefresh();
         }
@@ -117,7 +115,7 @@
         const list = document.getElementById('listItems');
         list.innerHTML = perfumes.map((p, index) => `
             <div class="product-item">
-                <span><strong>${p.name}</strong> [${p.cat}] - ${p.price}</span>
+                <span><strong>${p.name}</strong> [${p.cat}]</span>
                 <button class="delete-btn" onclick="deletePerfume(${index})">Remove</button>
             </div>
         `).join('');
