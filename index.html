@@ -85,22 +85,33 @@
             top: 0;
             z-index: 1000;
             box-shadow: var(--shadow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        nav.sticky-adjust { top: 45px; } /* Adjusts if promo banner is visible */
+        nav.sticky-adjust { top: 45px; } 
 
         nav a {
-            margin: 0 15px;
-            text-decoration: none;
             color: var(--dark);
+            text-decoration: none;
+            font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.8rem;
             letter-spacing: 1px;
             transition: color 0.3s;
         }
 
         nav a:hover { color: var(--gold); }
+
+        .nav-separator {
+            width: 1px;
+            height: 12px;
+            background-color: var(--gold);
+            opacity: 0.4;
+        }
 
         .container {
             max-width: 1200px;
@@ -167,7 +178,7 @@
         .product-image-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Ensures images are not cropped */
+            object-fit: contain;
             display: block;
         }
 
@@ -256,21 +267,41 @@
         footer {
             background: var(--dark);
             color: var(--white);
-            padding: 60px 20px;
+            padding: 40px 20px;
             text-align: center;
             margin-top: 60px;
+            border-top: 1px solid var(--gold);
         }
 
-        .social-links { margin-bottom: 20px; }
-        .social-links a { color: var(--gold); margin: 0 10px; text-decoration: none; font-size: 1.2rem; }
-
-        .admin-link {
+        .footer-logo {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 15px;
             display: block;
-            margin-top: 40px;
-            color: #444;
+        }
+
+        .instagram-handle {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .instagram-handle:hover { opacity: 1; color: var(--gold); }
+
+        .admin-portal-link {
+            display: block;
+            margin-top: 30px;
+            color: var(--white);
             text-decoration: none;
             font-size: 0.7rem;
+            opacity: 0.3;
         }
+
+        .admin-portal-link:hover { opacity: 0.6; }
 
         @media (max-width: 768px) {
             .logo { font-size: 1.8rem; }
@@ -292,8 +323,12 @@
 
 <nav id="mainNav">
     <a href="#masculine">Masculine</a>
+    <div class="nav-separator"></div>
     <a href="#feminine">Feminine</a>
+    <div class="nav-separator"></div>
     <a href="#unisex">Unisex</a>
+    <div class="nav-separator"></div>
+    <a href="admin.html">Admins Portal</a>
 </nav>
 
 <div class="container">
@@ -330,18 +365,16 @@
 </div>
 
 <footer>
-    <div class="social-links">
-        <a href="https://www.instagram.com/perfumecollection_na" target="_blank">Instagram</a>
-    </div>
-    <p>&copy; 2026 Perfume Collection _na. All Rights Reserved.</p>
-    <a href="admin.html" class="admin-link">Admins Portal</a>
+    <span class="footer-logo">Perfume Collection _na</span>
+    <a href="https://www.instagram.com/perfumecollection_na" target="_blank" class="instagram-handle">@perfumecollection_na</a>
+    <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">&copy; 2026 Perfume Collection _na. All Rights Reserved.</p>
+    <a href="admin.html" class="admin-portal-link">Admins Portal Access</a>
 </footer>
 
 <script>
     const defaultPerfumes = [
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
         { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
-        // Note: Full list is maintained via localStorage from Admin Portal
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
@@ -361,7 +394,6 @@
         } else {
             banner.style.display = 'none';
             nav.classList.remove('sticky-adjust');
-            // If promo expired but products still marked onSale, revert them
             if (perfumes.some(p => p.onSale)) {
                 perfumes.forEach(p => p.onSale = false);
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
@@ -423,10 +455,7 @@
     function submitOrder() {
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
-
         if (!name || !phone) return alert("Please fill in your details.");
-
-        // Log order for Admin
         const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
         orders.push({
             product: selectedProduct,
@@ -435,18 +464,13 @@
             date: new Date().toLocaleString()
         });
         localStorage.setItem('perfumeOrders', JSON.stringify(orders));
-
-        // WhatsApp redirect
         const waMessage = `Hello Perfume Collection _na, I would like to order: ${selectedProduct}. My name is ${name}.`;
         window.open(`https://wa.me/264812345678?text=${encodeURIComponent(waMessage)}`, '_blank');
-        
         closeModal();
     }
 
-    // Refresh promo status every minute
-    setInterval(checkPromo, 60000);
+    setInterval(checkPromo, 10000);
     renderProducts();
 </script>
-
 </body>
 </html>
