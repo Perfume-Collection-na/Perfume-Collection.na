@@ -389,6 +389,18 @@
     </div>
 </div>
 
+<div id="adminLoginModal" class="modal">
+    <div class="modal-content">
+        <h2>Admins Portal</h2>
+        <div style="text-align: left; margin: 20px 0;">
+            <input type="text" id="adminUser" class="login-input" placeholder="Username">
+            <input type="password" id="adminPass" class="login-input" placeholder="Password">
+        </div>
+        <button onclick="login()">Login</button>
+        <button style="margin-top: 10px; background: none; color: #666;" onclick="closeModal('adminLoginModal')">Cancel</button>
+    </div>
+</div>
+
 <footer>
     <span class="footer-logo">Perfume Collection _na</span>
     <p>Premium Fragrance Boutique</p>
@@ -397,7 +409,7 @@
     <div class="footer-divider"></div>
     
     <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
-    <a href="admin.html" class="admin-link">Admin</a>
+    <a onclick="openAdminLogin()" class="admin-link">Admin</a>
 </footer>
 
 <script>
@@ -471,6 +483,21 @@
         document.getElementById('orderModal').style.display = "flex";
     }
 
+    function openAdminLogin() {
+        document.getElementById('adminLoginModal').style.display = "flex";
+    }
+
+    function login() {
+        const user = document.getElementById('adminUser').value;
+        const pass = document.getElementById('adminPass').value;
+        if (user === "Admin" && pass === "LNJ_Admin44") {
+            sessionStorage.setItem('adminAuth', 'true');
+            window.location.href = 'admin.html';
+        } else {
+            alert("Unauthorized Access.");
+        }
+    }
+
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
     function submitOrder() {
@@ -500,4 +527,4 @@
     renderProducts();
 </script>
 </body>
-    </html>
+</html>
