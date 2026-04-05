@@ -2,18 +2,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Portal - Perfume Collection_na</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Perfume Collection _na</title>
     <style>
-        :root { --gold: #c5a059; --dark: #1a1a1a; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { border-bottom: 2px solid var(--gold); padding-bottom: 10px; color: var(--dark); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .btn { background: var(--dark); color: white; border: none; padding: 12px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; width: 100%; margin-top: 10px; }
-        .btn-save { background: var(--gold); }
-        .product-item, .order-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        :root { 
+            --gold: #c5a059; 
+            --dark: #1a1a1a; 
+            --light: #f4f4f4;
+            --white: #ffffff;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--light); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styling */
+        header {
+            background: var(--dark);
+            color: var(--white);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .admin-logo {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        nav.admin-nav a {
+            color: var(--white);
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        nav.admin-nav a:hover { color: var(--gold); }
+
+        .container { 
+            max-width: 900px; 
+            margin: 40px auto; 
+            background: var(--white); 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+
+        h2 { 
+            border-bottom: 2px solid var(--gold); 
+            padding-bottom: 10px; 
+            color: var(--dark);
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center; justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+        }
+
+        .btn { 
+            background: var(--dark); 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            width: 100%; 
+            margin-top: 10px; 
+            text-transform: uppercase;
+        }
+
+        .btn-save { background: var(--gold); color: var(--dark); }
+        
+        .product-item, .order-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px; 
+            border-bottom: 1px solid #eee; 
+        }
+
+        .delete-btn { 
+            background: #ff4d4d; 
+            color: white; 
+            border: none; 
+            padding: 6px 12px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+        }
+
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: auto;
+            border-top: 1px solid var(--gold);
+        }
+
+        section { scroll-margin-top: 120px; }
     </style>
 </head>
 <body>
@@ -22,62 +148,87 @@
     if (sessionStorage.getItem('adminAuth') !== 'true') window.location.href = 'index.html';
 </script>
 
-<div class="container">
-    <h2>Administrative Portal</h2>
-    <div class="form-group">
-        <label>Perfume Name</label>
-        <input type="text" id="pName">
+<header>
+    <span class="admin-logo">Perfume Collection _na</span>
+    <nav class="admin-nav">
+        <a href="#orders">Orders</a>
+        <a href="#inventory">Inventory</a>
+        <a onclick="openModal('productModal')">Product Entry</a>
+        <a onclick="logout()">Logout</a>
+    </nav>
+</header>
+
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <h2>Add New Product</h2>
+        <div class="form-group">
+            <label>Perfume Name</label>
+            <input type="text" id="pName">
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input type="text" id="pPrice" placeholder="N$ 0.00">
+        </div>
+        <div class="form-group">
+            <label>Stock Count</label>
+            <input type="number" id="pStock" value="1">
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <select id="pCat">
+                <option value="masculine">Masculine</option>
+                <option value="feminine">Feminine</option>
+                <option value="unisex">Unisex</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Image Filename</label>
+            <input type="text" id="pImg" placeholder="folder/image.jpg">
+        </div>
+        <div class="form-group">
+            <label>New Arrival?</label>
+            <select id="pNew">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+        </div>
+        <button class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
+        <button class="btn" style="background:none; color:#666;" onclick="closeModal('productModal')">Cancel</button>
     </div>
-    <div class="form-group">
-        <label>Price</label>
-        <input type="text" id="pPrice" placeholder="N$ 0.00">
-    </div>
-    <div class="form-group">
-        <label>Stock Count</label>
-        <input type="number" id="pStock" value="1">
-    </div>
-    <div class="form-group">
-        <label>Category</label>
-        <select id="pCat">
-            <option value="masculine">Masculine</option>
-            <option value="feminine">Feminine</option>
-            <option value="unisex">Unisex</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>Image Filename</label>
-        <input type="text" id="pImg" placeholder="folder/image.jpg">
-    </div>
-    <div class="form-group">
-        <label>New Arrival?</label>
-        <select id="pNew">
-            <option value="no">No</option>
-            <option value="yes">Yes</option>
-        </select>
-    </div>
-    <button class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
-    <button class="btn" onclick="logout()">Logout</button>
 </div>
 
-<div class="container">
-    <h2>Customer Orders Queue</h2>
-    <div id="orderList"></div>
+<div class="container" id="orders">
+    <section>
+        <h2>Customer Orders Queue</h2>
+        <div id="orderList"></div>
+    </section>
 </div>
 
-<div class="container">
-    <h2>Live Inventory</h2>
-    <div id="listItems"></div>
+<div class="container" id="inventory">
+    <section>
+        <h2>Live Inventory List</h2>
+        <div id="listItems"></div>
+    </section>
 </div>
+
+<footer>
+    <p>Administrative Portal - Private Access</p>
+    <p>&copy; 2026 Perfume Collection _na. Managed by LNJ_Admin.</p>
+</footer>
 
 <script>
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || [];
     let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
 
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
     function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const img = document.getElementById('pImg').value;
-        if(!name || !price || !img) return alert("Missing fields");
+        
+        if(!name || !price || !img) return alert("Fill required fields.");
 
         perfumes.push({
             name, price,
@@ -86,30 +237,56 @@
             img,
             isNew: document.getElementById('pNew').value === 'yes'
         });
-        save();
-    }
 
-    function save() {
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-        render();
+        renderLists();
+        closeModal('productModal');
+        
+        document.getElementById('pName').value = '';
+        document.getElementById('pPrice').value = '';
+        document.getElementById('pImg').value = '';
     }
 
-    function logout() { sessionStorage.removeItem('adminAuth'); window.location.href = 'index.html'; }
+    function deletePerfume(index) {
+        if(confirm("Remove product?")) {
+            perfumes.splice(index, 1);
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            renderLists();
+        }
+    }
 
-    function render() {
-        document.getElementById('listItems').innerHTML = perfumes.map((p, i) => `
-            <div class="product-item"><span>${p.name}</span><button onclick="perfumes.splice(${i},1);save()">X</button></div>
-        `).join('');
+    function clearOrder(index) {
+        if(confirm("Mark order as done?")) {
+            orders.splice(index, 1);
+            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+            renderLists();
+        }
+    }
 
-        document.getElementById('orderList').innerHTML = orders.map((o, i) => `
-            <div class="order-item">
-                <div><strong>${o.product}</strong><br><small>${o.customer} - ${o.contact}</small></div>
-                <button onclick="orders.splice(${i},1);localStorage.setItem('perfumeOrders',JSON.stringify(orders));render()">Clear</button>
+    function logout() {
+        sessionStorage.removeItem('adminAuth');
+        window.location.href = 'index.html';
+    }
+
+    function renderLists() {
+        const invDiv = document.getElementById('listItems');
+        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
+            <div class="product-item">
+                <span><strong>${p.name}</strong> (${p.cat})</span>
+                <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
             </div>
-        `).join('');
+        `).join('') : "<p>No products.</p>";
+
+        const ordDiv = document.getElementById('orderList');
+        ordDiv.innerHTML = orders.length ? orders.map((o, i) => `
+            <div class="order-item">
+                <div><b>${o.product}</b><br><small>${o.customer} (${o.contact})</small></div>
+                <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
+            </div>
+        `).join('') : "<p>No orders.</p>";
     }
 
-    render();
+    renderLists();
 </script>
 </body>
 </html>
