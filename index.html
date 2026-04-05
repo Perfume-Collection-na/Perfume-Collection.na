@@ -88,8 +88,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
         }
 
         nav.sticky-adjust { top: 45px; } 
@@ -138,13 +137,13 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
         }
 
         .product-card {
             background: var(--white);
-            border-radius: 8px;
+            border-radius: 4px;
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: transform 0.3s;
@@ -170,9 +169,10 @@
 
         .product-image-container {
             width: 100%;
-            height: 300px;
+            height: 350px; /* Standardized height for Club De Nuit look */
             overflow: hidden;
-            background: #eee;
+            background: var(--white);
+            padding: 10px;
         }
 
         .product-image-container img {
@@ -185,18 +185,21 @@
         .product-info {
             padding: 20px;
             text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: var(--white);
+            border-top: 1px solid #f0f0f0;
         }
 
         .product-name {
-            font-size: 1rem;
-            margin-bottom: 10px;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
             font-weight: 600;
-            height: 3em;
-            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--dark);
+            min-height: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .price-container { margin-bottom: 15px; }
@@ -204,8 +207,8 @@
         .old-price {
             text-decoration: line-through;
             color: #888;
-            font-size: 0.9rem;
-            margin-right: 10px;
+            font-size: 0.85rem;
+            margin-right: 8px;
         }
 
         .current-price {
@@ -214,28 +217,58 @@
             font-size: 1.1rem;
         }
 
-        .sale-active .current-price { color: #d9534f; }
+        .sale-active .current-price { color: #b12704; }
 
         .btn-order {
             background: var(--dark);
             color: var(--white);
-            border: none;
+            border: 1px solid var(--dark);
             padding: 12px;
             width: 100%;
             cursor: pointer;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
 
-        .btn-order:hover { background: var(--gold); color: var(--dark); }
+        .btn-order:hover { background: var(--gold); border-color: var(--gold); color: var(--dark); }
 
         .out-of-stock {
-            background: #ccc !important;
+            background: #eee !important;
+            border-color: #eee !important;
             cursor: not-allowed !important;
-            color: #666 !important;
+            color: #999 !important;
         }
+
+        /* Contact Us Section */
+        .contact-section {
+            background: var(--white);
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .contact-item {
+            font-weight: 600;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .contact-item:hover { color: var(--gold); }
 
         /* Order Modal */
         .modal {
@@ -250,7 +283,7 @@
         .modal-content {
             background: var(--white);
             padding: 30px;
-            border-radius: 8px;
+            border-radius: 4px;
             width: 90%;
             max-width: 400px;
             text-align: center;
@@ -261,7 +294,7 @@
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; }
         .form-group input { 
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 2px; 
         }
 
         footer {
@@ -269,8 +302,14 @@
             color: var(--white);
             padding: 40px 20px;
             text-align: center;
-            margin-top: 60px;
-            border-top: 1px solid var(--gold);
+        }
+
+        .footer-divider {
+            width: 100%;
+            height: 1px;
+            background: var(--gold);
+            opacity: 0.3;
+            margin-bottom: 25px;
         }
 
         .footer-logo {
@@ -278,35 +317,34 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             color: var(--gold);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: block;
         }
 
-        .instagram-handle {
+        .instagram-link {
             color: var(--white);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.8;
-            transition: opacity 0.3s;
         }
 
-        .instagram-handle:hover { opacity: 1; color: var(--gold); }
+        .instagram-link:hover { color: var(--gold); }
 
-        .admin-portal-link {
-            display: block;
-            margin-top: 30px;
-            color: var(--white);
+        .admin-label-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--gold);
             text-decoration: none;
-            font-size: 0.7rem;
-            opacity: 0.3;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
-        .admin-portal-link:hover { opacity: 0.6; }
 
         @media (max-width: 768px) {
             .logo { font-size: 1.8rem; }
-            .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-            .product-image-container { height: 200px; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+            .product-image-container { height: 280px; }
         }
     </style>
 </head>
@@ -327,8 +365,6 @@
     <a href="#feminine">Feminine</a>
     <div class="nav-separator"></div>
     <a href="#unisex">Unisex</a>
-    <div class="nav-separator"></div>
-    <a href="admin.html">Admins Portal</a>
 </nav>
 
 <div class="container">
@@ -348,33 +384,46 @@
     </section>
 </div>
 
+<section class="contact-section">
+    <div class="contact-container">
+        <h2 class="section-title">Contact Us</h2>
+        <p>Questions about a scent? Reach out to our boutique directly.</p>
+        <div class="contact-info">
+            <a href="https://wa.me/264812345678" class="contact-item">WhatsApp: +264 81 234 5678</a>
+            <a href="mailto:info@perfumecollection.na" class="contact-item">Email: info@perfumecollection.na</a>
+        </div>
+    </div>
+</section>
+
 <div id="orderModal" class="modal">
     <div class="modal-content">
         <h3 id="modalProductName">Place Order</h3>
         <div class="form-group">
             <label>Full Name</label>
-            <input type="text" id="custName" placeholder="Enter your name">
+            <input type="text" id="custName" placeholder="Your name">
         </div>
         <div class="form-group">
-            <label>Phone Number / WhatsApp</label>
-            <input type="text" id="custPhone" placeholder="e.g. +264 81...">
+            <label>Phone Number</label>
+            <input type="text" id="custPhone" placeholder="+264...">
         </div>
         <button class="btn-order" onclick="submitOrder()">Confirm via WhatsApp</button>
-        <button class="btn-order" style="background:none; color:#888; margin-top:10px;" onclick="closeModal()">Cancel</button>
+        <button class="btn-order" style="background:none; border:none; color:#888; margin-top:10px;" onclick="closeModal()">Cancel</button>
     </div>
 </div>
 
 <footer>
+    <div class="footer-divider"></div>
     <span class="footer-logo">Perfume Collection _na</span>
-    <a href="https://www.instagram.com/perfumecollection_na" target="_blank" class="instagram-handle">@perfumecollection_na</a>
-    <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">&copy; 2026 Perfume Collection _na. All Rights Reserved.</p>
-    <a href="admin.html" class="admin-portal-link">Admins Portal Access</a>
+    <a href="https://www.instagram.com/perfumecollection_na" target="_blank" class="instagram-link">Follow us on Instagram @perfumecollection_na</a>
+    <p style="margin-top: 15px; font-size: 0.8rem; opacity: 0.5;">&copy; 2026 Perfume Collection _na. All Rights Reserved.</p>
+    <a href="admin.html" class="admin-label-link">Admins Portal</a>
 </footer>
 
 <script>
     const defaultPerfumes = [
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" }
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg" },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT_INTENSE_MAN(100ml).jpg" }
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
@@ -473,4 +522,4 @@
     renderProducts();
 </script>
 </body>
-</html>
+</html>u
