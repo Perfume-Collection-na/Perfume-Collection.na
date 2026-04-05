@@ -121,6 +121,18 @@
             border-bottom: 1px solid #eee; 
         }
 
+        .stock-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stock-input {
+            width: 60px;
+            padding: 5px;
+            text-align: center;
+        }
+
         .delete-btn { 
             background: #ff4d4d; 
             color: white; 
@@ -223,6 +235,13 @@
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
+    // Policy Check: Handle outside clicks without logout/redirect
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            event.target.style.display = "none";
+        }
+    }
+
     function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
@@ -245,6 +264,13 @@
         document.getElementById('pName').value = '';
         document.getElementById('pPrice').value = '';
         document.getElementById('pImg').value = '';
+    }
+
+    function updateStock(index, newStock) {
+        perfumes[index].stock = parseInt(newStock);
+        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+        // Soft render to avoid losing focus if needed, but here we just refresh
+        renderLists();
     }
 
     function deletePerfume(index) {
@@ -272,8 +298,14 @@
         const invDiv = document.getElementById('listItems');
         invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
             <div class="product-item">
-                <span><strong>${p.name}</strong> (${p.cat})</span>
-                <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
+                <div style="flex: 1;">
+                    <strong>${p.name}</strong> (${p.cat})
+                </div>
+                <div class="stock-control">
+                    <label style="font-size: 0.7rem;">Stock:</label>
+                    <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock(${i}, this.value)">
+                    <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
+                </div>
             </div>
         `).join('') : "<p>No products.</p>";
 
