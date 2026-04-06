@@ -3,10 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Perfume Collection _na | Premium Fragrances & Scents in Namibia</title>
     <meta name="google-site-verification" content="1q61AjJdba2693qxDuZ5pdQ54WfMrjopLYOlsUQbTdI" />
-    <title>Perfume Collection _na - Premium Fragrance Boutique</title>
+    <meta name="description" content="Shop exclusive masculine, feminine, and unisex perfumes at Perfume Collection _na. Your home for affordable luxury designer scents and fragrances in Namibia.">
+    <meta name="keywords" content="perfume, fragrance, scents, perfume collection na, Namibia perfumes, designer fragrances, unisex scents, buy perfume online Namibia">
+    
+    <meta property="og:title" content="Perfume Collection _na - Premium Fragrance Boutique">
+    <meta property="og:description" content="Affordable Luxury in Every Drop. Explore our curated collection of international scents.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://perfume-collection-na.github.io/">
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@600&display=swap" rel="stylesheet">
+    
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <style>
         :root {
             --gold: #c5a059;
@@ -367,30 +378,30 @@
 
 <div class="container">
     <section id="new-section" class="category-section" style="display:none;">
-        <h2 class="category-title">New in Our Collection</h2>
+        <h2 class="category-title">New Arrivals</h2>
         <div class="grid" id="grid-new"></div>
     </section>
 
     <section id="masculine" class="category-section">
-        <h2 class="category-title">Masculine Collection</h2>
+        <h2 class="category-title">Masculine Fragrance Collection</h2>
         <div class="grid" id="grid-masculine"></div>
     </section>
 
     <section id="feminine" class="category-section">
-        <h2 class="category-title">Feminine Collection</h2>
+        <h2 class="category-title">Feminine Fragrance Collection</h2>
         <div class="grid" id="grid-feminine"></div>
     </section>
 
     <section id="unisex" class="category-section">
-        <h2 class="category-title">Unisex Collection</h2>
+        <h2 class="category-title">Unisex Fragrance Collection</h2>
         <div class="grid" id="grid-unisex"></div>
     </section>
 </div>
 
 <section class="contact-section">
     <div class="contact-container">
-        <h2 class="category-title">Contact Us</h2>
-        <p>Questions about a scent? Reach out to our boutique directly.</p>
+        <h2 class="category-title">Visit Our Boutique</h2>
+        <p>Expert advice on premium scents and luxury fragrances.</p>
         <div class="contact-info">
             <a href="https://wa.me/264813557282" class="contact-item">WhatsApp: +264 81 355 7282</a>
             <a href="mailto:perfumecollection.na@gmail.com" class="contact-item">Email: perfumecollection.na@gmail.com</a>
@@ -423,23 +434,22 @@
 
 <footer>
     <span class="footer-logo">Perfume Collection _na</span>
-    <p>Premium Fragrance Boutique</p>
+    <p>Premium Fragrance Boutique Namibia</p>
     <p><a href="https://www.instagram.com/perfume_collection_na?igsh=Z2p3YXZvc3A3ZzV2" target="_blank">Follow us on Instagram: @perfumecollection_na</a></p>
     <div class="footer-divider"></div>
     <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
-    <a onclick="openAdminLogin()" class="admin-link">Admin</a>
+    <a onclick="openAdminLogin()" class="admin-link">Admin Portal</a>
 </footer>
 
 <script>
-    // Initialize EmailJS with your Public Key
     (function() {
         emailjs.init("hXQEk__VsDHgyAAGd"); 
     })();
 
     const defaultPerfumes = [
+        { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Aventos_Blue_For_Him_(100ml)[1].jpg", isNew: true },
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: true },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg", isNew: false },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT_INTENSE_MAN(100ml).jpg", isNew: true }
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg", isNew: false }
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
@@ -471,10 +481,11 @@
     function createCardHTML(p, isPromoActive) {
         const showSale = isPromoActive && p.onSale && p.salePrice;
         const isOOS = p.stock <= 0;
+        // SEO: Added 'alt' attribute to images for search visibility
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
-                ${p.isNew ? '<div class="new-badge">New Arrival</div>' : ''}
-                <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
+                ${p.isNew ? '<div class="new-badge">New</div>' : ''}
+                <img src="${p.img}" alt="${p.name} - Luxury Fragrance" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
                 <h3>${p.name}</h3>
                 <div class="card-action-area">
                     <p class="price">
@@ -496,7 +507,7 @@
         const nav = document.getElementById('mainNav');
         const hasNew = perfumes.some(p => p.isNew);
         const navLinks = [];
-        if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrivals" });
+        if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrival" });
         navLinks.push({ href: "#masculine", text: "Masculine" });
         navLinks.push({ href: "#feminine", text: "Feminine" });
         navLinks.push({ href: "#unisex", text: "Unisex" });
@@ -579,7 +590,6 @@
             order_date: new Date().toLocaleString()
         };
 
-        // Automated Background Send with NEW Service ID service_mjgfqz6
         emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function(response) {
                 alert("Order Successful! We will contact you shortly.");
@@ -609,4 +619,4 @@
     renderProducts();
 </script>
 </body>
-</html>
+    </html>
