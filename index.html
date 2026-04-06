@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfume Collection _na - Premium Fragrance Boutique</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@600&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         :root {
             --gold: #c5a059;
@@ -391,7 +392,7 @@
         <p>Questions about a scent? Reach out to our boutique directly.</p>
         <div class="contact-info">
             <a href="https://wa.me/264813557282" class="contact-item">WhatsApp: +264 81 355 7282</a>
-            <a href="mailto:jakobloide44@gmail.com" class="contact-item">Email: jakobloide44@gmail.com</a>
+            <a href="mailto:perfumecollection.na@gmail.com" class="contact-item">Email: perfumecollection.na@gmail.com</a>
         </div>
     </div>
 </section>
@@ -404,7 +405,7 @@
             <input type="text" id="custName" class="login-input" placeholder="Your Name">
             <input type="text" id="custPhone" class="login-input" placeholder="Phone Number / Contact">
         </div>
-        <button style="background: var(--gold); color: var(--dark);" onclick="submitOrder()">Confirm Order</button>
+        <button id="confirmOrderBtn" style="background: var(--gold); color: var(--dark);" onclick="submitOrder()">Confirm Order</button>
         <button style="margin-top: 10px; background: none; color: #666;" onclick="closeModal('orderModal')">Cancel</button>
     </div>
 </div>
@@ -429,6 +430,11 @@
 </footer>
 
 <script>
+    // Initialize EmailJS with Public Key
+    (function() {
+        emailjs.init("hXQEk__VsDHgyAAGd"); 
+    })();
+
     const defaultPerfumes = [
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: true },
         { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud_(100ml)[1].jpg", isNew: false },
@@ -546,40 +552,52 @@
         }
     }
 
-    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+    function closeModal(id) { 
+        document.getElementById(id).style.display = "none"; 
+        if(id === 'orderModal') {
+            document.getElementById('confirmOrderBtn').disabled = false;
+            document.getElementById('confirmOrderBtn').innerText = "Confirm Order";
+        }
+    }
 
     function submitOrder() {
         const cName = document.getElementById('custName').value;
         const cPhone = document.getElementById('custPhone').value;
+        const btn = document.getElementById('confirmOrderBtn');
+
         if(!cName || !cPhone) return alert("Please fill in your details.");
 
-        // Log the order locally
-        const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
-        orders.push({
-            product: selectedItem.name,
-            customer: cName,
-            contact: cPhone,
-            date: new Date().toLocaleString()
-        });
-        localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+        btn.disabled = true;
+        btn.innerText = "Sending Order...";
 
-        // Automated Email Logic
-        const adminEmail = "jakobloide44@gmail.com";
-        const subject = encodeURIComponent(`New Order: ${selectedItem.name}`);
-        const body = encodeURIComponent(
-            `Hello Perfume Collection _na,\n\n` +
-            `I would like to place an order for the following:\n` +
-            `Product: ${selectedItem.name}\n` +
-            `Price: ${selectedItem.price}\n\n` +
-            `Customer Name: ${cName}\n` +
-            `Contact: ${cPhone}\n\n` +
-            `Date: ${new Date().toLocaleString()}`
-        );
+        const templateParams = {
+            product_name: selectedItem.name,
+            price: selectedItem.price,
+            customer_name: cName,
+            customer_contact: cPhone,
+            order_date: new Date().toLocaleString()
+        };
 
-        // Open user's email client
-        window.location.href = `mailto:${adminEmail}?subject=${subject}&body=${body}`;
-        
-        closeModal('orderModal');
+        // Automated Background Send
+        emailjs.send('service_p1jugyv', 'template_6bwlc5o', templateParams)
+            .then(function() {
+                alert("Order Successful! We will contact you shortly.");
+                
+                const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
+                orders.push({
+                    product: selectedItem.name,
+                    customer: cName,
+                    contact: cPhone,
+                    date: new Date().toLocaleString()
+                });
+                localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+                
+                closeModal('orderModal');
+            }, function(error) {
+                alert("Order failed to send automatically. Please reach out via WhatsApp.");
+                btn.disabled = false;
+                btn.innerText = "Confirm Order";
+            });
     }
 
     window.onclick = function(event) {
@@ -590,4 +608,4 @@
     renderProducts();
 </script>
 </body>
-</html>
+        </html>
