@@ -430,7 +430,7 @@
 </footer>
 
 <script>
-    // Robust Initialization with your Public Key
+    // Initialize EmailJS with your Public Key
     (function() {
         emailjs.init("hXQEk__VsDHgyAAGd"); 
     })();
@@ -570,7 +570,6 @@
         btn.disabled = true;
         btn.innerText = "Sending Order...";
 
-        // Parameters sent to EmailJS template
         const templateParams = {
             product_name: selectedItem.name,
             price: selectedItem.price,
@@ -579,12 +578,11 @@
             order_date: new Date().toLocaleString()
         };
 
-        // Automated Background Send using your Service and Template ID
-        emailjs.send('service_p1jugyv', 'template_6bwlc5o', templateParams)
+        // Automated Background Send with NEW Service ID service_mjgfqz6
+        emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function(response) {
                 alert("Order Successful! We will contact you shortly.");
                 
-                // Log locally for Admin Portal
                 const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
                 orders.push({
                     product: selectedItem.name,
@@ -596,7 +594,6 @@
                 
                 closeModal('orderModal');
             }, function(error) {
-                // Debugging Alert to catch specific EmailJS configuration errors
                 alert("Order failed to send. Error: " + JSON.stringify(error));
                 btn.disabled = false;
                 btn.innerText = "Confirm Order";
