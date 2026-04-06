@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>Perfume Collection _na | Premium Fragrances & Scents in Namibia</title>
-    <meta name="google-site-verification" content="1q61AjJdba2693qxDuZ5pdQ54WfMrjopLYOlsUQbTdI" />
+    <meta name="google-site-verification" content="epjcSvQqQn0hMpq4C4-kHCYzXRaO7tz8fAs5UCcHcN0" />
     <meta name="description" content="Shop exclusive masculine, feminine, and unisex perfumes at Perfume Collection _na. Your home for affordable luxury designer scents and fragrances in Namibia.">
     <meta name="keywords" content="perfume, fragrance, scents, perfume collection na, Namibia perfumes, designer fragrances, unisex scents, buy perfume online Namibia">
     
@@ -481,7 +481,6 @@
     function createCardHTML(p, isPromoActive) {
         const showSale = isPromoActive && p.onSale && p.salePrice;
         const isOOS = p.stock <= 0;
-        // SEO: Added 'alt' attribute to images for search visibility
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
                 ${p.isNew ? '<div class="new-badge">New</div>' : ''}
@@ -590,6 +589,7 @@
             order_date: new Date().toLocaleString()
         };
 
+        // Service ID updated to: service_mjgfqz6
         emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function(response) {
                 alert("Order Successful! We will contact you shortly.");
@@ -619,4 +619,4 @@
     renderProducts();
 </script>
 </body>
-    </html>
+</html>
