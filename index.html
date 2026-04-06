@@ -337,9 +337,7 @@
             text-decoration: none;
             font-size: 0.75rem;
             opacity: 0.6;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
+            cursor: pointer; font-weight: bold; text-transform: uppercase;
         }
 
         @media (max-width: 768px) {
@@ -404,9 +402,9 @@
         <p id="modalPrice" class="price" style="margin-top:10px;"></p>
         <div style="text-align: left; margin: 20px 0;">
             <input type="text" id="custName" class="login-input" placeholder="Your Name">
-            <input type="text" id="custPhone" class="login-input" placeholder="WhatsApp Number">
+            <input type="text" id="custPhone" class="login-input" placeholder="Phone Number / Contact">
         </div>
-        <button style="background: #25D366;" onclick="submitOrder()">Confirm Order</button>
+        <button style="background: var(--gold); color: var(--dark);" onclick="submitOrder()">Confirm Order</button>
         <button style="margin-top: 10px; background: none; color: #666;" onclick="closeModal('orderModal')">Cancel</button>
     </div>
 </div>
@@ -490,7 +488,6 @@
     function renderNavigation() {
         const nav = document.getElementById('mainNav');
         const hasNew = perfumes.some(p => p.isNew);
-        
         const navLinks = [];
         if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrivals" });
         navLinks.push({ href: "#masculine", text: "Masculine" });
@@ -507,11 +504,8 @@
     function renderProducts() {
         const isPromoActive = checkPromo();
         const cats = ['masculine', 'feminine', 'unisex'];
-        
-        // Navigation update
         renderNavigation();
 
-        // Render New Arrivals Logic
         const newItems = perfumes.filter(p => p.isNew);
         const newSection = document.getElementById('new-section');
         const newGrid = document.getElementById('grid-new');
@@ -523,7 +517,6 @@
             newSection.style.display = 'none';
         }
 
-        // Render Gender Categories
         cats.forEach(cat => {
             const grid = document.getElementById(`grid-${cat}`);
             const filtered = perfumes.filter(p => p.cat === cat);
@@ -558,8 +551,9 @@
     function submitOrder() {
         const cName = document.getElementById('custName').value;
         const cPhone = document.getElementById('custPhone').value;
-        if(!cName || !cPhone) return alert("Fill your details.");
+        if(!cName || !cPhone) return alert("Please fill in your details.");
 
+        // Log the order locally
         const orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
         orders.push({
             product: selectedItem.name,
@@ -569,8 +563,22 @@
         });
         localStorage.setItem('perfumeOrders', JSON.stringify(orders));
 
-        const waMessage = `Hello Perfume Collection _na, I would like to order: ${selectedItem.name}. My name is ${cName}.`;
-        window.open(`https://wa.me/264813557282?text=${encodeURIComponent(waMessage)}`, '_blank');
+        // Automated Email Logic
+        const adminEmail = "jakobloide44@gmail.com";
+        const subject = encodeURIComponent(`New Order: ${selectedItem.name}`);
+        const body = encodeURIComponent(
+            `Hello Perfume Collection _na,\n\n` +
+            `I would like to place an order for the following:\n` +
+            `Product: ${selectedItem.name}\n` +
+            `Price: ${selectedItem.price}\n\n` +
+            `Customer Name: ${cName}\n` +
+            `Contact: ${cPhone}\n\n` +
+            `Date: ${new Date().toLocaleString()}`
+        );
+
+        // Open user's email client
+        window.location.href = `mailto:${adminEmail}?subject=${subject}&body=${body}`;
+        
         closeModal('orderModal');
     }
 
