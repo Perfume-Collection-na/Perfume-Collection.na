@@ -1,0 +1,9 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Prevent search engines from showing your Admin login page in results
+Disallow: /admin.html
+
+# Tell search engines where your sitemap is
+Sitemap: https://perfume-collection-na.github.io/sitemap.xml
