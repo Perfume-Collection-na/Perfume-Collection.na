@@ -131,29 +131,41 @@
             opacity: 0.4;
         }
 
+        /* Expanded to cover whole page width */
         .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
+            width: 100%;
+            max-width: 100%;
+            margin: 40px 0;
+            padding: 0 40px;
         }
 
         .category-section {
-            margin-bottom: 60px;
+            margin-bottom: 80px;
+            width: 100%;
         }
 
         .category-title {
             font-size: 1.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border-bottom: 2px solid var(--gold);
-            display: inline-block;
-            margin-bottom: 30px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* New section divider line */
+        .section-divider {
+            width: 100%;
+            height: 2px;
+            background-color: var(--gold);
+            margin-bottom: 35px;
+            opacity: 0.8;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
+            width: 100%;
         }
 
         .perfume-card {
@@ -384,6 +396,7 @@
             .perfume-card img { height: 200px; }
             nav { padding: 10px; gap: 10px; }
             nav a { font-size: 0.8rem; }
+            .container { padding: 0 15px; }
             .quiver-footer-link { position: static; margin: 20px auto 0 auto; width: 40px; } /* Center on mobile */
         }
     </style>
@@ -405,28 +418,32 @@
 <div class="container">
     <section id="new-section" class="category-section" style="display:none;">
         <h2 class="category-title">New Arrivals</h2>
+        <div class="section-divider"></div>
         <div class="grid" id="grid-new"></div>
     </section>
 
     <section id="masculine" class="category-section">
         <h2 class="category-title">Masculine Fragrance Collection</h2>
+        <div class="section-divider"></div>
         <div class="grid" id="grid-masculine"></div>
     </section>
 
     <section id="feminine" class="category-section">
         <h2 class="category-title">Feminine Fragrance Collection</h2>
+        <div class="section-divider"></div>
         <div class="grid" id="grid-feminine"></div>
     </section>
 
     <section id="unisex" class="category-section">
         <h2 class="category-title">Unisex Fragrance Collection</h2>
+        <div class="section-divider"></div>
         <div class="grid" id="grid-unisex"></div>
     </section>
 </div>
 
 <section class="contact-section">
     <div class="contact-container">
-        <h2 class="category-title">Visit Our Boutique</h2>
+        <h2 class="category-title" style="text-align: center; border: none;">Visit Our Boutique</h2>
         <p>Expert advice on premium scents and luxury fragrances.</p>
         <div class="contact-info">
             <a href="https://wa.me/264813557282" class="contact-item">WhatsApp: +264 81 355 7282</a>
