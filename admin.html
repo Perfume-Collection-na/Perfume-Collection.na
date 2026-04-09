@@ -359,39 +359,84 @@
 </footer>
 
 <script>
-    const defaultPerfumes = [
-        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
-        { name: "Ur Way by Fragrance World", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAG_WORLD.jpg" },
-        { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE.jpg" },
-        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Brown_Orchid.jpg" },
-        { name: "Gorgio Black Special Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK.jpg" },
-        { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL.jpg" },
-        { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ZARA_MAN.jpg" },
-        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/WAYFARER.jpg" },
-        { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/SUAVE.jpg" },
-        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_FOR_GLORY.jpg" },
-        { name: "Oniro", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ONIRO.jpg" },
-        { name: "Odyssey Homme", price: "N$ 700.00", salePrice: "N$ 600.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ODYSSEY.jpg" },
-        { name: "Now Rave", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/NOW_RAVE.jpg" },
-        { name: "Midnight Oud", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/MIDNIGHT_OUD.jpg" },
-        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", salePrice: "N$ 550.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/KHAMRA.jpg" },
-        { name: "Invicto Legend", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_L.jpg" },
-        { name: "Invicto Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_I.jpg" },
-        { name: "Invicto Elixir", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_E.jpg" },
-        { name: "Intense Wood", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WOOD.jpg" },
-        { name: "Intense Wayfarer Homme", price: "N$ 500.00", salePrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WAY.jpg" },
-        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_OUD.jpg" },
-        { name: "Intense Noir", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_NOIR.jpg" },
-        { name: "Genius Victory Amper", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GENIUS.jpg" },
-        { name: "Emperor II", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/EMPEROR.jpg" },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT.jpg" },
-        { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA.jpg" },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg" }
-    ];
+    // SPREADSHEET SYNC CONFIG
+    const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
+    let perfumes = [];
     let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
+
+    // --- ENHANCED SYNC & MIGRATION LOGIC ---
+
+    async function loadAndMigrate() {
+        // Step 1: Get existing data from current phone storage
+        const localData = JSON.parse(localStorage.getItem('perfumeData')) || [];
+        
+        try {
+            const response = await fetch(API_URL);
+            const sheetData = await response.json();
+
+            // Step 2: MIGRATION logic. If sheet is empty but local has data, upload local data to cloud.
+            if ((!sheetData || sheetData.length === 0) && localData.length > 0) {
+                console.log("Sheet empty. Migrating existing local data to Google Sheets...");
+                for (const p of localData) {
+                    await syncToSheet("Inventory", [
+                        p.name, 
+                        p.price, 
+                        p.salePrice || "", 
+                        p.onSale ? "TRUE" : "FALSE", 
+                        p.stock, 
+                        p.cat, 
+                        p.img,
+                        p.isNew ? "TRUE" : "FALSE"
+                    ]);
+                }
+                perfumes = localData;
+            } 
+            // Step 3: Otherwise, prioritize sheet data
+            else if (sheetData && sheetData.length > 0) {
+                perfumes = sheetData.map(p => ({
+                    name: p.name,
+                    price: p.price,
+                    salePrice: p.saleprice,
+                    onSale: p.onsale === "TRUE" || p.onsale === true,
+                    stock: p.stock,
+                    cat: p.category,
+                    img: p.imageurl, // normalize key
+                    isNew: p.isnew === "TRUE" || p.isnew === true
+                }));
+                localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            } else {
+                perfumes = localData;
+            }
+            
+            renderLists();
+        } catch (error) {
+            console.error("Connection failed, using local backup:", error);
+            perfumes = localData;
+            renderLists();
+        }
+    }
+
+    async function syncToSheet(sheetName, rowData) {
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sheet: sheetName,
+                    data: rowData
+                })
+            });
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    // --- ORIGINAL CORE FUNCTIONS ---
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -400,7 +445,6 @@
         field.style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
     }
 
-    /* Long-Term Promotion Logic */
     function startPromotion() {
         const msg = document.getElementById('promoMsg').value;
         const days = parseFloat(document.getElementById('promoPeriod').value);
@@ -449,30 +493,36 @@
         renderLists();
     }
 
-    window.onclick = function(event) {
-        if (event.target.className === 'modal') {
-            event.target.style.display = "none";
-        }
-    }
-
-    function addPerfume() {
+    async function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const sPrice = document.getElementById('pSalePrice').value;
         const fileInput = document.getElementById('pImageFile');
+        const stock = parseInt(document.getElementById('pStock').value);
+        const cat = document.getElementById('pCat').value;
+        const isNew = document.getElementById('pNew').value === 'yes';
+
         if(!name || !price || !fileInput.files[0]) return alert("Name, Price, and Image are required.");
 
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
+            const imgData = e.target.result;
+            
+            // Sync to Google Sheet
+            const row = [name, price, sPrice || "", (activePromo && sPrice) ? "TRUE" : "FALSE", stock, cat, imgData, isNew ? "TRUE" : "FALSE"];
+            await syncToSheet("Inventory", row);
+
+            // Update local memory
             perfumes.push({
                 name, price,
                 salePrice: sPrice || null,
                 onSale: (activePromo && sPrice),
-                stock: parseInt(document.getElementById('pStock').value),
-                cat: document.getElementById('pCat').value,
-                img: e.target.result,
-                isNew: document.getElementById('pNew').value === 'yes'
+                stock: stock,
+                cat: cat,
+                img: imgData,
+                isNew: isNew
             });
+            
             localStorage.setItem('perfumeData', JSON.stringify(perfumes));
             renderLists();
             closeModal('productModal');
@@ -484,46 +534,13 @@
         perfumes[index].stock = Math.max(0, parseInt(newStock));
         localStorage.setItem('perfumeData', JSON.stringify(perfumes));
         renderLists();
-    }
-
-    function editPrice(index) {
-        const newPrice = prompt("Regular Price:", perfumes[index].price);
-        const newSale = prompt("Sale Price (blank for none):", perfumes[index].salePrice || "");
-        if (newPrice !== null) {
-            perfumes[index].price = newPrice;
-            perfumes[index].salePrice = newSale || null;
-            perfumes[index].onSale = (activePromo && newSale);
-            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-            renderLists();
-        }
+        alert("Stock updated locally. Please note stock changes must be updated in the Google Sheet for permanent global sync.");
     }
 
     function deletePerfume(index) {
-        if(confirm("Remove product?")) {
+        if(confirm("Remove product? Note: You must manually delete the row from the Google Sheet to remove it permanently from all devices.")) {
             perfumes.splice(index, 1);
             localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-            renderLists();
-        }
-    }
-
-    function clearOrder(index) {
-        const order = orders[index];
-        if(confirm(`Mark order for "${order.product}" as done?`)) {
-            const perfumeIndex = perfumes.findIndex(p => p.name === order.product);
-            if (perfumeIndex !== -1 && perfumes[perfumeIndex].stock > 0) {
-                perfumes[perfumeIndex].stock -= 1;
-            }
-            orders.splice(index, 1);
-            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
-            renderLists();
-        }
-    }
-
-    function deleteOrder(index) {
-        if(confirm("Delete this order?")) {
-            orders.splice(index, 1);
-            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
             renderLists();
         }
     }
@@ -535,28 +552,32 @@
 
     function renderLists() {
         const invDiv = document.getElementById('listItems');
-        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
-            <div class="product-item">
-                <div style="display: flex; align-items: center; flex: 1;">
-                    <img src="${p.img}" class="thumb">
-                    <div>
-                        <strong>${p.name}</strong> 
-                        <br><small style="${p.onSale ? 'color: red; font-weight: bold;' : 'color: #888;'}">
-                            ${p.onSale ? `SALE: ${p.salePrice}` : p.price}
-                        </small>
+        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => {
+            const imgSrc = p.imageurl || p.img; // Handle both sheet and local storage keys
+            const isOnSale = p.onsale === "TRUE" || p.onsale === true || p.onSale === true;
+
+            return `
+                <div class="product-item">
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <img src="${imgSrc}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
+                        <div>
+                            <strong>${p.name}</strong> 
+                            <br><small style="${isOnSale ? 'color: red; font-weight: bold;' : 'color: #888;'}">
+                                ${isOnSale ? `SALE: ${p.salePrice || p.saleprice}` : p.price}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="stock-control">
+                        <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock(${i}, this.value)">
+                        <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
                     </div>
                 </div>
-                <div class="stock-control">
-                    <button class="price-btn" onclick="editPrice(${i})">Price/Sale</button>
-                    <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock(${i}, this.value)">
-                    <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
-                </div>
-            </div>
-        `).join('') : "<p>No products.</p>";
+            `;
+        }).join('') : "<p>No products.</p>";
 
         const ordDiv = document.getElementById('orderList');
         ordDiv.innerHTML = orders.length ? orders.map((o, i) => {
-            const cleanPhone = o.contact.replace(/\D/g, '');
+            const cleanPhone = String(o.contact).replace(/\D/g, '');
             return `
                 <div class="order-item">
                     <div>
@@ -568,17 +589,24 @@
                         </small>
                     </div>
                     <div class="action-group">
-                        <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
-                        <button class="delete-btn" onclick="deleteOrder(${i})">Delete</button>
+                        <button class="delete-btn" style="background:#28a745;" onclick="deleteOrder(${i})">Clear Order</button>
                     </div>
                 </div>
             `;
         }).join('') : "<p>No orders.</p>";
     }
 
+    function deleteOrder(index) {
+        if(confirm("Mark this order as completed?")) {
+            orders.splice(index, 1);
+            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+            renderLists();
+        }
+    }
+
+    // Initialize
+    loadAndMigrate();
     setInterval(checkActivePromo, 10000);
-    checkActivePromo();
-    renderLists();
 </script>
 </body>
-    </html>
+</html>
