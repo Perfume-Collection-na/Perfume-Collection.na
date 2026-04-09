@@ -476,7 +476,38 @@
 
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    let perfumes = [];
+    // MASTER DEFAULT LIST
+    const defaultPerfumes = [
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: false },
+        { name: "Ur Way by Fragrance World", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAG_WORLD.jpg", isNew: false },
+        { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE.jpg", isNew: false },
+        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Brown_Orchid.jpg", isNew: false },
+        { name: "Gorgio Black Special Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK.jpg", isNew: false },
+        { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL.jpg", isNew: false },
+        { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ZARA_MAN.jpg", isNew: false },
+        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/WAYFARER.jpg", isNew: false },
+        { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/SUAVE.jpg", isNew: false },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_FOR_GLORY.jpg", isNew: false },
+        { name: "Oniro", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ONIRO.jpg", isNew: false },
+        { name: "Odyssey Homme", price: "N$ 700.00", salePrice: "N$ 600.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ODYSSEY.jpg", isNew: false },
+        { name: "Now Rave", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/NOW_RAVE.jpg", isNew: false },
+        { name: "Midnight Oud", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/MIDNIGHT_OUD.jpg", isNew: false },
+        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", salePrice: "N$ 550.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/KHAMRA.jpg", isNew: false },
+        { name: "Invicto Legend", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_L.jpg", isNew: false },
+        { name: "Invicto Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_I.jpg", isNew: false },
+        { name: "Invicto Elixir", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_E.jpg", isNew: false },
+        { name: "Intense Wood", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WOOD.jpg", isNew: false },
+        { name: "Intense Wayfarer Homme", price: "N$ 500.00", salePrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WAY.jpg", isNew: false },
+        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_OUD.jpg", isNew: false },
+        { name: "Intense Noir", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_NOIR.jpg", isNew: false },
+        { name: "Genius Victory Amper", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GENIUS.jpg", isNew: false },
+        { name: "Emperor II", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/EMPEROR.jpg", isNew: false },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT.jpg", isNew: false },
+        { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA.jpg", isNew: false },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg", isNew: false }
+    ];
+
+    let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
     let selectedItem = {};
 
     // SYNC: Fetch from Sheet and update UI
@@ -486,7 +517,6 @@
             const sheetData = await response.json();
             
             if (sheetData && sheetData.length > 0) {
-                // Normalize Google Sheet lowercase keys to internal logic
                 perfumes = sheetData.map(p => ({
                     name: p.name,
                     price: p.price,
@@ -498,12 +528,10 @@
                     isNew: p.isnew === "TRUE" || p.isnew === true
                 }));
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-                renderProducts();
             }
+            renderProducts();
         } catch (error) {
-            console.error("Sync failed:", error);
-            // Fallback to local cache if offline
-            perfumes = JSON.parse(localStorage.getItem('perfumeData')) || [];
+            console.error("Sync failed, using offline list:", error);
             renderProducts();
         }
     }
@@ -631,7 +659,6 @@
         btn.disabled = true;
         btn.innerText = "Processing...";
 
-        // 1. Sync Order to Google Sheet
         try {
             await fetch(API_URL, {
                 method: 'POST',
@@ -643,7 +670,6 @@
             });
         } catch(e) { console.error("Sheet Sync Failed"); }
 
-        // 2. Send via EmailJS
         const templateParams = {
             product_name: selectedItem.name,
             price: selectedItem.price,
