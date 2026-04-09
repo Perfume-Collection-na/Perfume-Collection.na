@@ -470,7 +470,7 @@
         <h2>Admin Access</h2>
         <input type="text" id="adminUser" class="login-input" placeholder="Username">
         <input type="password" id="adminPass" class="login-input" placeholder="Password">
-        <button style="background: var(--dark); color: white; padding: 10px; width: 100%;" onclick="login()">Login</button>
+        <button style="background: var(--dark); color: white; padding: 10px; width: 100%; border: none; cursor: pointer;" onclick="login()">Login</button>
         <button style="margin-top: 10px; background: none; border: none; color: #666; cursor: pointer;" onclick="closeModal('adminLoginModal')">Cancel</button>
     </div>
 </div>
@@ -631,12 +631,17 @@
         document.getElementById('adminLoginModal').style.display = "flex";
     }
 
+    // FIXED LOGIN FUNCTION: Added delay and localStorage for connection stability
     function login() {
         const user = document.getElementById('adminUser').value;
         const pass = document.getElementById('adminPass').value;
         if (user === "LNJ_Admin" && pass === "J@cob/CEO.PCna") {
-            sessionStorage.setItem('adminAuth', 'true');
-            window.location.href = 'admin.html';
+            // Using localStorage as it's more persistent during the redirect hand-off
+            localStorage.setItem('adminAuth', 'true');
+            // 150ms buffer allows the browser to confirm the storage write before leaving the page
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 150);
         } else {
             alert("Unauthorized Access.");
         }
@@ -660,10 +665,11 @@
         btn.disabled = true;
         btn.innerText = "Sending Order...";
 
-        // NEW: Sync Order to Spreadsheet
+        // Sync Order to Spreadsheet
         try {
             await fetch(API_URL, {
                 method: 'POST',
+                // Mode 'no-cors' allows writing to the script without standard CORS errors
                 mode: 'no-cors',
                 body: JSON.stringify({
                     sheet: "Orders",
@@ -680,7 +686,6 @@
             order_date: new Date().toLocaleString()
         };
 
-        // Service ID updated to: service_mjgfqz6
         emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function(response) {
                 alert("Order Successful! We will contact you shortly.");
