@@ -583,8 +583,10 @@
 
         cats.forEach(cat => {
             const grid = document.getElementById(`grid-${cat}`);
-            const filtered = perfumes.filter(p => p.cat === cat);
-            grid.innerHTML = filtered.map(p => createCardHTML(p, isPromoActive)).join('');
+            if (grid) {
+                const filtered = perfumes.filter(p => p.cat === cat);
+                grid.innerHTML = filtered.map(p => createCardHTML(p, isPromoActive)).join('');
+            }
         });
     }
 
@@ -663,7 +665,10 @@
     }
 
     setInterval(checkPromo, 10000);
-    renderProducts();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        renderProducts();
+    });
 </script>
 </body>
 </html>
