@@ -359,26 +359,25 @@
 </footer>
 
 <script>
-    // SPREADSHEET SYNC CONFIG
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
     let perfumes = [];
     let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
 
-    // --- ENHANCED SYNC & MIGRATION LOGIC ---
+    // --- MIGRATION & DATA LOADING ---
 
     async function loadAndMigrate() {
-        // Step 1: Get existing data from current phone storage
+        // Look for existing data on THIS device
         const localData = JSON.parse(localStorage.getItem('perfumeData')) || [];
         
         try {
             const response = await fetch(API_URL);
             const sheetData = await response.json();
 
-            // Step 2: MIGRATION logic. If sheet is empty but local has data, upload local data to cloud.
+            // If Google Sheet is empty but phone has data, push phone data to Sheet
             if ((!sheetData || sheetData.length === 0) && localData.length > 0) {
-                console.log("Sheet empty. Migrating existing local data to Google Sheets...");
+                alert("Cloud is empty. Migrating your phone's data to Google Sheets now...");
                 for (const p of localData) {
                     await syncToSheet("Inventory", [
                         p.name, 
@@ -393,7 +392,7 @@
                 }
                 perfumes = localData;
             } 
-            // Step 3: Otherwise, prioritize sheet data
+            // If Google Sheet has data, use it (primary source)
             else if (sheetData && sheetData.length > 0) {
                 perfumes = sheetData.map(p => ({
                     name: p.name,
@@ -402,7 +401,7 @@
                     onSale: p.onsale === "TRUE" || p.onsale === true,
                     stock: p.stock,
                     cat: p.category,
-                    img: p.imageurl, // normalize key
+                    img: p.imageurl, 
                     isNew: p.isnew === "TRUE" || p.isnew === true
                 }));
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
@@ -412,7 +411,7 @@
             
             renderLists();
         } catch (error) {
-            console.error("Connection failed, using local backup:", error);
+            console.error("Connection failed:", error);
             perfumes = localData;
             renderLists();
         }
@@ -423,12 +422,8 @@
             await fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sheet: sheetName,
-                    data: rowData
-                })
+                body: JSON.stringify({ sheet: sheetName, data: rowData })
             });
             return true;
         } catch (error) {
@@ -436,61 +431,13 @@
         }
     }
 
-    // --- ORIGINAL CORE FUNCTIONS ---
+    // --- BUTTON ACTIONS ---
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function toggleSaleField() {
         const field = document.getElementById('saleField');
         field.style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
-    }
-
-    function startPromotion() {
-        const msg = document.getElementById('promoMsg').value;
-        const days = parseFloat(document.getElementById('promoPeriod').value);
-        if(!msg) return alert("Please enter a message.");
-
-        const expiryDate = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
-        
-        activePromo = { message: msg, expires: expiryDate };
-        localStorage.setItem('activePromo', JSON.stringify(activePromo));
-
-        perfumes.forEach(p => { if(p.salePrice) p.onSale = true; });
-        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-
-        renderLists();
-        checkActivePromo();
-        closeModal('promoModal');
-        alert("Promotion is now LIVE on the storefront!");
-    }
-
-    function checkActivePromo() {
-        const banner = document.getElementById('promoBanner');
-        const now = new Date().getTime();
-
-        if (activePromo && now < activePromo.expires) {
-            banner.style.display = 'block';
-            document.getElementById('promoText').innerText = activePromo.message;
-            const timeLeft = Math.ceil((activePromo.expires - now) / 1000);
-            
-            if(timeLeft < 60) {
-                document.getElementById('promoTimer').innerText = `Ends in: ${timeLeft}s`;
-            } else {
-                const hours = Math.round(timeLeft / 3600);
-                document.getElementById('promoTimer').innerText = `Active for approx. ${hours} more hours`;
-            }
-        } else if (activePromo) {
-            endPromotion();
-        }
-    }
-
-    function endPromotion() {
-        activePromo = null;
-        localStorage.removeItem('activePromo');
-        document.getElementById('promoBanner').style.display = 'none';
-        perfumes.forEach(p => p.onSale = false);
-        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
-        renderLists();
     }
 
     async function addPerfume() {
@@ -502,27 +449,16 @@
         const cat = document.getElementById('pCat').value;
         const isNew = document.getElementById('pNew').value === 'yes';
 
-        if(!name || !price || !fileInput.files[0]) return alert("Name, Price, and Image are required.");
+        if(!name || !price || !fileInput.files[0]) return alert("Missing fields.");
 
         const reader = new FileReader();
         reader.onload = async function(e) {
             const imgData = e.target.result;
+            const row = [name, price, sPrice || "", "FALSE", stock, cat, imgData, isNew ? "TRUE" : "FALSE"];
             
-            // Sync to Google Sheet
-            const row = [name, price, sPrice || "", (activePromo && sPrice) ? "TRUE" : "FALSE", stock, cat, imgData, isNew ? "TRUE" : "FALSE"];
             await syncToSheet("Inventory", row);
-
-            // Update local memory
-            perfumes.push({
-                name, price,
-                salePrice: sPrice || null,
-                onSale: (activePromo && sPrice),
-                stock: stock,
-                cat: cat,
-                img: imgData,
-                isNew: isNew
-            });
             
+            perfumes.push({ name, price, salePrice: sPrice, onSale: false, stock, cat, img: imgData, isNew });
             localStorage.setItem('perfumeData', JSON.stringify(perfumes));
             renderLists();
             closeModal('productModal');
@@ -530,17 +466,42 @@
         reader.readAsDataURL(fileInput.files[0]);
     }
 
-    function updateStock(index, newStock) {
-        perfumes[index].stock = Math.max(0, parseInt(newStock));
-        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+    function renderLists() {
+        const invDiv = document.getElementById('listItems');
+        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
+            <div class="product-item">
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <img src="${p.img}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
+                    <div>
+                        <strong>${p.name}</strong> 
+                        <br><small>${p.price}</small>
+                    </div>
+                </div>
+                <div class="stock-control">
+                    <input type="number" class="stock-input" value="${p.stock}" readonly>
+                    <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
+                </div>
+            </div>
+        `).join('') : "<p>No products found in cloud or local storage.</p>";
+
+        const ordDiv = document.getElementById('orderList');
+        ordDiv.innerHTML = orders.length ? orders.map((o, i) => `
+            <div class="order-item">
+                <div><b>${o.product}</b><br><small>${o.customer} (${o.contact})</small></div>
+                <button class="delete-btn" style="background:#28a745;" onclick="deleteOrder(${i})">Done</button>
+            </div>
+        `).join('') : "<p>No orders.</p>";
+    }
+
+    function deleteOrder(index) {
+        orders.splice(index, 1);
+        localStorage.setItem('perfumeOrders', JSON.stringify(orders));
         renderLists();
-        alert("Stock updated locally. Please note stock changes must be updated in the Google Sheet for permanent global sync.");
     }
 
     function deletePerfume(index) {
-        if(confirm("Remove product? Note: You must manually delete the row from the Google Sheet to remove it permanently from all devices.")) {
+        if(confirm("To remove permanently, delete the row from Google Sheets. Remove from this view?")) {
             perfumes.splice(index, 1);
-            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
             renderLists();
         }
     }
@@ -550,63 +511,8 @@
         window.location.href = 'index.html';
     }
 
-    function renderLists() {
-        const invDiv = document.getElementById('listItems');
-        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => {
-            const imgSrc = p.imageurl || p.img; // Handle both sheet and local storage keys
-            const isOnSale = p.onsale === "TRUE" || p.onsale === true || p.onSale === true;
-
-            return `
-                <div class="product-item">
-                    <div style="display: flex; align-items: center; flex: 1;">
-                        <img src="${imgSrc}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
-                        <div>
-                            <strong>${p.name}</strong> 
-                            <br><small style="${isOnSale ? 'color: red; font-weight: bold;' : 'color: #888;'}">
-                                ${isOnSale ? `SALE: ${p.salePrice || p.saleprice}` : p.price}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="stock-control">
-                        <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock(${i}, this.value)">
-                        <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
-                    </div>
-                </div>
-            `;
-        }).join('') : "<p>No products.</p>";
-
-        const ordDiv = document.getElementById('orderList');
-        ordDiv.innerHTML = orders.length ? orders.map((o, i) => {
-            const cleanPhone = String(o.contact).replace(/\D/g, '');
-            return `
-                <div class="order-item">
-                    <div>
-                        <b>${o.product}</b><br>
-                        <small>Customer: ${o.customer}</small><br>
-                        <small>Contact: 
-                            <a href="tel:${cleanPhone}" class="contact-link">${o.contact}</a>
-                            <a href="https://wa.me/${cleanPhone}" target="_blank" class="wa-btn">WhatsApp</a>
-                        </small>
-                    </div>
-                    <div class="action-group">
-                        <button class="delete-btn" style="background:#28a745;" onclick="deleteOrder(${i})">Clear Order</button>
-                    </div>
-                </div>
-            `;
-        }).join('') : "<p>No orders.</p>";
-    }
-
-    function deleteOrder(index) {
-        if(confirm("Mark this order as completed?")) {
-            orders.splice(index, 1);
-            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
-            renderLists();
-        }
-    }
-
-    // Initialize
+    // Load everything
     loadAndMigrate();
-    setInterval(checkActivePromo, 10000);
 </script>
 </body>
 </html>
