@@ -163,6 +163,7 @@
         }
 
         .btn-save { background: var(--gold); color: var(--dark); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .product-item, .order-item { 
             display: flex; 
@@ -179,23 +180,6 @@
             border-radius: 4px;
             margin-right: 15px;
             border: 1px solid #ddd;
-        }
-
-        .contact-link {
-            color: var(--gold);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .wa-btn {
-            display: inline-block;
-            margin-left: 10px;
-            color: #25D366;
-            text-decoration: none;
-            font-size: 0.8rem;
-            border: 1px solid #25D366;
-            padding: 2px 6px;
-            border-radius: 4px;
         }
 
         .stock-control {
@@ -334,7 +318,7 @@
                 <option value="yes">Yes</option>
             </select>
         </div>
-        <button class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
+        <button id="submitBtn" class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
         <button class="btn" style="background:none; color:#666;" onclick="closeModal('productModal')">Cancel</button>
     </div>
 </div>
@@ -362,33 +346,33 @@
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
     const defaultPerfumes = [
-        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
-        { name: "Ur Way by Fragrance World", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAG_WORLD.jpg" },
-        { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE.jpg" },
-        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Brown_Orchid.jpg" },
-        { name: "Gorgio Black Special Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK.jpg" },
-        { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL.jpg" },
-        { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ZARA_MAN.jpg" },
-        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/WAYFARER.jpg" },
-        { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/SUAVE.jpg" },
-        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_FOR_GLORY.jpg" },
-        { name: "Oniro", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ONIRO.jpg" },
-        { name: "Odyssey Homme", price: "N$ 700.00", salePrice: "N$ 600.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ODYSSEY.jpg" },
-        { name: "Now Rave", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/NOW_RAVE.jpg" },
-        { name: "Midnight Oud", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/MIDNIGHT_OUD.jpg" },
-        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", salePrice: "N$ 550.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/KHAMRA.jpg" },
-        { name: "Invicto Legend", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_L.jpg" },
-        { name: "Invicto Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_I.jpg" },
-        { name: "Invicto Elixir", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_E.jpg" },
-        { name: "Intense Wood", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WOOD.jpg" },
-        { name: "Intense Wayfarer Homme", price: "N$ 500.00", salePrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WAY.jpg" },
-        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_OUD.jpg" },
-        { name: "Intense Noir", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_NOIR.jpg" },
-        { name: "Genius Victory Amper", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GENIUS.jpg" },
-        { name: "Emperor II", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/EMPEROR.jpg" },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT.jpg" },
-        { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA.jpg" },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg" }
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
+        { name: "Ur Way by Fragrance World", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAG_WORLD.jpg" },
+        { name: "Aventos Blue For Him", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE.jpg" },
+        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/Brown_Orchid.jpg" },
+        { name: "Gorgio Black Special Edition", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK.jpg" },
+        { name: "Oud Al Layl", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL.jpg" },
+        { name: "Zara Man", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/ZARA_MAN.jpg" },
+        { name: "Wayfarer Homme", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/WAYFARER.jpg" },
+        { name: "Suave", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/SUAVE.jpg" },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/OUD_FOR_GLORY.jpg" },
+        { name: "Oniro", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/ONIRO.jpg" },
+        { name: "Odyssey Homme", price: "N$ 700.00", saleprice: "N$ 600.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/ODYSSEY.jpg" },
+        { name: "Now Rave", price: "N$ 450.00", saleprice: "N$ 400.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/NOW_RAVE.jpg" },
+        { name: "Midnight Oud", price: "N$ 450.00", saleprice: "N$ 400.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/MIDNIGHT_OUD.jpg" },
+        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", saleprice: "N$ 550.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/KHAMRA.jpg" },
+        { name: "Invicto Legend", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_L.jpg" },
+        { name: "Invicto Intense", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_I.jpg" },
+        { name: "Invicto Elixir", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_E.jpg" },
+        { name: "Intense Wood", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WOOD.jpg" },
+        { name: "Intense Wayfarer Homme", price: "N$ 500.00", saleprice: "N$ 450.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WAY.jpg" },
+        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", saleprice: "N$ 400.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_OUD.jpg" },
+        { name: "Intense Noir", price: "N$ 450.00", saleprice: "N$ 400.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_NOIR.jpg" },
+        { name: "Genius Victory Amper", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/GENIUS.jpg" },
+        { name: "Emperor II", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/EMPEROR.jpg" },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", saleprice: "N$ 1000.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT.jpg" },
+        { name: "Bavarria Man Intense", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA.jpg" },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg" }
     ];
 
     let perfumes = [];
@@ -411,6 +395,7 @@
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
     function toggleSaleField() {
         const field = document.getElementById('saleField');
         field.style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
@@ -454,29 +439,50 @@
     }
 
     async function addPerfume() {
+        const btn = document.getElementById('submitBtn');
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
-        const sPrice = document.getElementById('pSalePrice').value;
+        const sPrice = document.getElementById('pSalePrice').value || "";
         const stock = document.getElementById('pStock').value;
         const cat = document.getElementById('pCat').value;
         const isNew = document.getElementById('pNew').value;
         const fileInput = document.getElementById('pImageFile');
+        const onSale = document.getElementById('pOnSale').checked;
 
         if(!name || !price || !fileInput.files[0]) return alert("Required fields missing.");
 
+        btn.disabled = true;
+        btn.innerText = "Syncing with Sheets...";
+
         const reader = new FileReader();
         reader.onload = async function(e) {
-            const rowData = [name, price, sPrice, (activePromo && sPrice), stock, cat, e.target.result, isNew];
+            // Updated rowData to match typical Google Sheet column mapping
+            const rowData = {
+                sheet: "Inventory",
+                data: [name, price, sPrice, onSale, stock, cat, e.target.result, isNew]
+            };
             
             try {
                 await fetch(API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ sheet: "Inventory", data: rowData })
+                    mode: 'no-cors', // Standard for GAS Web Apps
+                    cache: 'no-cache',
+                    body: JSON.stringify(rowData)
                 });
-                fetchInventory();
+                
+                alert("Product Sync Triggered Successfully!");
+                
+                // Refresh and Reset
+                setTimeout(fetchInventory, 1500); 
                 closeModal('productModal');
+                document.getElementById('pName').value = '';
+                document.getElementById('pPrice').value = '';
+                document.getElementById('pImageFile').value = '';
             } catch (err) {
-                alert("Error saving to sheet.");
+                alert("Connection error. Ensure API URL is correct.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Update Storefront";
             }
         };
         reader.readAsDataURL(fileInput.files[0]);
@@ -508,12 +514,6 @@
         renderLists();
     }
 
-    function deleteOrder(index) {
-        orders.splice(index, 1);
-        localStorage.setItem('perfumeOrders', JSON.stringify(orders));
-        renderLists();
-    }
-
     function logout() {
         sessionStorage.removeItem('adminAuth');
         window.location.href = 'index.html';
@@ -524,7 +524,7 @@
         invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
             <div class="product-item">
                 <div style="display: flex; align-items: center; flex: 1;">
-                    <img src="${p.img}" class="thumb">
+                    <img src="${p.img}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
                     <div>
                         <strong>${p.name}</strong> 
                         <br><small style="${p.onsale ? 'color: red;' : ''}">${p.onsale ? p.saleprice : p.price}</small>
@@ -536,7 +536,7 @@
                     <button class="delete-btn" onclick="deletePerfume(${i})">X</button>
                 </div>
             </div>
-        `).join('') : "<p>Loading...</p>";
+        `).join('') : "<p>Loading inventory...</p>";
 
         const ordDiv = document.getElementById('orderList');
         ordDiv.innerHTML = orders.map((o, i) => `
