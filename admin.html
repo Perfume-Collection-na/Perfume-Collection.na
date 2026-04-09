@@ -67,7 +67,6 @@
             opacity: 0.4;
         }
 
-        /* Promotion Banner Animation */
         #promoBanner {
             display: none;
             position: fixed;
@@ -181,11 +180,7 @@
             border: 1px solid #ddd;
         }
 
-        .contact-link {
-            color: var(--gold);
-            text-decoration: none;
-            font-weight: bold;
-        }
+        .contact-link { color: var(--gold); text-decoration: none; font-weight: bold; }
 
         .wa-btn {
             display: inline-block;
@@ -198,40 +193,15 @@
             border-radius: 4px;
         }
 
-        .stock-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .stock-control { display: flex; align-items: center; gap: 10px; }
 
-        .stock-input {
-            width: 60px;
-            padding: 5px;
-            text-align: center;
-        }
+        .stock-input { width: 60px; padding: 5px; text-align: center; }
 
-        .delete-btn { 
-            background: #ff4d4d; 
-            color: white; 
-            border: none; 
-            padding: 6px 12px; 
-            cursor: pointer; 
-            border-radius: 4px; 
-        }
+        .delete-btn { background: #ff4d4d; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
 
-        .price-btn {
-            background: #555;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
+        .price-btn { background: #555; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
 
-        .action-group {
-            display: flex;
-            gap: 5px;
-        }
+        .action-group { display: flex; gap: 5px; }
 
         footer {
             background: var(--dark);
@@ -359,85 +329,110 @@
 </footer>
 
 <script>
+    // --- DATABASE & SYNC CONFIG ---
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    let perfumes = [];
+    // YOUR FULL ORIGINAL PERFUME LIST
+    const defaultPerfumes = [
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
+        { name: "Ur Way by Fragrance World", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAG_WORLD.jpg" },
+        { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE.jpg" },
+        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Brown_Orchid.jpg" },
+        { name: "Gorgio Black Special Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK.jpg" },
+        { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL.jpg" },
+        { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ZARA_MAN.jpg" },
+        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/WAYFARER.jpg" },
+        { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/SUAVE.jpg" },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_FOR_GLORY.jpg" },
+        { name: "Oniro", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ONIRO.jpg" },
+        { name: "Odyssey Homme", price: "N$ 700.00", salePrice: "N$ 600.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ODYSSEY.jpg" },
+        { name: "Now Rave", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/NOW_RAVE.jpg" },
+        { name: "Midnight Oud", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/MIDNIGHT_OUD.jpg" },
+        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", salePrice: "N$ 550.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/KHAMRA.jpg" },
+        { name: "Invicto Legend", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_L.jpg" },
+        { name: "Invicto Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_I.jpg" },
+        { name: "Invicto Elixir", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO_E.jpg" },
+        { name: "Intense Wood", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WOOD.jpg" },
+        { name: "Intense Wayfarer Homme", price: "N$ 500.00", salePrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_WAY.jpg" },
+        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_OUD.jpg" },
+        { name: "Intense Noir", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE_NOIR.jpg" },
+        { name: "Genius Victory Amper", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GENIUS.jpg" },
+        { name: "Emperor II", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/EMPEROR.jpg" },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB_DE_NUIT.jpg" },
+        { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA.jpg" },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg" }
+    ];
+
+    let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
     let orders = JSON.parse(localStorage.getItem('perfumeOrders')) || [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
 
-    // --- MIGRATION & DATA LOADING ---
-
-    async function loadAndMigrate() {
-        // Look for existing data on THIS device
-        const localData = JSON.parse(localStorage.getItem('perfumeData')) || [];
-        
+    // --- NEW CLOUD SYNC LOGIC ---
+    async function loadFromCloud() {
         try {
             const response = await fetch(API_URL);
             const sheetData = await response.json();
-
-            // If Google Sheet is empty but phone has data, push phone data to Sheet
-            if ((!sheetData || sheetData.length === 0) && localData.length > 0) {
-                alert("Cloud is empty. Migrating your phone's data to Google Sheets now...");
-                for (const p of localData) {
-                    await syncToSheet("Inventory", [
-                        p.name, 
-                        p.price, 
-                        p.salePrice || "", 
-                        p.onSale ? "TRUE" : "FALSE", 
-                        p.stock, 
-                        p.cat, 
-                        p.img,
-                        p.isNew ? "TRUE" : "FALSE"
-                    ]);
-                }
-                perfumes = localData;
-            } 
-            // If Google Sheet has data, use it (primary source)
-            else if (sheetData && sheetData.length > 0) {
+            if (sheetData && sheetData.length > 0) {
                 perfumes = sheetData.map(p => ({
-                    name: p.name,
-                    price: p.price,
-                    salePrice: p.saleprice,
-                    onSale: p.onsale === "TRUE" || p.onsale === true,
-                    stock: p.stock,
-                    cat: p.category,
-                    img: p.imageurl, 
-                    isNew: p.isnew === "TRUE" || p.isnew === true
+                    name: p.name, price: p.price, salePrice: p.saleprice,
+                    onSale: p.onsale === "TRUE", stock: p.stock, cat: p.category,
+                    img: p.imageurl, isNew: p.isnew === "TRUE"
                 }));
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
             } else {
-                perfumes = localData;
+                // If cloud is empty, migrate your local list to cloud
+                for (const p of perfumes) {
+                    await syncToSheet("Inventory", [p.name, p.price, p.salePrice || "", "FALSE", p.stock, p.cat, p.img, p.isNew ? "TRUE" : "FALSE"]);
+                }
             }
-            
-            renderLists();
-        } catch (error) {
-            console.error("Connection failed:", error);
-            perfumes = localData;
-            renderLists();
-        }
+        } catch (e) { console.warn("Cloud connection failed, using local data."); }
+        renderLists();
     }
 
     async function syncToSheet(sheetName, rowData) {
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sheet: sheetName, data: rowData })
-            });
-            return true;
-        } catch (error) {
-            return false;
-        }
+        await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ sheet: sheetName, data: rowData }) });
     }
 
-    // --- BUTTON ACTIONS ---
-
+    // --- YOUR ORIGINAL FUNCTIONS ---
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function toggleSaleField() {
         const field = document.getElementById('saleField');
         field.style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
+    }
+
+    function startPromotion() {
+        const msg = document.getElementById('promoMsg').value;
+        const days = parseFloat(document.getElementById('promoPeriod').value);
+        if(!msg) return alert("Please enter a message.");
+        const expiryDate = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
+        activePromo = { message: msg, expires: expiryDate };
+        localStorage.setItem('activePromo', JSON.stringify(activePromo));
+        perfumes.forEach(p => { if(p.salePrice) p.onSale = true; });
+        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+        renderLists();
+        checkActivePromo();
+        closeModal('promoModal');
+    }
+
+    function checkActivePromo() {
+        const banner = document.getElementById('promoBanner');
+        const now = new Date().getTime();
+        if (activePromo && now < activePromo.expires) {
+            banner.style.display = 'block';
+            document.getElementById('promoText').innerText = activePromo.message;
+        } else if (activePromo) {
+            endPromotion();
+        }
+    }
+
+    function endPromotion() {
+        activePromo = null;
+        localStorage.removeItem('activePromo');
+        document.getElementById('promoBanner').style.display = 'none';
+        perfumes.forEach(p => p.onSale = false);
+        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+        renderLists();
     }
 
     async function addPerfume() {
@@ -449,70 +444,88 @@
         const cat = document.getElementById('pCat').value;
         const isNew = document.getElementById('pNew').value === 'yes';
 
-        if(!name || !price || !fileInput.files[0]) return alert("Missing fields.");
+        if(!name || !price || !fileInput.files[0]) return alert("Required fields missing.");
 
         const reader = new FileReader();
         reader.onload = async function(e) {
             const imgData = e.target.result;
-            const row = [name, price, sPrice || "", "FALSE", stock, cat, imgData, isNew ? "TRUE" : "FALSE"];
-            
-            await syncToSheet("Inventory", row);
-            
-            perfumes.push({ name, price, salePrice: sPrice, onSale: false, stock, cat, img: imgData, isNew });
+            const newP = { name, price, salePrice: sPrice || null, onSale: false, stock, cat, img: imgData, isNew };
+            perfumes.push(newP);
             localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            await syncToSheet("Inventory", [name, price, sPrice || "", "FALSE", stock, cat, imgData, isNew ? "TRUE" : "FALSE"]);
             renderLists();
             closeModal('productModal');
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
 
+    function editPrice(index) {
+        const newPrice = prompt("Regular Price:", perfumes[index].price);
+        const newSale = prompt("Sale Price:", perfumes[index].salePrice || "");
+        if (newPrice !== null) {
+            perfumes[index].price = newPrice;
+            perfumes[index].salePrice = newSale || null;
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            renderLists();
+        }
+    }
+
+    function updateStock(index, newStock) {
+        perfumes[index].stock = Math.max(0, parseInt(newStock));
+        localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+        renderLists();
+    }
+
+    function deletePerfume(index) {
+        if(confirm("Remove product?")) {
+            perfumes.splice(index, 1);
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            renderLists();
+        }
+    }
+
+    function clearOrder(index) {
+        const order = orders[index];
+        if(confirm(`Mark "${order.product}" as done?`)) {
+            const pIdx = perfumes.findIndex(p => p.name === order.product);
+            if (pIdx !== -1 && perfumes[pIdx].stock > 0) perfumes[pIdx].stock -= 1;
+            orders.splice(index, 1);
+            localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+            localStorage.setItem('perfumeOrders', JSON.stringify(orders));
+            renderLists();
+        }
+    }
+
     function renderLists() {
         const invDiv = document.getElementById('listItems');
-        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
+        invDiv.innerHTML = perfumes.map((p, i) => `
             <div class="product-item">
-                <div style="display: flex; align-items: center; flex: 1;">
-                    <img src="${p.img}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
-                    <div>
-                        <strong>${p.name}</strong> 
-                        <br><small>${p.price}</small>
-                    </div>
+                <div style="display:flex; align-items:center;">
+                    <img src="${p.img}" class="thumb">
+                    <div><strong>${p.name}</strong><br><small>${p.onSale ? p.salePrice : p.price}</small></div>
                 </div>
                 <div class="stock-control">
-                    <input type="number" class="stock-input" value="${p.stock}" readonly>
-                    <button class="delete-btn" onclick="deletePerfume(${i})">Remove</button>
+                    <button class="price-btn" onclick="editPrice(${i})">Edit</button>
+                    <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock(${i}, this.value)">
+                    <button class="delete-btn" onclick="deletePerfume(${i})">X</button>
                 </div>
             </div>
-        `).join('') : "<p>No products found in cloud or local storage.</p>";
+        `).join('');
 
         const ordDiv = document.getElementById('orderList');
         ordDiv.innerHTML = orders.length ? orders.map((o, i) => `
             <div class="order-item">
                 <div><b>${o.product}</b><br><small>${o.customer} (${o.contact})</small></div>
-                <button class="delete-btn" style="background:#28a745;" onclick="deleteOrder(${i})">Done</button>
+                <button class="delete-btn" style="background:#28a745;" onclick="clearOrder(${i})">Done</button>
             </div>
         `).join('') : "<p>No orders.</p>";
     }
 
-    function deleteOrder(index) {
-        orders.splice(index, 1);
-        localStorage.setItem('perfumeOrders', JSON.stringify(orders));
-        renderLists();
-    }
+    function logout() { sessionStorage.removeItem('adminAuth'); window.location.href = 'index.html'; }
 
-    function deletePerfume(index) {
-        if(confirm("To remove permanently, delete the row from Google Sheets. Remove from this view?")) {
-            perfumes.splice(index, 1);
-            renderLists();
-        }
-    }
-
-    function logout() {
-        sessionStorage.removeItem('adminAuth');
-        window.location.href = 'index.html';
-    }
-
-    // Load everything
-    loadAndMigrate();
+    // Start everything
+    loadFromCloud();
+    setInterval(checkActivePromo, 10000);
 </script>
 </body>
 </html>
