@@ -493,6 +493,9 @@
         emailjs.init("hXQEk__VsDHgyAAGd"); 
     })();
 
+    // SPREADSHEET SYNC CONFIG
+    const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
+
     const defaultPerfumes = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Aventos_Blue_For_Him_(100ml)[1].jpg", isNew: true },
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: true },
@@ -501,6 +504,33 @@
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
     let selectedItem = {};
+
+    // NEW FUNCTION: Fetch from Sheet and Merge with Existing/Local Data
+    async function syncWithSheet() {
+        try {
+            const response = await fetch(API_URL);
+            const sheetData = await response.json();
+            
+            if (sheetData && sheetData.length > 0) {
+                // Map sheet keys (lowercase) back to local logic keys
+                perfumes = sheetData.map(p => ({
+                    name: p.name,
+                    price: p.price,
+                    salePrice: p.saleprice,
+                    onSale: p.onsale === "TRUE" || p.onsale === true,
+                    stock: p.stock,
+                    cat: p.category,
+                    img: p.imageurl,
+                    isNew: p.isnew === "TRUE" || p.isnew === true
+                }));
+                localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+                renderProducts();
+            }
+        } catch (error) {
+            console.error("Sync with Sheet failed, using existing local data:", error);
+            renderProducts();
+        }
+    }
 
     function checkPromo() {
         const promo = JSON.parse(localStorage.getItem('activePromo'));
@@ -620,7 +650,7 @@
         }
     }
 
-    function submitOrder() {
+    async function submitOrder() {
         const cName = document.getElementById('custName').value;
         const cPhone = document.getElementById('custPhone').value;
         const btn = document.getElementById('confirmOrderBtn');
@@ -629,6 +659,18 @@
 
         btn.disabled = true;
         btn.innerText = "Sending Order...";
+
+        // NEW: Sync Order to Spreadsheet
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    sheet: "Orders",
+                    data: [selectedItem.name, cName, cPhone, "New Order"]
+                })
+            });
+        } catch(e) { console.error("Spreadsheet order sync failed"); }
 
         const templateParams = {
             product_name: selectedItem.name,
@@ -667,7 +709,7 @@
     setInterval(checkPromo, 10000);
     
     document.addEventListener('DOMContentLoaded', () => {
-        renderProducts();
+        syncWithSheet(); // Use Sheet sync instead of just rendering local
     });
 </script>
 </body>
