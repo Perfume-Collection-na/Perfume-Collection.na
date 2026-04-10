@@ -180,7 +180,6 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    // POLICY: Initialize from Local Storage to reduce perceived load time
     let currentInventory = JSON.parse(localStorage.getItem('cachedInventory')) || [];
 
     const defaultPerfumes = [
@@ -214,13 +213,10 @@
     ];
 
     async function fetchUniversalData() {
-        // Render from cache immediately if available
         if (currentInventory.length > 0) renderInventory();
-
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
-            
             if (!data || data.length === 0) {
                 await seedSheetWithDefaults();
             } else {
@@ -237,14 +233,27 @@
     }
 
     async function seedSheetWithDefaults() {
-        document.getElementById('listItems').innerText = "Sheet empty. Seeding defaults to Cloud...";
-        for (const item of defaultPerfumes) {
-            await syncToAction("ADD_PRODUCT", {
-                sheet: "Inventory",
-                data: [item.name, item.price, item.saleprice, item.onsale.toString().toUpperCase(), item.stock, item.cat, item.img, "FALSE"]
-            });
-        }
-        fetchUniversalData();
+        document.getElementById('listItems').innerText = "Sheet empty. Seeding defaults via Batch Sync...";
+        
+        // Prepare all data into a 2D array for a single request
+        const batchData = defaultPerfumes.map(item => [
+            item.name, 
+            item.price, 
+            item.saleprice, 
+            item.onsale.toString().toUpperCase(), 
+            item.stock, 
+            item.cat, 
+            item.img, 
+            "FALSE"
+        ]);
+
+        await syncToAction("BATCH_ADD_PRODUCTS", {
+            sheet: "Inventory",
+            data: batchData
+        });
+
+        // Delay to allow Google's indexing
+        setTimeout(fetchUniversalData, 2000);
     }
 
     async function saveProduct() {
@@ -263,7 +272,6 @@
 
         await syncToAction("ADD_PRODUCT", payload);
         closeModal('productModal');
-        // Policy: Manual delay to allow Google Script to process before re-fetching
         setTimeout(fetchUniversalData, 1500);
     }
 
@@ -281,7 +289,7 @@
             <div class="product-item">
                 <div style="display:flex; align-items:center;">
                     <img src="${p.img}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
-                    <div><strong>${p.name}</strong><br><small>${p.price}</small></div>
+                    <div><strong>${p.name}</strong><br><small>${p.cat.toUpperCase()} | ${p.price}</small></div>
                 </div>
                 <button class="btn" style="width:auto; background:#ff4d4d;" onclick="removeProduct('${p.name}')">Delete</button>
             </div>
@@ -290,11 +298,9 @@
 
     async function removeProduct(name) {
         if(confirm("Confirm deletion from Cloud?")) {
-            // Optimistic UI Update: Remove instantly from local array/cache
             currentInventory = currentInventory.filter(p => p.name !== name);
             localStorage.setItem('cachedInventory', JSON.stringify(currentInventory));
             renderInventory();
-
             await syncToAction("DELETE_PRODUCT", { sheet: "Inventory", identifier: name });
         }
     }
