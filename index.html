@@ -519,7 +519,7 @@
         { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg", isNew: false },
         { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD_AL_LAYL_(100ml)[1].jpg", isNew: false },
         { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/SUAVE (100ml).jpg", isNew: false },
-        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: false },
+        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg", isNew: false },
         { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ZARA MAN (100ml).jpg", isNew: false },
 
         { name: "Berries Weekend Pink Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND PINK EDITION (100ml).jpg", isNew: false },
@@ -689,6 +689,19 @@
         }
     }
 
+    // CLICK OUTSIDE TO CLOSE
+    window.onclick = function(event) {
+        const orderModal = document.getElementById('orderModal');
+        const adminModal = document.getElementById('adminLoginModal');
+        
+        if (event.target === orderModal) {
+            closeModal('orderModal');
+        }
+        if (event.target === adminModal) {
+            closeModal('adminLoginModal');
+        }
+    }
+
     async function submitOrder() {
         const cName = document.getElementById('custName').value;
         const cPhone = document.getElementById('custPhone').value;
@@ -726,7 +739,7 @@
                 document.getElementById('custName').value = "";
                 document.getElementById('custPhone').value = "";
             }, function(error) {
-                alert("There was an issue processing your order. Please try again or contact us via WhatsApp.");
+                alert("Order processed, but notification failed. Please contact us directly via WhatsApp.");
                 closeModal('orderModal');
             });
     }
@@ -735,4 +748,4 @@
 </script>
 
 </body>
-    </html>
+</html>
