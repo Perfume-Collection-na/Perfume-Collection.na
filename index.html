@@ -535,27 +535,31 @@
     let selectedItem = {};
 
     async function syncWithSheet() {
+        // Step 1: Immediate Render from Cache (Per Admin Load Policy)
+        renderProducts();
+
         try {
             const response = await fetch(API_URL);
             const sheetData = await response.json();
             
             if (sheetData && sheetData.length > 0) {
+                // Step 2: Map Sheet Headers to JS logic
                 perfumes = sheetData.map(p => ({
                     name: p.name,
                     price: p.price,
                     salePrice: p.saleprice,
-                    onSale: p.onsale === "TRUE" || p.onsale === true,
+                    onSale: String(p.onsale).toUpperCase() === "TRUE",
                     stock: parseInt(p.stock) || 0,
-                    cat: p.category,
-                    img: p.imageurl,
-                    isNew: p.isnew === "TRUE" || p.isnew === true
+                    cat: p.cat || p.category,
+                    img: p.img || p.imageurl,
+                    isNew: String(p.featured || p.isnew).toUpperCase() === "TRUE"
                 }));
+                // Step 3: Update Cache & Re-render silently
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
+                renderProducts();
             }
-            renderProducts();
         } catch (error) {
             console.error("Sync failed, using offline list:", error);
-            renderProducts();
         }
     }
 
@@ -688,6 +692,7 @@
                 mode: 'no-cors',
                 body: JSON.stringify({
                     sheet: "Orders",
+                    action: "ADD_PRODUCT", // Reusing the append logic from Code.gs
                     data: [new Date().toLocaleString(), selectedItem.name, cName, cPhone, "New"]
                 })
             });
@@ -717,10 +722,8 @@
         if (event.target.className === 'modal') closeModal(event.target.id);
     }
 
-    // Initialize Page
-    document.addEventListener('DOMContentLoaded', () => {
-        syncWithSheet();
-    });
+    // Initial Load
+    syncWithSheet();
 </script>
 </body>
 </html>
