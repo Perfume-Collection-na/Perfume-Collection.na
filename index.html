@@ -30,13 +30,19 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--light);
             color: var(--dark);
             line-height: 1.6;
             scroll-behavior: smooth;
-            overflow-x: hidden;
         }
 
         /* Promotion Banner */
@@ -75,25 +81,32 @@
         header {
             background-color: var(--purple);
             color: var(--gold);
-            padding: 40px 20px;
+            padding: 40px 10px;
             text-align: center;
             border-bottom: 3px solid var(--gold);
-            width: 100%;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            left: 0;
+            right: 0;
         }
 
         .logo {
-            font-size: 2.5rem;
+            /* Fluid font size: Min 1.5rem, Preferred 5vw, Max 2.5rem */
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             letter-spacing: 5px;
             text-transform: uppercase;
             margin-bottom: 10px;
             display: block;
             color: var(--gold);
+            word-wrap: break-word;
+            padding: 0 10px;
         }
 
         .tagline {
             font-style: italic;
             color: var(--gold);
-            font-size: 1rem;
+            font-size: clamp(0.75rem, 2vw, 1rem);
             letter-spacing: 2px;
         }
 
@@ -135,9 +148,9 @@
 
         .container {
             width: 100%;
-            max-width: 100%;
-            margin: 40px 0;
-            padding: 0 40px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
         .category-section {
@@ -262,6 +275,7 @@
             padding: 60px 20px;
             text-align: center;
             border-top: 1px solid #eee;
+            width: 100%;
         }
 
         .contact-container {
@@ -316,11 +330,15 @@
             background: var(--purple);
             color: var(--gold);
             text-align: center;
-            padding: 40px 20px;
+            padding: 40px 10px;
             margin-top: 60px;
             border-top: 1px solid var(--gold);
-            width: 100%;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
             position: relative;
+            left: 0;
+            right: 0;
         }
 
         footer p {
@@ -335,11 +353,12 @@
 
         .footer-logo {
             color: var(--gold);
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 15px;
             display: block;
+            word-wrap: break-word;
         }
 
         .footer-divider {
@@ -376,7 +395,6 @@
         .quiver-footer-link img { width: 100%; height: auto; display: block; }
 
         @media (max-width: 768px) {
-            .logo { font-size: 1.8rem; }
             .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
             .perfume-card img { height: 200px; }
             nav { padding: 10px; gap: 10px; }
@@ -723,4 +741,4 @@
 </script>
 
 </body>
-</html>
+    </html>
