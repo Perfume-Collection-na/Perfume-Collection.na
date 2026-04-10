@@ -526,7 +526,7 @@
         { name: "Club De Nuit Intense Man", price: "N$ 1200.00", salePrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg", isNew: false },
         { name: "Emperor II", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/EMPEROR II (100ml).jpg", isNew: false },
         { name: "Genius Victory Amper", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/GENIUS VICTORY AMPER (100ml).jpg", isNew: false },
-        { name: "Gorgio Black Special Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg", isNew: false },
+        { name: "Gorgio Black Special Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculio/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg", isNew: false },
         { name: "Intense Noir", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE NOIR (100ml).jpg", isNew: false },
         { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", salePrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE OUD BY ARABIAN ORYX (100ml).jpg", isNew: false },
         { name: "Intense Wayfarer Homme", price: "N$ 500.00", salePrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: false },
@@ -573,7 +573,7 @@
     ];
 
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
-    let selectedItem = {};
+    let selectedItem = { name: "", price: "" };
 
     async function syncWithSheet() {
         renderProducts();
@@ -683,7 +683,7 @@
     }
 
     function openOrderModal(name, price) {
-        selectedItem = { name, price };
+        selectedItem = { name: name, price: price };
         document.getElementById('modalTitle').innerText = name;
         document.getElementById('modalPrice').innerText = price;
         document.getElementById('orderModal').style.display = "flex";
@@ -712,38 +712,21 @@
         }
     }
 
-    // Modal Exit Listeners
     window.onclick = function(event) {
-        const modals = ['orderModal', 'adminLoginModal'];
-        modals.forEach(id => {
-            const modal = document.getElementById(id);
-            if (event.target === modal) closeModal(id);
-        });
+        if (event.target.classList.contains('modal')) {
+            if (event.target.id !== 'loadingModal') {
+                closeModal(event.target.id);
+            }
+        }
     }
 
     async function submitOrder() {
-        const cName = document.getElementById('custName').value;
-        const cPhone = document.getElementById('custPhone').value;
+        const cName = document.getElementById('custName').value.trim();
+        const cPhone = document.getElementById('custPhone').value.trim();
         
         if(!cName || !cPhone) return alert("Please fill in your details.");
 
-        // Show Loading and Hide Order UI
-        document.getElementById('orderModal').style.display = 'none';
-        document.getElementById('loadingModal').style.display = 'flex';
-
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    sheet: "Orders",
-                    action: "ADD_PRODUCT", 
-                    data: [new Date().toLocaleString(), selectedItem.name, cName, cPhone, "New"]
-                })
-            });
-        } catch(e) { console.error("Sheet Sync Failed"); }
-
-        const templateParams = {
+        const orderData = {
             product_name: selectedItem.name,
             price: selectedItem.price,
             customer_name: cName,
@@ -751,7 +734,22 @@
             order_date: new Date().toLocaleString()
         };
 
-        emailjs.send('service_mjgfqz6', 'template_50pvt8o', templateParams)
+        closeModal('orderModal');
+        document.getElementById('loadingModal').style.display = 'flex';
+
+        try {
+            fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    sheet: "Orders",
+                    action: "ADD_PRODUCT", 
+                    data: [orderData.order_date, orderData.product_name, orderData.customer_name, orderData.customer_contact, "New"]
+                })
+            });
+        } catch(e) { console.error("Sheet Sync Failed", e); }
+
+        emailjs.send('service_mjgfqz6', 'template_50pvt8o', orderData)
             .then(function() {
                 document.getElementById('loadingModal').style.display = 'none';
                 alert("Order Confirmed! We have received your request and will contact you shortly.");
@@ -759,7 +757,12 @@
                 document.getElementById('custPhone').value = "";
             }, function(error) {
                 document.getElementById('loadingModal').style.display = 'none';
-                alert("Order recorded, but notification failed. Please follow up with us via WhatsApp.");
+                console.error("EmailJS Error:", error);
+                
+                const whatsappMsg = `Hi Perfume Collection na! I'd like to order ${orderData.product_name} (${orderData.price}). Name: ${orderData.customer_name}.`;
+                if(confirm("Order recorded, but notification failed. Would you like to confirm via WhatsApp instead?")) {
+                    window.open(`https://wa.me/264813557282?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+                }
             });
     }
 
