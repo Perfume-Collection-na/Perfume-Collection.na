@@ -12,13 +12,12 @@
             --white: #ffffff;
         }
 
-        /* POLICY: Eliminate browser defaults to allow full-width edge-to-edge coverage */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
             width: 100%;
-            overflow-x: hidden; /* Prevent horizontal scroll debacles */
+            overflow-x: hidden;
         }
 
         body { 
@@ -28,7 +27,6 @@
             flex-direction: column;
         }
 
-        /* POLICY: Header occupies 100% of the screen width */
         header {
             background: var(--dark);
             color: var(--white);
@@ -38,7 +36,7 @@
             position: sticky;
             top: 0;
             z-index: 900;
-            width: 100%; /* Force full width */
+            width: 100%; 
             flex-shrink: 0;
         }
 
@@ -77,7 +75,6 @@
             opacity: 0.4;
         }
 
-        /* POLICY: Main content container for centralized inventory management */
         .container { 
             max-width: 900px; 
             width: 90%; 
@@ -86,7 +83,7 @@
             padding: 30px; 
             border-radius: 8px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-            flex: 1 0 auto; /* Ensures page content fills height between header/footer */
+            flex: 1 0 auto;
         }
 
         h2 { border-bottom: 2px solid var(--gold); padding-bottom: 10px; color: var(--dark); }
@@ -124,7 +121,6 @@
 
         .thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px; }
 
-        /* POLICY: Footer covers the entire viewport width at the bottom */
         footer { 
             background: var(--dark); 
             color: var(--white); 
@@ -184,6 +180,9 @@
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
+    // POLICY: Initialize from Local Storage to reduce perceived load time
+    let currentInventory = JSON.parse(localStorage.getItem('cachedInventory')) || [];
+
     const defaultPerfumes = [
         { name: "My Way by Giorgio Armani", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg" },
         { name: "Ur Way by Fragrance World", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAG_WORLD.jpg" },
@@ -214,9 +213,10 @@
         { name: "Barrakat Satin Oud", price: "N$ 400.00", saleprice: "N$ 350.00", onsale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg" }
     ];
 
-    let currentInventory = [];
-
     async function fetchUniversalData() {
+        // Render from cache immediately if available
+        if (currentInventory.length > 0) renderInventory();
+
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
@@ -225,11 +225,14 @@
                 await seedSheetWithDefaults();
             } else {
                 currentInventory = data;
+                localStorage.setItem('cachedInventory', JSON.stringify(data));
                 renderInventory();
             }
         } catch (err) {
             console.error("Connection error:", err);
-            document.getElementById('listItems').innerText = "Unable to reach the Cloud. Check your API URL.";
+            if (currentInventory.length === 0) {
+                document.getElementById('listItems').innerText = "Unable to reach the Cloud. Check your API URL.";
+            }
         }
     }
 
@@ -260,6 +263,7 @@
 
         await syncToAction("ADD_PRODUCT", payload);
         closeModal('productModal');
+        // Policy: Manual delay to allow Google Script to process before re-fetching
         setTimeout(fetchUniversalData, 1500);
     }
 
@@ -286,8 +290,12 @@
 
     async function removeProduct(name) {
         if(confirm("Confirm deletion from Cloud?")) {
+            // Optimistic UI Update: Remove instantly from local array/cache
+            currentInventory = currentInventory.filter(p => p.name !== name);
+            localStorage.setItem('cachedInventory', JSON.stringify(currentInventory));
+            renderInventory();
+
             await syncToAction("DELETE_PRODUCT", { sheet: "Inventory", identifier: name });
-            setTimeout(fetchUniversalData, 1500);
         }
     }
 
