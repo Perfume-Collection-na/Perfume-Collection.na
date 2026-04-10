@@ -202,15 +202,30 @@
             align-items: center; 
             padding: 15px; 
             border-bottom: 1px solid #eee; 
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .thumb {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
             border-radius: 4px;
             margin-right: 15px;
             border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .edit-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .edit-controls input {
+            padding: 5px;
+            font-size: 0.85rem;
         }
 
         .stock-control {
@@ -249,6 +264,15 @@
         }
 
         section { scroll-margin-top: 120px; }
+
+        #specificPerfumeList {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -287,8 +311,32 @@
         <h2>Announce Promotion</h2>
         <div class="form-group">
             <label>Promotion Message</label>
-            <input type="text" id="promoMsg" placeholder="e.g. FLASH SALE: ALL MASCULINE SCENTS N$ 350!">
+            <input type="text" id="promoMsg" placeholder="e.g. FLASH SALE!">
         </div>
+        <div class="form-group">
+            <label>Discount Type (Required)</label>
+            <select id="promoType">
+                <option value="fixed">Exact Off-Price (e.g., N$ 50 off)</option>
+                <option value="percent">Percentage Off (e.g., 10% off)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Discount Value</label>
+            <input type="number" id="promoVal" placeholder="50">
+        </div>
+        <div class="form-group">
+            <label>Affected Products</label>
+            <select id="promoTarget" onchange="toggleSpecificSelection()">
+                <option value="all">All Products</option>
+                <option value="feminine">Feminine Only</option>
+                <option value="masculine">Masculine Only</option>
+                <option value="unisex">Unisex Only</option>
+                <option value="specific">Choose Specifically...</option>
+            </select>
+        </div>
+        
+        <div id="specificPerfumeList"></div>
+
         <div class="form-group">
             <label>Sale Period</label>
             <select id="promoPeriod">
@@ -301,6 +349,8 @@
         <button class="btn" style="background:none; color:#666;" onclick="closeModal('promoModal')">Cancel</button>
     </div>
 </div>
+
+<input type="file" id="editImageInput" style="display:none;" accept="image/*">
 
 <div id="productModal" class="modal">
     <div class="modal-content">
@@ -434,7 +484,10 @@
         document.getElementById('globalLoader').style.display = "none";
     }
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function openModal(id) { 
+        document.getElementById(id).style.display = 'flex'; 
+        if(id === 'promoModal') populateSpecificList();
+    }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     
     window.addEventListener('click', (event) => {
@@ -442,6 +495,24 @@
             event.target.style.display = 'none';
         }
     });
+
+    // Handle Image Editing trigger
+    function triggerImageEdit(perfumeName) {
+        const input = document.getElementById('editImageInput');
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imgPreview = document.querySelector(`img[data-perfume="${perfumeName}"]`);
+                    if(imgPreview) imgPreview.src = event.target.result;
+                    imgPreview.dataset.changed = "true";
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    }
 
     async function refreshData() {
         showLoader("Retrieving content...");
@@ -486,6 +557,21 @@
         field.style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
     }
 
+    function toggleSpecificSelection() {
+        const target = document.getElementById('promoTarget').value;
+        document.getElementById('specificPerfumeList').style.display = target === 'specific' ? 'block' : 'none';
+    }
+
+    function populateSpecificList() {
+        const listDiv = document.getElementById('specificPerfumeList');
+        listDiv.innerHTML = perfumes.map(p => `
+            <div class="checkbox-group">
+                <input type="checkbox" class="promo-choice" value="${p.name || p.Name}">
+                <label style="font-weight:normal;">${p.name || p.Name}</label>
+            </div>
+        `).join('');
+    }
+
     async function globalUpdate(actionType, rowData) {
         showLoader("Updating Cloud Data...");
         try {
@@ -506,16 +592,33 @@
 
     function startPromotion() {
         const msg = document.getElementById('promoMsg').value;
+        const type = document.getElementById('promoType').value;
+        const val = parseFloat(document.getElementById('promoVal').value);
+        const target = document.getElementById('promoTarget').value;
         const days = parseFloat(document.getElementById('promoPeriod').value);
-        if(!msg) return alert("Please enter a message.");
+
+        if(!msg || isNaN(val)) return alert("Please fill required fields.");
+
+        let affected = [];
+        if(target === 'specific') {
+            document.querySelectorAll('.promo-choice:checked').forEach(cb => affected.push(cb.value));
+            if(affected.length === 0) return alert("Select at least one perfume.");
+        }
 
         const expiryDate = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
-        activePromo = { message: msg, expires: expiryDate };
+        activePromo = { 
+            message: msg, 
+            expires: expiryDate, 
+            type: type, 
+            val: val, 
+            target: target, 
+            affectedList: affected 
+        };
+        
         localStorage.setItem('activePromo', JSON.stringify(activePromo));
-
         checkActivePromo();
         closeModal('promoModal');
-        alert("Promotion is now LIVE.");
+        alert("Promotion is now LIVE and calculating sale prices.");
     }
 
     function checkActivePromo() {
@@ -531,27 +634,47 @@
         }
     }
 
+    async function updateFullProduct(oldName) {
+        const container = document.querySelector(`[data-row="${oldName}"]`);
+        const newName = container.querySelector('.edit-name').value;
+        const newPrice = container.querySelector('.edit-price').value;
+        const newStock = container.querySelector('.stock-input').value;
+        const imgEl = container.querySelector('.thumb');
+        
+        const rowData = {
+            sheet: "Inventory",
+            identifier: oldName,
+            data: {
+                name: newName,
+                price: newPrice,
+                stock: newStock,
+                img: imgEl.dataset.changed === "true" ? imgEl.src : null
+            }
+        };
+
+        // Note: You will need a corresponding 'UPDATE_PRODUCT_FULL' case in your Apps Script 
+        // that takes these specific keys.
+        await globalUpdate("UPDATE_PRODUCT_FULL", rowData);
+    }
+
     async function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
         const sPrice = document.getElementById('pSalePrice').value || "";
         const stock = document.getElementById('pStock').value;
-        const cat = document.getElementById('pCat').value; // 'masculine', 'feminine', or 'unisex'
+        const cat = document.getElementById('pCat').value;
         const isNew = document.getElementById('pNew').value;
         const onSale = document.getElementById('pOnSale').checked;
         const fileInput = document.getElementById('pImageFile');
 
         if(!name || !price) return alert("Required fields missing.");
 
-        // If a file is selected, we use the File Reader to create the Base64 string
-        // but ensure the folder prefix is set correctly in the data.
         if(fileInput.files[0]) {
             showLoader("Uploading Image & Product...");
             const reader = new FileReader();
             reader.onload = async function(e) {
                 const rowData = {
                     sheet: "Inventory",
-                    // The image data remains base64 but is stored under the correct category label
                     data: [name, price, sPrice, onSale, stock, cat, e.target.result, isNew]
                 };
                 await globalUpdate("ADD_PRODUCT", rowData);
@@ -559,7 +682,6 @@
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            // Fallback for logic where no file is added but name/price are present
             const rowData = {
                 sheet: "Inventory",
                 data: [name, price, sPrice, onSale, stock, cat, "", isNew]
@@ -575,10 +697,6 @@
         }
     }
 
-    async function updateStock(productName, newStock) {
-        await globalUpdate("UPDATE_STOCK", { sheet: "Inventory", identifier: productName, value: newStock });
-    }
-
     async function clearOrder(orderId) {
         await globalUpdate("COMPLETE_ORDER", { sheet: "Orders", identifier: orderId });
     }
@@ -591,21 +709,34 @@
     function renderLists(orders = []) {
         const invDiv = document.getElementById('listItems');
         invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => {
-            const saleStatus = (p.onsale === 'TRUE' || p.onSale === true || p.OnSale === true);
-            const displayPrice = saleStatus ? (p.saleprice || p.sPrice || p.SalePrice) : (p.price || p.Price);
+            const pName = p.name || p.Name;
+            const pPrice = p.price || p.Price;
+            const pStock = p.stock || p.Stock;
+            const pImg = p.img || p.imageurl || p.ImageURL;
             
             return `
-            <div class="product-item">
-                <div style="display: flex; align-items: center; flex: 1;">
-                    <img src="${p.img || p.imageurl || p.ImageURL}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
-                    <div>
-                        <strong>${p.name || p.Name}</strong> 
-                        <br><small style="${saleStatus ? 'color: red;' : ''}">${displayPrice}</small>
+            <div class="product-item" data-row="${pName}">
+                <div style="display: flex; align-items: center; flex: 1; min-width: 300px;">
+                    <img src="${pImg}" class="thumb" 
+                         data-perfume="${pName}" 
+                         onclick="triggerImageEdit('${pName}')" 
+                         onerror="this.src='https://via.placeholder.com/60'">
+                    <div class="edit-controls">
+                        <label>Name:</label>
+                        <input type="text" class="edit-name" value="${pName}">
+                        <label>Price:</label>
+                        <input type="text" class="edit-price" value="${pPrice}">
                     </div>
                 </div>
                 <div class="stock-control">
-                    <input type="number" class="stock-input" value="${p.stock || p.Stock}" onchange="updateStock('${p.name || p.Name}', this.value)">
-                    <button class="delete-btn" onclick="deletePerfume('${p.name || p.Name}')">X</button>
+                    <div>
+                        <label>Stock:</label>
+                        <input type="number" class="stock-input" value="${pStock}">
+                    </div>
+                    <div class="action-group" style="margin-left: 10px;">
+                        <button class="btn-save" style="padding: 5px 10px; border-radius:4px; border:none; cursor:pointer;" onclick="updateFullProduct('${pName}')">Update</button>
+                        <button class="delete-btn" onclick="deletePerfume('${pName}')">X</button>
+                    </div>
                 </div>
             </div>
         `}).join('') : "<p>No products found.</p>";
