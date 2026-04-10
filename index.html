@@ -73,8 +73,8 @@
         }
 
         header {
-            background-color: var(--dark); /* Remains Black as instructed */
-            color: var(--white);
+            background-color: var(--purple); /* UPDATED: Swapped to Purple */
+            color: var(--dark); /* UPDATED: Swapped to Black */
             padding: 40px 20px;
             text-align: center;
             border-bottom: 3px solid var(--gold);
@@ -87,12 +87,12 @@
             text-transform: uppercase;
             margin-bottom: 10px;
             display: block;
-            color: var(--purple); /* Title color updated to Purple */
+            color: var(--dark); /* Swapped: Logo is now Black */
         }
 
         .tagline {
             font-style: italic;
-            color: var(--purple); /* Subtitle color updated to Purple */
+            color: var(--dark); /* Swapped: Tagline is now Black */
             font-size: 1rem;
             letter-spacing: 2px;
         }
@@ -117,7 +117,7 @@
 
         nav a {
             text-decoration: none;
-            color: var(--purple); /* Navigation links updated to Purple */
+            color: var(--purple); /* Navigation links remain Purple */
             font-weight: 600;
             font-size: 0.9rem;
             text-transform: uppercase;
@@ -151,7 +151,7 @@
             letter-spacing: 2px;
             display: block;
             margin-bottom: 15px;
-            color: var(--purple); /* Category titles updated to Purple */
+            color: var(--purple); /* Category titles remain Purple */
         }
 
         .section-divider {
@@ -242,7 +242,7 @@
         }
 
         button {
-            background: var(--purple); /* Button backgrounds updated to Purple */
+            background: var(--purple); /* Button backgrounds remain Purple */
             color: white;
             border: none;
             padding: 12px;
@@ -313,8 +313,8 @@
         }
 
         footer {
-            background: var(--dark); /* Remains Black as instructed */
-            color: var(--white);
+            background: var(--purple); /* UPDATED: Swapped to Purple */
+            color: var(--dark); /* UPDATED: Swapped to Black */
             text-align: center;
             padding: 40px 20px;
             margin-top: 60px;
@@ -327,14 +327,14 @@
             margin: 5px 0;
             font-size: 0.9rem;
             opacity: 0.8;
-            color: var(--purple); /* Footer subtitles updated to Purple */
+            color: var(--dark); /* Swapped: Footer subtitles are Black */
         }
 
         footer a { color: inherit; text-decoration: none; }
         footer a:hover { color: var(--gold); }
 
         .footer-logo {
-            color: var(--purple); /* Footer titles updated to Purple */
+            color: var(--dark); /* Swapped: Footer title is Black */
             font-size: 1.2rem;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -353,7 +353,7 @@
         .admin-link {
             display: inline-block;
             margin-top: 15px;
-            color: var(--gold);
+            color: var(--dark);
             text-decoration: none;
             font-size: 0.75rem;
             opacity: 0.6;
@@ -713,7 +713,7 @@
                 window.open(`https://wa.me/264813557282?text=New Order: ${selectedItem.name}`, '_blank');
                 closeModal('orderModal');
             }, function(error) {
-                alert("Email failed, but order saved. Error: " + JSON.stringify(error));
+                alert("Email confirmation failed, but your order has been saved in our system.");
                 btn.disabled = false;
                 btn.innerText = "Confirm Order";
             });
