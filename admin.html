@@ -21,7 +21,6 @@
             min-height: 100vh;
         }
 
-        /* --- GLOBAL ACTION LOADER --- */
         #globalLoader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -373,54 +372,54 @@
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
     const MASTER_COLLECTION = [
-        { name: "Aventos Blue For Him", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: "FALSE" },
-        { name: "Bavarria Man Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: "FALSE" },
-        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg", isNew: "FALSE" },
-        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", sPrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg", isNew: "FALSE" },
-        { name: "Emperor II", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/EMPEROR II (100ml).jpg", isNew: "FALSE" },
-        { name: "Genius Victory Amper", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/GENIUS VICTORY AMPER (100ml).jpg", isNew: "FALSE" },
-        { name: "Gorgio Black Special Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg", isNew: "FALSE" },
-        { name: "Intense Noir", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE NOIR (100ml).jpg", isNew: "FALSE" },
-        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE OUD BY ARABIAN ORYX (100ml).jpg", isNew: "FALSE" },
-        { name: "Intense Wayfarer Homme", price: "N$ 500.00", sPrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: "FALSE" },
-        { name: "Intense Wood", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INTENSE WOOD (100ml).jpg", isNew: "FALSE" },
-        { name: "Invicto Elixir", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INVICTO ELIXIR.jpg", isNew: "FALSE" },
-        { name: "Invicto Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INVICTO INTENSE.jpg", isNew: "FALSE" },
-        { name: "Invicto Legend", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/INVICTO LEGEND (100ml).jpg", isNew: "FALSE" },
-        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", sPrice: "N$ 550.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/KHAMRA QAHWA BY LATTAFA (100ml).jpg", isNew: "FALSE" },
-        { name: "Midnight Oud", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/MIDNIGHT OUD (100ml).jpg", isNew: "FALSE" },
-        { name: "Now Rave", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/NOW RAVE (100ml).jpg", isNew: "FALSE" },
-        { name: "Odyssey Homme", price: "N$ 700.00", sPrice: "N$ 600.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ODYSSEY HOMME (100ml).jpg", isNew: "FALSE" },
-        { name: "Oniro", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ONIRO (100ml).jpg", isNew: "FALSE" },
-        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg", isNew: "FALSE" },
-        { name: "Oud Al Layl", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD_AL_LAYL_(100ml)[1].jpg", isNew: "FALSE" },
-        { name: "Suave", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/SUAVE (100ml).jpg", isNew: "FALSE" },
-        { name: "Wayfarer Homme", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: "FALSE" },
-        { name: "Zara Man", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ZARA MAN (100ml).jpg", isNew: "FALSE" },
-        { name: "Berries Weekend Pink Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND PINK EDITION (100ml).jpg", isNew: "FALSE" },
-        { name: "Berries Weekend Violet", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND VIOLET (100ml).jpg", isNew: "FALSE" },
-        { name: "Bint Hooran Rose Passion", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BINT HOORAN ROSE PASSION.jpg", isNew: "FALSE" },
-        { name: "Club De Nuit Untold", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/CLUB DE NUIT UNTOLD (100ml).jpg", isNew: "FALSE" },
-        { name: "Dolores Pour Femme", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/DOLORES POUR FEMME (100ml).jpg", isNew: "FALSE" },
-        { name: "Elysia Apple Rouge", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ELYSIA APPLE ROUGE.jpg", isNew: "FALSE" },
-        { name: "Elysia Lychee Fizz", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ELYSIA LYCHEE FIZZ.jpg", isNew: "FALSE" },
-        { name: "Elysia Pista Sundae", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ELYSIA PISTA SUNDAE (100ml).jpg", isNew: "FALSE" },
-        { name: "Elysia Sugar Patchouli", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ELYSIA SUGAR PATCHOULI (100ml).jpg", isNew: "FALSE" },
-        { name: "Elysia Vanilla", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ELYSIA VANILLA (100ml).jpg", isNew: "FALSE" },
-        { name: "Genius Rose Amper", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/GENIUS ROSE AMPER (100ml).jpg", isNew: "FALSE" },
-        { name: "Gorgio Pink Special Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/GORGIO PINK SPECIAL EDITION.jpg", isNew: "FALSE" },
-        { name: "Hayaati Belle", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/HAYAATI BELLE (100ml).jpg", isNew: "FALSE" },
-        { name: "Hayaati Rose 2", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/HAYAATI ROSE 2 (100ml).jpg", isNew: "FALSE" },
-        { name: "Mousuf Wardi", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/MOUSUF WARDI (100ml).jpg", isNew: "FALSE" },
-        { name: "My Way by Giorgio Armani", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: "FALSE" },
-        { name: "Noble Blush Badee Al Oud", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/NOBLE BLUSH BADEE AL OUD BY LATTAFA.jpg", isNew: "FALSE" },
-        { name: "Odyssey Spectra", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ODYSSEY SPECTRA (100ml).jpg", isNew: "FALSE" },
-        { name: "Rose Seduction Secret Las Vegas", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ROSE SEDUCTION SECRET LAS VEGAS (100ml).jpg", isNew: "FALSE" },
-        { name: "Rose Seduction Secret Sunkissed", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ROSE SEDUCTION SECRET SUNKISSED (100ml).jpg", isNew: "FALSE" },
-        { name: "Ur Way by Fragrance World", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg", isNew: "FALSE" },
-        { name: "Yara Pink by Lattafa", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/YARA PINK BY LATTAFA (100ml).jpg", isNew: "FALSE" },
-        { name: "Yara Violet by Lattafa", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/YARA VIOLET BY LATTAFA (100ml).jpg", isNew: "FALSE" },
-        { name: "Barrakat Satin Oud", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "image/unisex/Barrakat_Satin_Oud.jpg", isNew: "FALSE" }
+        { name: "Aventos Blue For Him", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: "FALSE" },
+        { name: "Bavarria Man Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: "FALSE" },
+        { name: "Brown Orchid Oud Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg", isNew: "FALSE" },
+        { name: "Club De Nuit Intense Man", price: "N$ 1200.00", sPrice: "N$ 1000.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/CLUB DE NUIT INTENSE MAN(100ml).jpg", isNew: "FALSE" },
+        { name: "Emperor II", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/EMPEROR II (100ml).jpg", isNew: "FALSE" },
+        { name: "Genius Victory Amper", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GENIUS VICTORY AMPER (100ml).jpg", isNew: "FALSE" },
+        { name: "Gorgio Black Special Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/GORGIO_BLACK_SPECIAL_EDITION_(100ml)[1].jpg", isNew: "FALSE" },
+        { name: "Intense Noir", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE NOIR (100ml).jpg", isNew: "FALSE" },
+        { name: "Intense Oud by Arabian Oryx", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE OUD BY ARABIAN ORYX (100ml).jpg", isNew: "FALSE" },
+        { name: "Intense Wayfarer Homme", price: "N$ 500.00", sPrice: "N$ 450.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: "FALSE" },
+        { name: "Intense Wood", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INTENSE WOOD (100ml).jpg", isNew: "FALSE" },
+        { name: "Invicto Elixir", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO ELIXIR.jpg", isNew: "FALSE" },
+        { name: "Invicto Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO INTENSE.jpg", isNew: "FALSE" },
+        { name: "Invicto Legend", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/INVICTO LEGEND (100ml).jpg", isNew: "FALSE" },
+        { name: "Khamra Qahwa by Lattafa", price: "N$ 600.00", sPrice: "N$ 550.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/KHAMRA QAHWA BY LATTAFA (100ml).jpg", isNew: "FALSE" },
+        { name: "Midnight Oud", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/MIDNIGHT OUD (100ml).jpg", isNew: "FALSE" },
+        { name: "Now Rave", price: "N$ 450.00", sPrice: "N$ 400.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/NOW RAVE (100ml).jpg", isNew: "FALSE" },
+        { name: "Odyssey Homme", price: "N$ 700.00", sPrice: "N$ 600.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ODYSSEY HOMME (100ml).jpg", isNew: "FALSE" },
+        { name: "Oniro", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ONIRO (100ml).jpg", isNew: "FALSE" },
+        { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg", isNew: "FALSE" },
+        { name: "Oud Al Layl", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/OUD_AL_LAYL_(100ml)[1].jpg", isNew: "FALSE" },
+        { name: "Suave", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/SUAVE (100ml).jpg", isNew: "FALSE" },
+        { name: "Wayfarer Homme", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: "FALSE" },
+        { name: "Zara Man", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/ZARA MAN (100ml).jpg", isNew: "FALSE" },
+        { name: "Berries Weekend Pink Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/BERRIES WEEKEND PINK EDITION (100ml).jpg", isNew: "FALSE" },
+        { name: "Berries Weekend Violet", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/BERRIES WEEKEND VIOLET (100ml).jpg", isNew: "FALSE" },
+        { name: "Bint Hooran Rose Passion", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/BINT HOORAN ROSE PASSION.jpg", isNew: "FALSE" },
+        { name: "Club De Nuit Untold", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/CLUB DE NUIT UNTOLD (100ml).jpg", isNew: "FALSE" },
+        { name: "Dolores Pour Femme", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/DOLORES POUR FEMME (100ml).jpg", isNew: "FALSE" },
+        { name: "Elysia Apple Rouge", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ELYSIA APPLE ROUGE.jpg", isNew: "FALSE" },
+        { name: "Elysia Lychee Fizz", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ELYSIA LYCHEE FIZZ.jpg", isNew: "FALSE" },
+        { name: "Elysia Pista Sundae", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ELYSIA PISTA SUNDAE (100ml).jpg", isNew: "FALSE" },
+        { name: "Elysia Sugar Patchouli", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ELYSIA SUGAR PATCHOULI (100ml).jpg", isNew: "FALSE" },
+        { name: "Elysia Vanilla", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ELYSIA VANILLA (100ml).jpg", isNew: "FALSE" },
+        { name: "Genius Rose Amper", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/GENIUS ROSE AMPER (100ml).jpg", isNew: "FALSE" },
+        { name: "Gorgio Pink Special Edition", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/GORGIO PINK SPECIAL EDITION.jpg", isNew: "FALSE" },
+        { name: "Hayaati Belle", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/HAYAATI BELLE (100ml).jpg", isNew: "FALSE" },
+        { name: "Hayaati Rose 2", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/HAYAATI ROSE 2 (100ml).jpg", isNew: "FALSE" },
+        { name: "Mousuf Wardi", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MOUSUF WARDI (100ml).jpg", isNew: "FALSE" },
+        { name: "My Way by Giorgio Armani", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/MY_WAY_BY_GIORGIO_ARMANI_(100ml)[1].jpg", isNew: "FALSE" },
+        { name: "Noble Blush Badee Al Oud", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/NOBLE BLUSH BADEE AL OUD BY LATTAFA.jpg", isNew: "FALSE" },
+        { name: "Odyssey Spectra", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ODYSSEY SPECTRA (100ml).jpg", isNew: "FALSE" },
+        { name: "Rose Seduction Secret Las Vegas", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ROSE SEDUCTION SECRET LAS VEGAS (100ml).jpg", isNew: "FALSE" },
+        { name: "Rose Seduction Secret Sunkissed", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/ROSE SEDUCTION SECRET SUNKISSED (100ml).jpg", isNew: "FALSE" },
+        { name: "Ur Way by Fragrance World", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg", isNew: "FALSE" },
+        { name: "Yara Pink by Lattafa", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/YARA PINK BY LATTAFA (100ml).jpg", isNew: "FALSE" },
+        { name: "Yara Violet by Lattafa", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "feminine/YARA VIOLET BY LATTAFA (100ml).jpg", isNew: "FALSE" },
+        { name: "Barrakat Satin Oud", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "unisex/Barrakat_Satin_Oud.jpg", isNew: "FALSE" }
     ];
 
     let perfumes = [];
@@ -451,9 +450,8 @@
             const data = await response.json();
             const sheetItems = Array.isArray(data) ? data : (data.inventory || []);
             
-            // AUTOMATIC SYNC: Find Master items missing from the sheet
             const missingFromSheet = MASTER_COLLECTION.filter(masterItem => 
-                !sheetItems.some(s => s.name === masterItem.name)
+                !sheetItems.some(s => (s.name || s.Name) === masterItem.name)
             );
 
             if (missingFromSheet.length > 0) {
@@ -469,7 +467,6 @@
                         })
                     });
                 }
-                // Refresh again to get confirmed sheet data
                 return refreshData();
             }
 
@@ -477,7 +474,7 @@
             renderLists(data.orders || []);
         } catch (err) {
             console.error("Fetch failed:", err);
-            perfumes = MASTER_COLLECTION; // Fallback to local
+            perfumes = MASTER_COLLECTION;
             renderLists([]);
         } finally {
             hideLoader();
@@ -539,25 +536,37 @@
         const price = document.getElementById('pPrice').value;
         const sPrice = document.getElementById('pSalePrice').value || "";
         const stock = document.getElementById('pStock').value;
-        const cat = document.getElementById('pCat').value;
+        const cat = document.getElementById('pCat').value; // 'masculine', 'feminine', or 'unisex'
         const isNew = document.getElementById('pNew').value;
         const onSale = document.getElementById('pOnSale').checked;
         const fileInput = document.getElementById('pImageFile');
 
-        if(!name || !price || !fileInput.files[0]) return alert("Required fields missing.");
+        if(!name || !price) return alert("Required fields missing.");
 
-        showLoader("Uploading Image & Product...");
-
-        const reader = new FileReader();
-        reader.onload = async function(e) {
+        // If a file is selected, we use the File Reader to create the Base64 string
+        // but ensure the folder prefix is set correctly in the data.
+        if(fileInput.files[0]) {
+            showLoader("Uploading Image & Product...");
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const rowData = {
+                    sheet: "Inventory",
+                    // The image data remains base64 but is stored under the correct category label
+                    data: [name, price, sPrice, onSale, stock, cat, e.target.result, isNew]
+                };
+                await globalUpdate("ADD_PRODUCT", rowData);
+                closeModal('productModal');
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            // Fallback for logic where no file is added but name/price are present
             const rowData = {
                 sheet: "Inventory",
-                data: [name, price, sPrice, onSale, stock, cat, e.target.result, isNew]
+                data: [name, price, sPrice, onSale, stock, cat, "", isNew]
             };
             await globalUpdate("ADD_PRODUCT", rowData);
             closeModal('productModal');
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+        }
     }
 
     async function deletePerfume(productName) {
@@ -581,28 +590,32 @@
 
     function renderLists(orders = []) {
         const invDiv = document.getElementById('listItems');
-        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => `
+        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => {
+            const saleStatus = (p.onsale === 'TRUE' || p.onSale === true || p.OnSale === true);
+            const displayPrice = saleStatus ? (p.saleprice || p.sPrice || p.SalePrice) : (p.price || p.Price);
+            
+            return `
             <div class="product-item">
                 <div style="display: flex; align-items: center; flex: 1;">
-                    <img src="${p.img || p.imageurl}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
+                    <img src="${p.img || p.imageurl || p.ImageURL}" class="thumb" onerror="this.src='https://via.placeholder.com/50'">
                     <div>
-                        <strong>${p.name}</strong> 
-                        <br><small style="${(p.onsale === 'TRUE' || p.onSale === true) ? 'color: red;' : ''}">${(p.onsale === 'TRUE' || p.onSale === true) ? (p.saleprice || p.sPrice) : p.price}</small>
+                        <strong>${p.name || p.Name}</strong> 
+                        <br><small style="${saleStatus ? 'color: red;' : ''}">${displayPrice}</small>
                     </div>
                 </div>
                 <div class="stock-control">
-                    <input type="number" class="stock-input" value="${p.stock}" onchange="updateStock('${p.name}', this.value)">
-                    <button class="delete-btn" onclick="deletePerfume('${p.name}')">X</button>
+                    <input type="number" class="stock-input" value="${p.stock || p.Stock}" onchange="updateStock('${p.name || p.Name}', this.value)">
+                    <button class="delete-btn" onclick="deletePerfume('${p.name || p.Name}')">X</button>
                 </div>
             </div>
-        `).join('') : "<p>No products found.</p>";
+        `}).join('') : "<p>No products found.</p>";
 
         const ordDiv = document.getElementById('orderList');
         ordDiv.innerHTML = orders.length ? orders.map((o, i) => `
             <div class="order-item">
-                <div><b>${o.product}</b><br><small>${o.customer} (${o.contact}) - ${o.status || 'New'}</small></div>
+                <div><b>${o.product || o.Product}</b><br><small>${o.customer || o.Customer} (${o.contact || o.Contact}) - ${o.status || o.Status || 'New'}</small></div>
                 <div class="action-group">
-                    <button class="delete-btn" style="background:#28a745;" onclick="clearOrder('${o.timestamp || o.id}')">Done</button>
+                    <button class="delete-btn" style="background:#28a745;" onclick="clearOrder('${o.timestamp || o.id || o.ID}')">Done</button>
                 </div>
             </div>
         `).join('') : "<p>No active orders.</p>";
