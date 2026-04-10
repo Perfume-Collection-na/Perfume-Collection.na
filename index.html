@@ -393,8 +393,7 @@
     <span class="tagline">Affordable Luxury in Every Drop</span>
 </header>
 
-<nav id="mainNav">
-    </nav>
+<nav id="mainNav"></nav>
 
 <div class="container">
     <section id="new-section" class="category-section" style="display:none;">
@@ -476,7 +475,6 @@
 
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-// MASTER DEFAULT LIST
     const defaultPerfumes = [
         // Masculine Collection
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
@@ -536,7 +534,6 @@
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
     let selectedItem = {};
 
-    // SYNC: Fetch from Sheet and update UI
     async function syncWithSheet() {
         try {
             const response = await fetch(API_URL);
@@ -568,7 +565,7 @@
         const nav = document.getElementById('mainNav');
         const now = new Date().getTime();
 
-        if (promo && now < promo.expires) {
+        if (promo && promo.expires && now < promo.expires) {
             banner.style.display = 'block';
             document.getElementById('promoText').innerText = promo.message;
             nav.classList.add('sticky-adjust');
@@ -608,7 +605,7 @@
         const nav = document.getElementById('mainNav');
         const hasNew = perfumes.some(p => p.isNew);
         const navLinks = [];
-        if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrival" });
+        if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrivals" });
         navLinks.push({ href: "#masculine", text: "Masculine" });
         navLinks.push({ href: "#feminine", text: "Feminine" });
         navLinks.push({ href: "#unisex", text: "Unisex" });
@@ -720,11 +717,13 @@
         if (event.target.className === 'modal') closeModal(event.target.id);
     }
 
-    setInterval(checkPromo, 10000);
-    
+    // Initialize Page
     document.addEventListener('DOMContentLoaded', () => {
-        syncWithSheet();
+        syncWithSheet(); // Live Fetch
+        checkPromo();    // Immediate Check
+        setInterval(checkPromo, 10000); // Recurring check
     });
+
 </script>
 </body>
 </html>
