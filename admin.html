@@ -108,7 +108,7 @@
         #promoBanner {
             display: none;
             position: fixed;
-            top: 110px;
+            top: 135px; /* Adjusted for larger header */
             left: 0;
             width: 100%;
             background: var(--gold);
@@ -154,12 +154,13 @@
             color: var(--purple);
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-bottom: 20px;
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 1500;
+            z-index: 2000;
             left: 0; top: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
             align-items: center; justify-content: center;
@@ -253,14 +254,16 @@
             background: #ff4d4d; 
             color: white; 
             border: none; 
-            padding: 6px 12px; 
+            padding: 8px 15px; 
             cursor: pointer; 
             border-radius: 4px; 
+            font-size: 0.8rem;
+            text-transform: uppercase;
         }
 
         .action-group {
             display: flex;
-            gap: 5px;
+            gap: 10px;
         }
 
         footer {
@@ -514,7 +517,6 @@
         }
     });
 
-    // Handle Image Editing trigger
     function triggerImageEdit(perfumeName) {
         const input = document.getElementById('editImageInput');
         input.onchange = (e) => {
@@ -561,6 +563,7 @@
 
             perfumes = sheetItems;
             renderLists(data.orders || []);
+            checkActivePromo();
         } catch (err) {
             console.error("Fetch failed:", err);
             perfumes = MASTER_COLLECTION;
@@ -636,7 +639,7 @@
         localStorage.setItem('activePromo', JSON.stringify(activePromo));
         checkActivePromo();
         closeModal('promoModal');
-        alert("Promotion is now LIVE and calculating sale prices.");
+        alert("Promotion is now LIVE.");
     }
 
     function checkActivePromo() {
@@ -669,9 +672,6 @@
                 img: imgEl.dataset.changed === "true" ? imgEl.src : null
             }
         };
-
-        // Note: You will need a corresponding 'UPDATE_PRODUCT_FULL' case in your Apps Script 
-        // that takes these specific keys.
         await globalUpdate("UPDATE_PRODUCT_FULL", rowData);
     }
 
@@ -725,8 +725,9 @@
     }
 
     function renderLists(orders = []) {
+        // Render Inventory
         const invDiv = document.getElementById('listItems');
-        invDiv.innerHTML = perfumes.length ? perfumes.map((p, i) => {
+        invDiv.innerHTML = perfumes.length ? perfumes.map((p) => {
             const pName = p.name || p.Name;
             const pPrice = p.price || p.Price;
             const pStock = p.stock || p.Stock;
@@ -752,9 +753,28 @@
                         <input type="number" class="stock-input" value="${pStock}">
                     </div>
                 </div>
+                <div class="action-group">
+                    <button class="btn btn-save" style="margin:0; width:auto;" onclick="updateFullProduct('${pName}')">Update</button>
+                    <button class="delete-btn" onclick="deletePerfume('${pName}')">Delete</button>
+                </div>
             </div>`;
         }).join('') : '<p>No inventory items found.</p>';
+
+        // Render Orders
+        const ordDiv = document.getElementById('orderList');
+        ordDiv.innerHTML = orders.length ? orders.map(o => `
+            <div class="order-item">
+                <div style="flex:1;">
+                    <strong style="color:var(--purple);">${o.customer || o.Customer || 'Unknown'}</strong><br>
+                    <small>${o.items || o.Items || ''}</small><br>
+                    <span style="font-weight:bold; color:var(--gold);">${o.total || o.Total || ''}</span>
+                </div>
+                <button class="btn btn-save" style="margin:0; width:auto;" onclick="clearOrder('${o.orderid || o.OrderID}')">Mark Delivered</button>
+            </div>
+        `).join('') : '<p>Queue is empty.</p>';
     }
+
+    window.onload = refreshData;
 </script>
 
 </body>
