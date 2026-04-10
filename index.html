@@ -24,6 +24,7 @@
             --dark: #1a1a1a;
             --light: #fdfbf8;
             --white: #ffffff;
+            --purple: #800080; /* Added for requested updates */
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
@@ -31,7 +32,7 @@
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--light);
+            background-color: var(--light); /* Remains White/Light as instructed */
             color: var(--dark);
             line-height: 1.6;
             scroll-behavior: smooth;
@@ -72,7 +73,7 @@
         }
 
         header {
-            background-color: var(--dark);
+            background-color: var(--dark); /* Remains Black as instructed */
             color: var(--white);
             padding: 40px 20px;
             text-align: center;
@@ -86,11 +87,12 @@
             text-transform: uppercase;
             margin-bottom: 10px;
             display: block;
+            color: var(--purple); /* Title color updated to Purple */
         }
 
         .tagline {
             font-style: italic;
-            color: var(--gold);
+            color: var(--purple); /* Subtitle color updated to Purple */
             font-size: 1rem;
             letter-spacing: 2px;
         }
@@ -115,7 +117,7 @@
 
         nav a {
             text-decoration: none;
-            color: var(--dark);
+            color: var(--purple); /* Navigation links updated to Purple */
             font-weight: 600;
             font-size: 0.9rem;
             text-transform: uppercase;
@@ -149,6 +151,7 @@
             letter-spacing: 2px;
             display: block;
             margin-bottom: 15px;
+            color: var(--purple); /* Category titles updated to Purple */
         }
 
         .section-divider {
@@ -202,7 +205,7 @@
 
         .price { 
             font-weight: bold; 
-            color: var(--gold); 
+            color: var(--purple); /* Prices updated to Purple */
             font-size: 1.1rem; 
             margin-bottom: 10px;
         }
@@ -239,7 +242,7 @@
         }
 
         button {
-            background: var(--dark);
+            background: var(--purple); /* Button backgrounds updated to Purple */
             color: white;
             border: none;
             padding: 12px;
@@ -310,7 +313,7 @@
         }
 
         footer {
-            background: var(--dark);
+            background: var(--dark); /* Remains Black as instructed */
             color: var(--white);
             text-align: center;
             padding: 40px 20px;
@@ -324,13 +327,14 @@
             margin: 5px 0;
             font-size: 0.9rem;
             opacity: 0.8;
+            color: var(--purple); /* Footer subtitles updated to Purple */
         }
 
         footer a { color: inherit; text-decoration: none; }
         footer a:hover { color: var(--gold); }
 
         .footer-logo {
-            color: var(--gold);
+            color: var(--purple); /* Footer titles updated to Purple */
             font-size: 1.2rem;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -440,7 +444,7 @@
             <input type="text" id="custName" class="login-input" placeholder="Your Name">
             <input type="text" id="custPhone" class="login-input" placeholder="Phone Number / Contact">
         </div>
-        <button id="confirmOrderBtn" style="background: var(--gold); color: var(--dark);" onclick="submitOrder()">Confirm Order</button>
+        <button id="confirmOrderBtn" onclick="submitOrder()">Confirm Order</button>
         <button style="margin-top: 10px; background: none; border: none; color: #666; cursor: pointer;" onclick="closeModal('orderModal')">Cancel</button>
     </div>
 </div>
@@ -450,7 +454,7 @@
         <h2>Admin Access</h2>
         <input type="text" id="adminUser" class="login-input" placeholder="Username">
         <input type="password" id="adminPass" class="login-input" placeholder="Password">
-        <button style="background: var(--dark); color: white; padding: 10px; width: 100%; border: none; cursor: pointer;" onclick="login()">Login</button>
+        <button style="padding: 10px; width: 100%; border: none; cursor: pointer;" onclick="login()">Login</button>
         <button style="margin-top: 10px; background: none; border: none; color: #666; cursor: pointer;" onclick="closeModal('adminLoginModal')">Cancel</button>
     </div>
 </div>
@@ -535,7 +539,6 @@
     let selectedItem = {};
 
     async function syncWithSheet() {
-        // Step 1: Immediate Render from Cache (Per Admin Load Policy)
         renderProducts();
 
         try {
@@ -543,7 +546,6 @@
             const sheetData = await response.json();
             
             if (sheetData && sheetData.length > 0) {
-                // Step 2: Map Sheet Headers to JS logic
                 perfumes = sheetData.map(p => ({
                     name: p.name,
                     price: p.price,
@@ -554,7 +556,6 @@
                     img: p.img || p.imageurl,
                     isNew: String(p.featured || p.isnew).toUpperCase() === "TRUE"
                 }));
-                // Step 3: Update Cache & Re-render silently
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
                 renderProducts();
             }
@@ -720,5 +721,6 @@
 
     window.onload = syncWithSheet;
 </script>
+
 </body>
 </html>
