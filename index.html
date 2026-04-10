@@ -692,7 +692,7 @@
                 mode: 'no-cors',
                 body: JSON.stringify({
                     sheet: "Orders",
-                    action: "ADD_PRODUCT", // Reusing the append logic from Code.gs
+                    action: "ADD_PRODUCT", 
                     data: [new Date().toLocaleString(), selectedItem.name, cName, cPhone, "New"]
                 })
             });
@@ -718,12 +718,7 @@
             });
     }
 
-    window.onclick = function(event) {
-        if (event.target.className === 'modal') closeModal(event.target.id);
-    }
-
-    // Initial Load
-    syncWithSheet();
+    window.onload = syncWithSheet;
 </script>
 </body>
 </html>
