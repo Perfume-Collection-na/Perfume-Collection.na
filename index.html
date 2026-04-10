@@ -92,7 +92,6 @@
         }
 
         .logo {
-            /* Fluid font size: Min 1.5rem, Preferred 5vw, Max 2.5rem */
             font-size: clamp(1.5rem, 5vw, 2.5rem);
             letter-spacing: 5px;
             text-transform: uppercase;
@@ -101,6 +100,8 @@
             color: var(--gold);
             word-wrap: break-word;
             padding: 0 10px;
+            /* BOLDED PER USER REQUEST */
+            font-weight: bold;
         }
 
         .tagline {
@@ -110,7 +111,9 @@
             letter-spacing: 2px;
         }
 
+        /* FIXED/STICKY NAVIGATION */
         nav {
+            position: -webkit-sticky;
             position: sticky;
             top: 0;
             background: white;
@@ -124,6 +127,7 @@
             gap: 15px;
             flex-wrap: wrap;
             width: 100%;
+            transition: top 0.3s ease;
         }
 
         nav.sticky-adjust { top: 45px; } 
@@ -250,10 +254,6 @@
             border-radius: 2px;
         }
 
-        .card-action-area {
-            width: 100%;
-        }
-
         button {
             background: var(--purple);
             color: white;
@@ -359,6 +359,8 @@
             margin-bottom: 15px;
             display: block;
             word-wrap: break-word;
+            /* BOLDED PER USER REQUEST */
+            font-weight: bold;
         }
 
         .footer-divider {
@@ -498,7 +500,6 @@
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
     const defaultPerfumes = [
-        // Masculine Collection
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
         { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: false },
         { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg", isNew: false },
@@ -524,7 +525,6 @@
         { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg", isNew: false },
         { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ZARA MAN (100ml).jpg", isNew: false },
 
-        // Feminine Collection
         { name: "Berries Weekend Pink Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND PINK EDITION (100ml).jpg", isNew: false },
         { name: "Berries Weekend Violet", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND VIOLET (100ml).jpg", isNew: false },
         { name: "Bint Hooran Rose Passion", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BINT HOORAN ROSE PASSION.jpg", isNew: false },
@@ -549,7 +549,6 @@
         { name: "Yara Pink by Lattafa", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/YARA PINK BY LATTAFA (100ml).jpg", isNew: false },
         { name: "Yara Violet by Lattafa", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/YARA VIOLET BY LATTAFA (100ml).jpg", isNew: false },
 
-        // Unisex Collection
         { name: "Barrakat Satin Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "unisex", img: "image/unisex/Barrakat_Satin_Oud.jpg", isNew: false }
     ];
 
@@ -558,11 +557,9 @@
 
     async function syncWithSheet() {
         renderProducts();
-
         try {
             const response = await fetch(API_URL);
             const sheetData = await response.json();
-            
             if (sheetData && sheetData.length > 0) {
                 perfumes = sheetData.map(p => ({
                     name: p.name,
@@ -727,17 +724,17 @@
 
         emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function() {
-                alert("Order Successful! Opening WhatsApp for final confirmation...");
-                window.open(`https://wa.me/264813557282?text=New Order: ${selectedItem.name}`, '_blank');
+                alert("Order submitted successfully!");
                 closeModal('orderModal');
+                window.open(`https://wa.me/264813557282?text=New Order: ${selectedItem.name} for ${cName}`, '_blank');
             }, function(error) {
-                alert("Email confirmation failed, but your order has been saved in our system.");
-                btn.disabled = false;
-                btn.innerText = "Confirm Order";
+                alert("Email failed, but logged to sheet. Redirecting to WhatsApp.");
+                window.open(`https://wa.me/264813557282?text=New Order: ${selectedItem.name} for ${cName}`, '_blank');
+                closeModal('orderModal');
             });
     }
 
-    window.onload = syncWithSheet;
+    syncWithSheet();
 </script>
 
 </body>
