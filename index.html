@@ -723,19 +723,14 @@
     async function submitOrder() {
         const cName = document.getElementById('custName').value.trim();
         const cPhone = document.getElementById('custPhone').value.trim();
+        const btn = document.getElementById('confirmOrderBtn');
+        const loading = document.getElementById('loadingModal');
         
         if(!cName || !cPhone) return alert("Please fill in your details.");
 
-        const orderData = {
-            product_name: selectedItem.name,
-            price: selectedItem.price,
-            customer_name: cName,
-            customer_contact: cPhone,
-            order_date: new Date().toLocaleString()
-        };
-
-        closeModal('orderModal');
-        document.getElementById('loadingModal').style.display = 'flex';
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+        loading.style.display = "flex";
 
         try {
             fetch(API_URL, {
@@ -744,30 +739,40 @@
                 body: JSON.stringify({
                     sheet: "Orders",
                     action: "ADD_PRODUCT", 
-                    data: [orderData.order_date, orderData.product_name, orderData.customer_name, orderData.customer_contact, "New"]
+                    data: [new Date().toLocaleString(), selectedItem.name, cName, cPhone, "New"]
                 })
             });
-        } catch(e) { console.error("Sheet Sync Failed", e); }
+        } catch(e) { console.error("Sheet Log Error:", e); }
 
-        emailjs.send('service_mjgfqz6', 'template_50pvt8o', orderData)
+        const templateParams = {
+            product_name: selectedItem.name,
+            price: selectedItem.price,
+            customer_name: cName,
+            customer_contact: cPhone,
+            order_date: new Date().toLocaleString()
+        };
+
+        emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function() {
-                document.getElementById('loadingModal').style.display = 'none';
-                alert("Order Confirmed! We have received your request and will contact you shortly.");
-                document.getElementById('custName').value = "";
-                document.getElementById('custPhone').value = "";
+                loading.style.display = "none";
+                alert("Order Successful! Opening WhatsApp for final confirmation...");
+                const waMsg = `Hello Perfume Collection! I would like to order: ${selectedItem.name} (${selectedItem.price}). My name is ${cName}.`;
+                window.open(`https://wa.me/264813557282?text=${encodeURIComponent(waMsg)}`, '_blank');
+                closeModal('orderModal');
+                btn.disabled = false;
+                btn.innerText = "Confirm Order";
             }, function(error) {
-                document.getElementById('loadingModal').style.display = 'none';
-                console.error("EmailJS Error:", error);
-                
-                const whatsappMsg = `Hi Perfume Collection na! I'd like to order ${orderData.product_name} (${orderData.price}). Name: ${orderData.customer_name}.`;
-                if(confirm("Order recorded, but notification failed. Would you like to confirm via WhatsApp instead?")) {
-                    window.open(`https://wa.me/264813557282?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
-                }
+                loading.style.display = "none";
+                alert("Order saved, but notification failed. Please reach out to us on WhatsApp!");
+                btn.disabled = false;
+                btn.innerText = "Confirm Order";
             });
     }
 
-    window.onload = syncWithSheet;
+    window.onload = () => {
+        syncWithSheet();
+        setInterval(checkPromo, 30000);
+    };
 </script>
-
 </body>
 </html>
