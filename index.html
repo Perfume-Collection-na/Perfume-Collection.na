@@ -324,6 +324,22 @@
             box-sizing: border-box;
         }
 
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         footer {
             background: var(--purple);
             color: var(--gold);
@@ -476,6 +492,13 @@
     </div>
 </div>
 
+<div id="loadingModal" class="modal">
+    <div class="modal-content" style="background: none; color: white; box-shadow: none;">
+        <div class="spinner"></div>
+        <p>Processing Your Order...</p>
+    </div>
+</div>
+
 <footer>
     <span class="footer-logo">PERFUME_COLLECTION_NA</span>
     <p>Premium Fragrance Boutique Namibia</p>
@@ -519,7 +542,7 @@
         { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg", isNew: false },
         { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD_AL_LAYL_(100ml)[1].jpg", isNew: false },
         { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/SUAVE (100ml).jpg", isNew: false },
-        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg", isNew: false },
+        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: false },
         { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ZARA MAN (100ml).jpg", isNew: false },
 
         { name: "Berries Weekend Pink Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND PINK EDITION (100ml).jpg", isNew: false },
@@ -689,28 +712,24 @@
         }
     }
 
-    // CLICK OUTSIDE TO CLOSE
+    // Modal Exit Listeners
     window.onclick = function(event) {
-        const orderModal = document.getElementById('orderModal');
-        const adminModal = document.getElementById('adminLoginModal');
-        
-        if (event.target === orderModal) {
-            closeModal('orderModal');
-        }
-        if (event.target === adminModal) {
-            closeModal('adminLoginModal');
-        }
+        const modals = ['orderModal', 'adminLoginModal'];
+        modals.forEach(id => {
+            const modal = document.getElementById(id);
+            if (event.target === modal) closeModal(id);
+        });
     }
 
     async function submitOrder() {
         const cName = document.getElementById('custName').value;
         const cPhone = document.getElementById('custPhone').value;
-        const btn = document.getElementById('confirmOrderBtn');
-
+        
         if(!cName || !cPhone) return alert("Please fill in your details.");
 
-        btn.disabled = true;
-        btn.innerText = "Processing...";
+        // Show Loading and Hide Order UI
+        document.getElementById('orderModal').style.display = 'none';
+        document.getElementById('loadingModal').style.display = 'flex';
 
         try {
             await fetch(API_URL, {
@@ -734,13 +753,13 @@
 
         emailjs.send('service_mjgfqz6', 'template_50pvt8o', templateParams)
             .then(function() {
+                document.getElementById('loadingModal').style.display = 'none';
                 alert("Order Confirmed! We have received your request and will contact you shortly.");
-                closeModal('orderModal');
                 document.getElementById('custName').value = "";
                 document.getElementById('custPhone').value = "";
             }, function(error) {
-                alert("Order processed, but notification failed. Please contact us directly via WhatsApp.");
-                closeModal('orderModal');
+                document.getElementById('loadingModal').style.display = 'none';
+                alert("Order recorded, but notification failed. Please follow up with us via WhatsApp.");
             });
     }
 
