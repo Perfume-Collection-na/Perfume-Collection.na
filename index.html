@@ -100,7 +100,6 @@
             color: var(--gold);
             word-wrap: break-word;
             padding: 0 10px;
-            /* BOLDED PER USER REQUEST */
             font-weight: bold;
         }
 
@@ -111,7 +110,6 @@
             letter-spacing: 2px;
         }
 
-        /* FIXED/STICKY NAVIGATION */
         nav {
             position: -webkit-sticky;
             position: sticky;
@@ -359,7 +357,6 @@
             margin-bottom: 15px;
             display: block;
             word-wrap: break-word;
-            /* BOLDED PER USER REQUEST */
             font-weight: bold;
         }
 
@@ -522,7 +519,7 @@
         { name: "Oud For Glory Badee Al Oud", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD FOR GRORY BADEE AL OUD BY LATTAFA(100ml).jpg", isNew: false },
         { name: "Oud Al Layl", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/OUD_AL_LAYL_(100ml)[1].jpg", isNew: false },
         { name: "Suave", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/SUAVE (100ml).jpg", isNew: false },
-        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PANDORA SCENTS (100ml).jpg", isNew: false },
+        { name: "Wayfarer Homme", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/WAYFARER HOMME BY PENDORA SCENTS (100ml).jpg", isNew: false },
         { name: "Zara Man", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/ZARA MAN (100ml).jpg", isNew: false },
 
         { name: "Berries Weekend Pink Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/BERRIES WEEKEND PINK EDITION (100ml).jpg", isNew: false },
@@ -722,19 +719,19 @@
             order_date: new Date().toLocaleString()
         };
 
-        emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
+        emailjs.send('service_mjgfqz6', 'template_50pvt8o', templateParams)
             .then(function() {
-                alert("Order submitted successfully!");
+                alert("Order Confirmed! We have received your request and will contact you shortly.");
                 closeModal('orderModal');
-                window.open(`https://wa.me/264813557282?text=New Order: ${selectedItem.name} for ${cName}`, '_blank');
+                document.getElementById('custName').value = "";
+                document.getElementById('custPhone').value = "";
             }, function(error) {
-                alert("Email failed, but logged to sheet. Redirecting to WhatsApp.");
-                window.open(`https://wa.me/264813557282?text=New Order: ${selectedItem.name} for ${cName}`, '_blank');
+                alert("There was an issue processing your order. Please try again or contact us via WhatsApp.");
                 closeModal('orderModal');
             });
     }
 
-    syncWithSheet();
+    window.onload = syncWithSheet;
 </script>
 
 </body>
