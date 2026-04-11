@@ -303,9 +303,36 @@
 </div>
 
 <script>
-    if (sessionStorage.getItem('adminAuth') !== 'true') window.location.href = 'index.html';
-</script>
+(async function () {
+    const token = localStorage.getItem('adminToken');
 
+    if (!token) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    try {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "VERIFY_ADMIN",
+                token: token
+            })
+        });
+
+        const data = await res.json();
+
+        if (!data || data.valid !== true) {
+            localStorage.removeItem('adminToken');
+            window.location.href = 'index.html';
+        }
+    } catch (e) {
+        localStorage.removeItem('adminToken');
+        window.location.href = 'index.html';
+    }
+})();
+</script>
 <div id="promoBanner">
     <span id="promoText" class="promo-pulse"></span>
     <div id="promoTimer" style="font-size: 0.7rem; margin-top: 5px; opacity: 0.8;"></div>
@@ -547,20 +574,26 @@
 
             if (missingFromSheet.length > 0) {
                 showLoader(`Syncing ${missingFromSheet.length} items...`);
-                for (const item of missingFromSheet) {
-                    await fetch(API_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify({
-                            action: "ADD_PRODUCT",
-                            sheet: "Inventory",
-                            data: [item.name, item.price, item.sPrice, item.onSale, item.stock, item.cat, item.img, item.isNew]
-                        })
-                    });
-                }
-                return refreshData();
-            }
+await fetch(API_URL, {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        action: "BATCH_ADD_PRODUCTS",
+        sheet: "Inventory",
+        items: missingFromSheet.map(item => ([
+            item.name,
+            item.price,
+            item.sPrice,
+            item.onSale,
+            item.stock,
+            item.cat,
+            item.img,
+            item.isNew
+        ]))
+    })
+});
 
+return refreshData();
             perfumes = sheetItems;
             renderLists(data.orders || []);
             checkActivePromo();
@@ -593,24 +626,60 @@
         `).join('');
     }
 
-    async function globalUpdate(actionType, rowData) {
-        showLoader("Updating Cloud Data...");
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    action: actionType,
-                    ...rowData
-                })
-            });
-            setTimeout(refreshData, 1500);
-        } catch (e) {
-            alert("Sync Failed.");
-            hideLoader();
-        }
-    }
+async function globalUpdate(actionType, rowData) {
+    showLoader("Updating Cloud Data...");
 
+    try {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: actionType,
+                ...rowData
+            })
+        });
+
+        const result = await res.json().catch(() => ({}));
+
+        // ⚡ INSTANT LOCAL REFRESH (no waiting / no timeout)
+        if (actionType === "ADD_PRODUCT") {
+            if (rowData.data) {
+                perfumes.push({
+                    name: rowData.data[0],
+                    price: rowData.data[1],
+                    sPrice: rowData.data[2],
+                    onSale: rowData.data[3],
+                    stock: rowData.data[4],
+                    cat: rowData.data[5],
+                    img: rowData.data[6],
+                    isNew: rowData.data[7]
+                });
+            }
+        }
+
+        if (actionType === "DELETE_PRODUCT") {
+            perfumes = perfumes.filter(p => (p.name || p.Name) !== rowData.identifier);
+        }
+
+        if (actionType === "UPDATE_PRODUCT_FULL") {
+            const p = perfumes.find(p => (p.name || p.Name) === rowData.identifier);
+            if (p) {
+                p.name = rowData.data.name;
+                p.price = rowData.data.price;
+                p.stock = rowData.data.stock;
+                if (rowData.data.img) p.img = rowData.data.img;
+            }
+        }
+
+        renderLists();
+
+    } catch (e) {
+        alert("Sync Failed.");
+        console.error(e);
+    } finally {
+        hideLoader();
+    }
+}
     function startPromotion() {
         const msg = document.getElementById('promoMsg').value;
         const type = document.getElementById('promoType').value;
