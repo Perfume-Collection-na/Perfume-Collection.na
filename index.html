@@ -517,11 +517,75 @@
 
 <script>
     (function() {
-        emailjs.init("hXQEk__VsDHgyAAGd"); 
-    })();
+    emailjs.init("hXQEk__VsDHgyAAGd"); 
+})();
 
-    const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
+// =========================
+// 🔐 REAL ADMIN AUTH FIX
+// =========================
+
+function setAdminToken(token) {
+    sessionStorage.setItem("adminToken", token);
+}
+
+function getAdminToken() {
+    return sessionStorage.getItem("adminToken");
+}
+
+// THIS is the ONLY FIXED LOGIN FLOW
+async function login() {
+    const user = document.getElementById('adminUser').value;
+    const pass = document.getElementById('adminPass').value;
+
+    try {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action: "ADMIN_LOGIN",
+                username: user,
+                password: pass
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.result === "success" && data.token) {
+            setAdminToken(data.token);
+
+            // ✅ guaranteed redirect only after server verification
+            window.location.replace("admin.html");
+        } else {
+            alert("Invalid username or password");
+        }
+
+    } catch (err) {
+        console.error("Login error:", err);
+        alert("Login failed. Please try again.");
+    }
+}
+
+// =========================
+// MODAL CONTROL (UNCHANGED LOGIC)
+// =========================
+
+function openAdminLogin() {
+    document.getElementById('adminLoginModal').style.display = "flex";
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        closeModal(event.target.id);
+    }
+};
     const defaultPerfumes = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
         { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: false },
