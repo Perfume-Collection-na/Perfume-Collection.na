@@ -581,12 +581,13 @@ function closeModal(id) {
     document.getElementById(id).style.display = "none";
 }
 
-window.onclick = function(event) {
+window.addEventListener("click", function(event) {
     if (event.target.classList.contains('modal')) {
         closeModal(event.target.id);
     }
-};
-    const defaultPerfumes = [
+});
+    
+const defaultPerfumes = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
         { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: false },
         { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg", isNew: false },
