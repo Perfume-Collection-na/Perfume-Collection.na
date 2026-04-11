@@ -755,15 +755,13 @@
         emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
             .then(function() {
                 loading.style.display = "none";
-                alert("Order Successful! Opening WhatsApp for final confirmation...");
-                const waMsg = `Hello Perfume Collection! I would like to order: ${selectedItem.name} (${selectedItem.price}). My name is ${cName}.`;
-                window.open(`https://wa.me/264813557282?text=${encodeURIComponent(waMsg)}`, '_blank');
+                alert("Order Successful! We have received your order and will contact you shortly.");
                 closeModal('orderModal');
                 btn.disabled = false;
                 btn.innerText = "Confirm Order";
             }, function(error) {
                 loading.style.display = "none";
-                alert("Order saved, but notification failed. Please reach out to us on WhatsApp!");
+                alert("Something went wrong. Please reach out to us on WhatsApp or Email directly!");
                 btn.disabled = false;
                 btn.innerText = "Confirm Order";
             });
