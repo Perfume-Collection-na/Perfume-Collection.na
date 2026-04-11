@@ -108,7 +108,7 @@
         #promoBanner {
             display: none;
             position: fixed;
-            top: 135px; /* Adjusted for larger header */
+            top: 135px;
             left: 0;
             width: 100%;
             background: var(--gold);
@@ -303,6 +303,8 @@
 </div>
 
 <script>
+const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/";
+
 (async function () {
     const token = localStorage.getItem('adminToken');
 
@@ -333,6 +335,7 @@
     }
 })();
 </script>
+
 <div id="promoBanner">
     <span id="promoText" class="promo-pulse"></span>
     <div id="promoTimer" style="font-size: 0.7rem; margin-top: 5px; opacity: 0.8;"></div>
@@ -594,6 +597,8 @@ await fetch(API_URL, {
 });
 
 return refreshData();
+            }
+
             perfumes = sheetItems;
             renderLists(data.orders || []);
             checkActivePromo();
@@ -641,7 +646,6 @@ async function globalUpdate(actionType, rowData) {
 
         const result = await res.json().catch(() => ({}));
 
-        // ⚡ INSTANT LOCAL REFRESH (no waiting / no timeout)
         if (actionType === "ADD_PRODUCT") {
             if (rowData.data) {
                 perfumes.push({
@@ -680,6 +684,7 @@ async function globalUpdate(actionType, rowData) {
         hideLoader();
     }
 }
+
     function startPromotion() {
         const msg = document.getElementById('promoMsg').value;
         const type = document.getElementById('promoType').value;
@@ -789,12 +794,11 @@ async function globalUpdate(actionType, rowData) {
     }
 
     function logout() {
-        sessionStorage.removeItem('adminAuth');
+        localStorage.removeItem('adminToken');
         window.location.href = 'index.html';
     }
 
     function renderLists(orders = []) {
-        // Render Inventory
         const invDiv = document.getElementById('listItems');
         invDiv.innerHTML = perfumes.length ? perfumes.map((p) => {
             const pName = p.name || p.Name;
@@ -829,7 +833,6 @@ async function globalUpdate(actionType, rowData) {
             </div>`;
         }).join('') : '<p>No inventory items found.</p>';
 
-        // Render Orders
         const ordDiv = document.getElementById('orderList');
         ordDiv.innerHTML = orders.length ? orders.map(o => `
             <div class="order-item">
@@ -847,4 +850,4 @@ async function globalUpdate(actionType, rowData) {
 </script>
 
 </body>
-    </html>
+</html>
