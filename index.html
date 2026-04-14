@@ -542,9 +542,6 @@ async function login() {
     try {
         const res = await fetch(API_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify({
                 action: "ADMIN_LOGIN",
                 username: user,
@@ -556,7 +553,6 @@ async function login() {
 
         if (data.result === "success" && data.token) {
             setAdminToken(data.token);
-
             // ✅ guaranteed redirect only after server verification
             window.location.replace("admin.html");
         } else {
@@ -579,11 +575,17 @@ function openAdminLogin() {
 
 function closeModal(id) {
     document.getElementById(id).style.display = "none";
+    if(id === 'orderModal') {
+        document.getElementById('confirmOrderBtn').disabled = false;
+        document.getElementById('confirmOrderBtn').innerText = "Confirm Order";
+    }
 }
 
 window.addEventListener("click", function(event) {
     if (event.target.classList.contains('modal')) {
-        closeModal(event.target.id);
+        if (event.target.id !== 'loadingModal') {
+            closeModal(event.target.id);
+        }
     }
 });
     
@@ -755,37 +757,6 @@ const defaultPerfumes = [
         document.getElementById('modalTitle').innerText = name;
         document.getElementById('modalPrice').innerText = price;
         document.getElementById('orderModal').style.display = "flex";
-    }
-
-    function openAdminLogin() {
-        document.getElementById('adminLoginModal').style.display = "flex";
-    }
-
-    function login() {
-        const user = document.getElementById('adminUser').value;
-        const pass = document.getElementById('adminPass').value;
-        if (user === "LNJ_Admin" && pass === "J@cob/CEO.PCna") {
-            sessionStorage.setItem('adminAuth', 'true');
-            window.location.href = 'admin.html';
-        } else {
-            alert("Unauthorized Access.");
-        }
-    }
-
-    function closeModal(id) { 
-        document.getElementById(id).style.display = "none"; 
-        if(id === 'orderModal') {
-            document.getElementById('confirmOrderBtn').disabled = false;
-            document.getElementById('confirmOrderBtn').innerText = "Confirm Order";
-        }
-    }
-
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            if (event.target.id !== 'loadingModal') {
-                closeModal(event.target.id);
-            }
-        }
     }
 
     async function submitOrder() {
