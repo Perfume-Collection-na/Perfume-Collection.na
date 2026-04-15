@@ -522,7 +522,7 @@
 
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    // 🔐 ADMIN AUTH WITH LOADING MODAL
+    // 🔐 ADMIN AUTH WITH LOADING MODAL (PULLING FROM ADMINS SHEET)
     async function login() {
         const user = document.getElementById('adminUser').value;
         const pass = document.getElementById('adminPass').value;
@@ -541,7 +541,7 @@
                 body: JSON.stringify({
                     action: "ADMIN_LOGIN",
                     username: user,
-                    password: pass
+                    password: pass // This gets hashed by the code.gs on the server side
                 })
             });
 
@@ -552,7 +552,7 @@
                 window.location.replace("admin.html");
             } else {
                 loading.style.display = "none";
-                alert("Invalid username or password");
+                alert(data.message || "Invalid username or password");
                 loginBtn.disabled = false;
                 loginBtn.innerText = "Login";
             }
@@ -561,7 +561,7 @@
             loginBtn.disabled = false;
             loginBtn.innerText = "Login";
             console.error("Login error:", err);
-            alert("Login failed. Please try again.");
+            alert("Login failed. Check your Apps Script deployment or connection.");
         }
     }
 
@@ -585,6 +585,7 @@
         }
     });
     
+    // ... rest of the inventory and logic continues as established ...
     const defaultPerfumes = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
         { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: false },
