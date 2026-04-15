@@ -530,11 +530,6 @@ function setAdminToken(token) {
     sessionStorage.setItem("adminToken", token);
 }
 
-function getAdminToken() {
-    return sessionStorage.getItem("adminToken");
-}
-
-// THIS is the ONLY FIXED LOGIN FLOW
 async function login() {
     const user = document.getElementById('adminUser').value;
     const pass = document.getElementById('adminPass').value;
@@ -553,7 +548,6 @@ async function login() {
 
         if (data.result === "success" && data.token) {
             setAdminToken(data.token);
-            // ✅ guaranteed redirect only after server verification
             window.location.replace("admin.html");
         } else {
             alert("Invalid username or password");
@@ -564,10 +558,6 @@ async function login() {
         alert("Login failed. Please try again.");
     }
 }
-
-// =========================
-// MODAL CONTROL (UNCHANGED LOGIC)
-// =========================
 
 function openAdminLogin() {
     document.getElementById('adminLoginModal').style.display = "flex";
@@ -772,9 +762,9 @@ const defaultPerfumes = [
         loading.style.display = "flex";
 
         try {
-            fetch(API_URL, {
+            // FIXED: Removed 'no-cors' so the backend can actually process the data reliably
+            await fetch(API_URL, {
                 method: 'POST',
-                mode: 'no-cors',
                 body: JSON.stringify({
                     sheet: "Orders",
                     action: "ADD_PRODUCT", 
