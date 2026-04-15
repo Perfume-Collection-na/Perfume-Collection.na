@@ -303,42 +303,69 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
+    let perfumes = [];
 
-(async function () {
-    // EMBEDDED ALTERATION: Check both storage types for the token
-    const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
-
+    // 1. Immediate Token Check
+    const token = sessionStorage.getItem("adminToken");
     if (!token) {
-        window.location.href = 'index.html';
-        return;
+        window.location.replace("index.html");
     }
 
-    try {
-        const res = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                action: "VERIFY_ADMIN",
-                token: token
-            })
-        });
+    // 2. Verified Initialization
+    async function initAdmin() {
+        const loadingModal = document.getElementById('loadingModal');
+        loadingModal.style.display = "flex";
+        document.getElementById('loadingText').innerText = "Verifying Session...";
 
-        const data = await res.json();
+        try {
+            // Verify token with the backend
+            const authResponse = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "VERIFY_ADMIN",
+                    token: token
+                })
+            });
 
-        if (!data || data.valid !== true) {
-            localStorage.removeItem('adminToken');
-            sessionStorage.removeItem('adminToken');
-            window.location.href = 'index.html';
+            const authData = await authResponse.json();
+
+            if (authData.result === "success") {
+                document.getElementById('loadingText').innerText = "Retrieving Content...";
+                await refreshData(); // Load the actual dashboard data
+                loadingModal.style.display = "none";
+            } else {
+                alert("Session expired. Please login again.");
+                sessionStorage.clear();
+                window.location.replace("index.html");
+            }
+        } catch (err) {
+            console.error("Initialization Error:", err);
+            // If it hangs here, the App Script might not be returning valid JSON
+            alert("Connection error while retrieving data. Please check your App Script deployment.");
+            loadingModal.style.display = "none";
         }
-    } catch (e) {
-        localStorage.removeItem('adminToken');
-        sessionStorage.removeItem('adminToken');
-        window.location.href = 'index.html';
     }
-})();
-</script>
 
+    async function refreshData() {
+        try {
+            // Fetching both Inventory and Orders
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            // Ensure data is mapped correctly to your local variables
+            if (data && data.length > 0) {
+                perfumes = data; 
+                renderLists(); // This function must exist in your admin.html to show the UI
+            }
+        } catch (error) {
+            console.error("Data Retrieval Failed:", error);
+            throw error; // Pass to initAdmin for handling
+        }
+    }
+
+    window.onload = initAdmin;
+</script>
 <div id="promoBanner">
     <span id="promoText" class="promo-pulse"></span>
     <div id="promoTimer" style="font-size: 0.7rem; margin-top: 5px; opacity: 0.8;"></div>
