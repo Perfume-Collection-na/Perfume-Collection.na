@@ -522,7 +522,7 @@
 
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    // 🔐 ADMIN AUTH WITH LOADING MODAL (PULLING FROM ADMINS SHEET)
+    // 🔐 ADMIN AUTH LOGIC
     async function login() {
         const user = document.getElementById('adminUser').value;
         const pass = document.getElementById('adminPass').value;
@@ -541,7 +541,7 @@
                 body: JSON.stringify({
                     action: "ADMIN_LOGIN",
                     username: user,
-                    password: pass // This gets hashed by the code.gs on the server side
+                    password: pass 
                 })
             });
 
@@ -561,9 +561,18 @@
             loginBtn.disabled = false;
             loginBtn.innerText = "Login";
             console.error("Login error:", err);
-            alert("Login failed. Check your Apps Script deployment or connection.");
+            alert("Login failed. Check your connection.");
         }
     }
+
+    // ⌨️ ENTER KEY LISTENERS
+    document.getElementById('adminPass').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') login();
+    });
+
+    document.getElementById('adminUser').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') document.getElementById('adminPass').focus();
+    });
 
     function openAdminLogin() {
         document.getElementById('adminLoginModal').style.display = "flex";
@@ -585,7 +594,6 @@
         }
     });
     
-    // ... rest of the inventory and logic continues as established ...
     const defaultPerfumes = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
         { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: false },
@@ -632,7 +640,7 @@
         { name: "Odyssey Spectra", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ODYSSEY SPECTRA (100ml).jpg", isNew: false },
         { name: "Rose Seduction Secret Las Vegas", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ROSE SEDUCTION SECRET LAS VEGAS (100ml).jpg", isNew: false },
         { name: "Rose Seduction Secret Sunkissed", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/ROSE SEDUCTION SECRET SUNKISSED (100ml).jpg", isNew: false },
-        { name: "Ur Way by Fragrance World", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/UR_WAY_BY_FRAGRANCE_WORLD_(100ml)[1].jpg", isNew: false },
+        { name: "Ur Way by Fragrance World", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/UR_WAY_BY_FRAG_WORLD.jpg", isNew: false },
         { name: "Yara Pink by Lattafa", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/YARA PINK BY LATTAFA (100ml).jpg", isNew: false },
         { name: "Yara Violet by Lattafa", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "feminine", img: "image/feminine/YARA VIOLET BY LATTAFA (100ml).jpg", isNew: false },
 
