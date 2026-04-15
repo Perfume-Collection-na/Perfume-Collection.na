@@ -594,7 +594,6 @@
 
     // --- CORE HANDSHAKE & DATA SYNC ---
     async function initAdmin() {
-        // Critical: Check session storage for the security token
         const token = sessionStorage.getItem("adminToken");
         
         if (!token) {
@@ -624,7 +623,6 @@
             }
         } catch (err) {
             console.error("Critical Connection Error during Auth:", err);
-            // On fail, alert user but try to load anyway for safety
             alert("Connection error. Attempting to restore database view.");
             await refreshData();
         }
@@ -639,7 +637,6 @@
             const sheetItems = Array.isArray(data) ? data : (data.inventory || []);
             perfumes = sheetItems;
             
-            // Check for structural mismatch between sheet and MASTER catalog
             const missingItems = MASTER_COLLECTION.filter(masterItem => 
                 !sheetItems.some(s => (s.name || s.Name) === masterItem.name)
             );
@@ -655,7 +652,7 @@
                         items: missingItems.map(i => [i.name, i.price, i.sPrice, i.onSale, i.stock, i.cat, i.img, i.isNew])
                     })
                 });
-                return refreshData(); // Re-sync after repair
+                return refreshData(); 
             }
 
             renderLists(data.orders || []);
@@ -671,7 +668,6 @@
 
     // --- RENDERING ENGINE ---
     function renderLists(orders = []) {
-        // Inventory Rendering
         const invDiv = document.getElementById('listItems');
         if (!perfumes || perfumes.length === 0) {
             invDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">The inventory is currently empty.</p>';
@@ -710,7 +706,6 @@
             }).join('');
         }
 
-        // Order Rendering
         const ordDiv = document.getElementById('orderList');
         if (!orders || orders.length === 0) {
             ordDiv.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">No pending orders in the queue.</p>';
@@ -890,6 +885,14 @@
             window.location.href = 'index.html';
         }
     }
+
+    /** * GLOBAL CLICK LISTENER: Close modals on background click
+     */
+    window.addEventListener('click', (event) => {
+        if (event.target.classList.contains('modal')) {
+            closeModal(event.target.id);
+        }
+    });
 
     /** * Start the system after a brief delay to ensure 
      * browser security tokens are fully readable.
