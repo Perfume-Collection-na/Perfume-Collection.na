@@ -327,25 +327,66 @@
             box-sizing: border-box;
         }
 
-        /* Password field adjustments */
+        /* Stylized Eye Toggle CSS */
         .pass-wrapper {
             position: relative;
             width: 100%;
         }
 
-        .eye-icon {
+        .eye-toggle-container {
             position: absolute;
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #666;
-            font-size: 1.2rem;
-            user-select: none;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 5;
         }
 
-        .eye-icon:hover { color: var(--gold); }
+        .eye-base {
+            position: relative;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #666; /* The "o" */
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .eye-base::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -2px;
+            width: 14px;
+            height: 7px;
+            border-top: 2px solid #666; /* The "lid" */
+            border-radius: 50% 50% 0 0;
+        }
+
+        .eye-toggle-container.hidden .eye-base::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -4px;
+            width: 22px;
+            height: 2px;
+            background: #666; /* The "cancelled" slash */
+            transform: rotate(45deg);
+            transform-origin: center;
+        }
+
+        .eye-toggle-container:hover .eye-base,
+        .eye-toggle-container:hover .eye-base::before {
+            border-color: var(--gold);
+        }
+
+        .eye-toggle-container:hover.hidden .eye-base::after {
+            background: var(--gold);
+        }
 
         /* Loading Spinner */
         .spinner {
@@ -511,7 +552,9 @@
         <input type="text" id="adminUser" class="login-input" placeholder="Username">
         <div class="pass-wrapper">
             <input type="password" id="adminPass" class="login-input" placeholder="Password">
-            <span class="eye-icon" onclick="togglePassword()">👁️</span>
+            <div class="eye-toggle-container hidden" onclick="togglePassword(this)">
+                <div class="eye-base"></div>
+            </div>
         </div>
         <button style="padding: 10px; width: 100%; border: none; cursor: pointer; margin-top: 10px;" onclick="login()">Login</button>
         <button style="margin-top: 10px; background: none; border: none; color: #666; cursor: pointer;" onclick="closeModal('adminLoginModal')">Cancel</button>
@@ -545,16 +588,15 @@
 
     const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-    // 👁️ TOGGLE PASSWORD VISIBILITY
-    function togglePassword() {
+    // 👁️ TOGGLE PASSWORD VISIBILITY (Custom Icon Style)
+    function togglePassword(container) {
         const passInput = document.getElementById('adminPass');
-        const eyeIcon = document.querySelector('.eye-icon');
         if (passInput.type === 'password') {
             passInput.type = 'text';
-            eyeIcon.innerText = '🔒';
+            container.classList.remove('hidden'); // Shows eyelid eye
         } else {
             passInput.type = 'password';
-            eyeIcon.innerText = '👁️';
+            container.classList.add('hidden'); // Adds slash (cancelled)
         }
     }
 
@@ -583,7 +625,6 @@
 
             const data = await res.json();
 
-            // Dismiss loading before showing result
             loading.style.display = "none";
 
             if (data.result === "success" && data.token) {
