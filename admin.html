@@ -374,52 +374,32 @@
     }
 
     // 2. Verified Initialization
-async function initAdmin() {
-        const token = sessionStorage.getItem("adminToken");
-        
-        // If no token exists at all, redirect immediately
-        if (!token) {
-            console.error("No token found in session.");
-            window.location.replace("index.html");
-            return;
-        }
-
+    async function initAdmin() {
         showLoader("Verifying Session...");
-
         try {
             const authResponse = await fetch(API_URL, {
                 method: "POST",
-                // Ensure we don't send a null/undefined body
                 body: JSON.stringify({
                     action: "VERIFY_ADMIN",
                     token: token
                 })
             });
-
             const authData = await authResponse.json();
 
             if (authData.result === "success") {
-                console.log("Session verified. Loading data...");
                 await refreshData();
             } else {
-                console.warn("Server rejected token:", authData.message);
-                alert("Session invalid or expired. Please login again.");
+                alert("Session expired. Please login again.");
                 sessionStorage.clear();
                 window.location.replace("index.html");
             }
         } catch (err) {
-            console.error("Critical Connection Error:", err);
-            // If the server is down, we don't want to kick the admin out immediately
-            // Let's try to load cached data or show an error instead of redirecting
-            alert("Database connection failed. Please check your internet or App Script deployment.");
+            console.error("Initialization Error:", err);
+            alert("Connection error. Please check your App Script deployment.");
             hideLoader();
         }
     }
 
-    // Use a slight timeout to ensure browser storage is ready
-    window.onload = () => {
-        setTimeout(initAdmin, 100); 
-    };
     async function refreshData() {
         showLoader("Retrieving content...");
         try {
