@@ -304,202 +304,6 @@
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
-    let perfumes = [];
-
-    // 1. Immediate Token Check
-    const token = sessionStorage.getItem("adminToken");
-    if (!token) {
-        window.location.replace("index.html");
-    }
-
-    // 2. Verified Initialization
-    async function initAdmin() {
-        const loadingModal = document.getElementById('loadingModal');
-        loadingModal.style.display = "flex";
-        document.getElementById('loadingText').innerText = "Verifying Session...";
-
-        try {
-            // Verify token with the backend
-            const authResponse = await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    action: "VERIFY_ADMIN",
-                    token: token
-                })
-            });
-
-            const authData = await authResponse.json();
-
-            if (authData.result === "success") {
-                document.getElementById('loadingText').innerText = "Retrieving Content...";
-                await refreshData(); // Load the actual dashboard data
-                loadingModal.style.display = "none";
-            } else {
-                alert("Session expired. Please login again.");
-                sessionStorage.clear();
-                window.location.replace("index.html");
-            }
-        } catch (err) {
-            console.error("Initialization Error:", err);
-            // If it hangs here, the App Script might not be returning valid JSON
-            alert("Connection error while retrieving data. Please check your App Script deployment.");
-            loadingModal.style.display = "none";
-        }
-    }
-
-    async function refreshData() {
-        try {
-            // Fetching both Inventory and Orders
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            
-            // Ensure data is mapped correctly to your local variables
-            if (data && data.length > 0) {
-                perfumes = data; 
-                renderLists(); // This function must exist in your admin.html to show the UI
-            }
-        } catch (error) {
-            console.error("Data Retrieval Failed:", error);
-            throw error; // Pass to initAdmin for handling
-        }
-    }
-
-    window.onload = initAdmin;
-</script>
-<div id="promoBanner">
-    <span id="promoText" class="promo-pulse"></span>
-    <div id="promoTimer" style="font-size: 0.7rem; margin-top: 5px; opacity: 0.8;"></div>
-</div>
-
-<header>
-    <span class="admin-logo">PERFUME_COLLECTION_NA</span>
-    <nav class="admin-nav">
-        <a href="#orders">Orders</a>
-        <div class="nav-separator"></div>
-        <a href="#inventory">Inventory</a>
-        <div class="nav-separator"></div>
-        <a onclick="openModal('productModal')">Product Entry</a>
-        <div class="nav-separator"></div>
-        <a onclick="openModal('promoModal')">Announce Promo</a>
-        <div class="nav-separator"></div>
-        <a onclick="logout()">Logout</a>
-    </nav>
-</header>
-
-<div id="promoModal" class="modal">
-    <div class="modal-content">
-        <h2>Announce Promotion</h2>
-        <div class="form-group">
-            <label>Promotion Message</label>
-            <input type="text" id="promoMsg" placeholder="e.g. FLASH SALE!">
-        </div>
-        <div class="form-group">
-            <label>Discount Type (Required)</label>
-            <select id="promoType">
-                <option value="fixed">Exact Off-Price (e.g., N$ 50 off)</option>
-                <option value="percent">Percentage Off (e.g., 10% off)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Discount Value</label>
-            <input type="number" id="promoVal" placeholder="50">
-        </div>
-        <div class="form-group">
-            <label>Affected Products</label>
-            <select id="promoTarget" onchange="toggleSpecificSelection()">
-                <option value="all">All Products</option>
-                <option value="feminine">Feminine Only</option>
-                <option value="masculine">Masculine Only</option>
-                <option value="unisex">Unisex Only</option>
-                <option value="specific">Choose Specifically...</option>
-            </select>
-        </div>
-        
-        <div id="specificPerfumeList"></div>
-
-        <div class="form-group">
-            <label>Sale Period</label>
-            <select id="promoPeriod">
-                <option value="1">Daily Sale (24 Hours)</option>
-                <option value="7">Weekly Sale (7 Days)</option>
-                <option value="30">Monthly Sale (30 Days)</option>
-            </select>
-        </div>
-        <button class="btn btn-save" onclick="startPromotion()">Trigger Live Promotion</button>
-        <button class="btn" style="background:none; color:#666;" onclick="closeModal('promoModal')">Cancel</button>
-    </div>
-</div>
-
-<input type="file" id="editImageInput" style="display:none;" accept="image/*">
-
-<div id="productModal" class="modal">
-    <div class="modal-content">
-        <h2>Add New Product</h2>
-        <div class="form-group">
-            <label>Perfume Name</label>
-            <input type="text" id="pName">
-        </div>
-        <div class="form-group">
-            <label>Price</label>
-            <input type="text" id="pPrice" placeholder="N$ 400.00">
-        </div>
-        <div class="checkbox-group">
-            <input type="checkbox" id="pOnSale" onchange="toggleSaleField()">
-            <label for="pOnSale">Has Sale Price?</label>
-        </div>
-        <div id="saleField" class="form-group" style="display:none; margin-top:10px;">
-            <label>Sale Price</label>
-            <input type="text" id="pSalePrice" placeholder="N$ 350.00">
-        </div>
-        <div class="form-group">
-            <label>Upload Product Image</label>
-            <input type="file" id="pImageFile" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label>Stock Count</label>
-            <input type="number" id="pStock" value="1">
-        </div>
-        <div class="form-group">
-            <label>Category</label>
-            <select id="pCat">
-                <option value="masculine">Masculine</option>
-                <option value="feminine">Feminine</option>
-                <option value="unisex">Unisex</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>New Arrival?</label>
-            <select id="pNew">
-                <option value="FALSE">No</option>
-                <option value="TRUE">Yes</option>
-            </select>
-        </div>
-        <button id="submitBtn" class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
-        <button class="btn" style="background:none; color:#666;" onclick="closeModal('productModal')">Cancel</button>
-    </div>
-</div>
-
-<div class="container" id="orders">
-    <section>
-        <h2>Customer Orders Queue</h2>
-        <div id="orderList"></div>
-    </section>
-</div>
-
-<div class="container" id="inventory">
-    <section>
-        <h2>Live Inventory List</h2>
-        <div id="listItems"></div>
-    </section>
-</div>
-
-<footer>
-    <span class="footer-logo">PERFUME_COLLECTION_NA</span>
-    <p>Administrative Portal - Private Access</p>
-    <p>&copy; 2026 Perfume Collection _na. Managed by LNJ_Admin.</p>
-</footer>
-
-<script>
     const MASTER_COLLECTION = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: "FALSE" },
         { name: "Bavarria Man Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: "FALSE" },
@@ -554,6 +358,12 @@
     let perfumes = [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
 
+    // 1. Immediate Token Check
+    const token = sessionStorage.getItem("adminToken");
+    if (!token) {
+        window.location.replace("index.html");
+    }
+
     function showLoader(text = "Synchronizing...") {
         document.getElementById('loaderText').innerText = text;
         document.getElementById('globalLoader').style.display = "flex";
@@ -563,33 +373,31 @@
         document.getElementById('globalLoader').style.display = "none";
     }
 
-    function openModal(id) { 
-        document.getElementById(id).style.display = 'flex'; 
-        if(id === 'promoModal') populateSpecificList();
-    }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    
-    window.addEventListener('click', (event) => {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    });
+    // 2. Verified Initialization
+    async function initAdmin() {
+        showLoader("Verifying Session...");
+        try {
+            const authResponse = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "VERIFY_ADMIN",
+                    token: token
+                })
+            });
+            const authData = await authResponse.json();
 
-    function triggerImageEdit(perfumeName) {
-        const input = document.getElementById('editImageInput');
-        input.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const imgPreview = document.querySelector(`img[data-perfume="${perfumeName}"]`);
-                    if(imgPreview) imgPreview.src = event.target.result;
-                    imgPreview.dataset.changed = "true";
-                };
-                reader.readAsDataURL(file);
+            if (authData.result === "success") {
+                await refreshData();
+            } else {
+                alert("Session expired. Please login again.");
+                sessionStorage.clear();
+                window.location.replace("index.html");
             }
-        };
-        input.click();
+        } catch (err) {
+            console.error("Initialization Error:", err);
+            alert("Connection error. Please check your App Script deployment.");
+            hideLoader();
+        }
     }
 
     async function refreshData() {
@@ -636,6 +444,35 @@
         } finally {
             hideLoader();
         }
+    }
+
+    function openModal(id) { 
+        document.getElementById(id).style.display = 'flex'; 
+        if(id === 'promoModal') populateSpecificList();
+    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    window.addEventListener('click', (event) => {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    });
+
+    function triggerImageEdit(perfumeName) {
+        const input = document.getElementById('editImageInput');
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imgPreview = document.querySelector(`img[data-perfume="${perfumeName}"]`);
+                    if(imgPreview) imgPreview.src = event.target.result;
+                    imgPreview.dataset.changed = "true";
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
     }
 
     function toggleSaleField() {
@@ -866,9 +703,141 @@
         `).join('') : '<p>Queue is empty.</p>';
     }
 
-    window.onload = async () => {
-        await refreshData();
-    };
+    window.onload = initAdmin;
 </script>
+
+<div id="promoBanner">
+    <span id="promoText" class="promo-pulse"></span>
+    <div id="promoTimer" style="font-size: 0.7rem; margin-top: 5px; opacity: 0.8;"></div>
+</div>
+
+<header>
+    <span class="admin-logo">PERFUME_COLLECTION_NA</span>
+    <nav class="admin-nav">
+        <a href="#orders">Orders</a>
+        <div class="nav-separator"></div>
+        <a href="#inventory">Inventory</a>
+        <div class="nav-separator"></div>
+        <a onclick="openModal('productModal')">Product Entry</a>
+        <div class="nav-separator"></div>
+        <a onclick="openModal('promoModal')">Announce Promo</a>
+        <div class="nav-separator"></div>
+        <a onclick="logout()">Logout</a>
+    </nav>
+</header>
+
+<div id="promoModal" class="modal">
+    <div class="modal-content">
+        <h2>Announce Promotion</h2>
+        <div class="form-group">
+            <label>Promotion Message</label>
+            <input type="text" id="promoMsg" placeholder="e.g. FLASH SALE!">
+        </div>
+        <div class="form-group">
+            <label>Discount Type (Required)</label>
+            <select id="promoType">
+                <option value="fixed">Exact Off-Price (e.g., N$ 50 off)</option>
+                <option value="percent">Percentage Off (e.g., 10% off)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Discount Value</label>
+            <input type="number" id="promoVal" placeholder="50">
+        </div>
+        <div class="form-group">
+            <label>Affected Products</label>
+            <select id="promoTarget" onchange="toggleSpecificSelection()">
+                <option value="all">All Products</option>
+                <option value="feminine">Feminine Only</option>
+                <option value="masculine">Masculine Only</option>
+                <option value="unisex">Unisex Only</option>
+                <option value="specific">Choose Specifically...</option>
+            </select>
+        </div>
+        
+        <div id="specificPerfumeList"></div>
+
+        <div class="form-group">
+            <label>Sale Period</label>
+            <select id="promoPeriod">
+                <option value="1">Daily Sale (24 Hours)</option>
+                <option value="7">Weekly Sale (7 Days)</option>
+                <option value="30">Monthly Sale (30 Days)</option>
+            </select>
+        </div>
+        <button class="btn btn-save" onclick="startPromotion()">Trigger Live Promotion</button>
+        <button class="btn" style="background:none; color:#666;" onclick="closeModal('promoModal')">Cancel</button>
+    </div>
+</div>
+
+<input type="file" id="editImageInput" style="display:none;" accept="image/*">
+
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <h2>Add New Product</h2>
+        <div class="form-group">
+            <label>Perfume Name</label>
+            <input type="text" id="pName">
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input type="text" id="pPrice" placeholder="N$ 400.00">
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="pOnSale" onchange="toggleSaleField()">
+            <label for="pOnSale">Has Sale Price?</label>
+        </div>
+        <div id="saleField" class="form-group" style="display:none; margin-top:10px;">
+            <label>Sale Price</label>
+            <input type="text" id="pSalePrice" placeholder="N$ 350.00">
+        </div>
+        <div class="form-group">
+            <label>Upload Product Image</label>
+            <input type="file" id="pImageFile" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>Stock Count</label>
+            <input type="number" id="pStock" value="1">
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <select id="pCat">
+                <option value="masculine">Masculine</option>
+                <option value="feminine">Feminine</option>
+                <option value="unisex">Unisex</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>New Arrival?</label>
+            <select id="pNew">
+                <option value="FALSE">No</option>
+                <option value="TRUE">Yes</option>
+            </select>
+        </div>
+        <button id="submitBtn" class="btn btn-save" onclick="addPerfume()">Update Storefront</button>
+        <button class="btn" style="background:none; color:#666;" onclick="closeModal('productModal')">Cancel</button>
+    </div>
+</div>
+
+<div class="container" id="orders">
+    <section>
+        <h2>Customer Orders Queue</h2>
+        <div id="orderList"></div>
+    </section>
+</div>
+
+<div class="container" id="inventory">
+    <section>
+        <h2>Live Inventory List</h2>
+        <div id="listItems"></div>
+    </section>
+</div>
+
+<footer>
+    <span class="footer-logo">PERFUME_COLLECTION_NA</span>
+    <p>Administrative Portal - Private Access</p>
+    <p>&copy; 2026 Perfume Collection _na. Managed by LNJ_Admin.</p>
+</footer>
+
 </body>
 </html>
