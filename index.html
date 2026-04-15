@@ -498,7 +498,7 @@
 <div id="loadingModal" class="modal">
     <div class="modal-content" style="background: none; color: white; box-shadow: none;">
         <div class="spinner"></div>
-        <p>Processing Your Order...</p>
+        <p id="loadingText">Processing...</p>
     </div>
 </div>
 
@@ -517,69 +517,75 @@
 
 <script>
     (function() {
-    emailjs.init("hXQEk__VsDHgyAAGd"); 
-})();
+        emailjs.init("hXQEk__VsDHgyAAGd"); 
+    })();
 
-const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
 
-// =========================
-// 🔐 REAL ADMIN AUTH FIX
-// =========================
+    // 🔐 ADMIN AUTH WITH LOADING MODAL
+    async function login() {
+        const user = document.getElementById('adminUser').value;
+        const pass = document.getElementById('adminPass').value;
+        const loading = document.getElementById('loadingModal');
+        const loginBtn = document.querySelector('#adminLoginModal button');
 
-function setAdminToken(token) {
-    sessionStorage.setItem("adminToken", token);
-}
+        if (!user || !pass) return alert("Please enter both username and password.");
 
-async function login() {
-    const user = document.getElementById('adminUser').value;
-    const pass = document.getElementById('adminPass').value;
+        loading.style.display = "flex";
+        loginBtn.disabled = true;
+        loginBtn.innerText = "Authenticating...";
 
-    try {
-        const res = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "ADMIN_LOGIN",
-                username: user,
-                password: pass
-            })
-        });
+        try {
+            const res = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "ADMIN_LOGIN",
+                    username: user,
+                    password: pass
+                })
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (data.result === "success" && data.token) {
-            setAdminToken(data.token);
-            window.location.replace("admin.html");
-        } else {
-            alert("Invalid username or password");
-        }
-
-    } catch (err) {
-        console.error("Login error:", err);
-        alert("Login failed. Please try again.");
-    }
-}
-
-function openAdminLogin() {
-    document.getElementById('adminLoginModal').style.display = "flex";
-}
-
-function closeModal(id) {
-    document.getElementById(id).style.display = "none";
-    if(id === 'orderModal') {
-        document.getElementById('confirmOrderBtn').disabled = false;
-        document.getElementById('confirmOrderBtn').innerText = "Confirm Order";
-    }
-}
-
-window.addEventListener("click", function(event) {
-    if (event.target.classList.contains('modal')) {
-        if (event.target.id !== 'loadingModal') {
-            closeModal(event.target.id);
+            if (data.result === "success" && data.token) {
+                sessionStorage.setItem("adminToken", data.token);
+                window.location.replace("admin.html");
+            } else {
+                loading.style.display = "none";
+                alert("Invalid username or password");
+                loginBtn.disabled = false;
+                loginBtn.innerText = "Login";
+            }
+        } catch (err) {
+            loading.style.display = "none";
+            loginBtn.disabled = false;
+            loginBtn.innerText = "Login";
+            console.error("Login error:", err);
+            alert("Login failed. Please try again.");
         }
     }
-});
+
+    function openAdminLogin() {
+        document.getElementById('adminLoginModal').style.display = "flex";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+        if(id === 'orderModal') {
+            document.getElementById('confirmOrderBtn').disabled = false;
+            document.getElementById('confirmOrderBtn').innerText = "Confirm Order";
+        }
+    }
+
+    window.addEventListener("click", function(event) {
+        if (event.target.classList.contains('modal')) {
+            if (event.target.id !== 'loadingModal') {
+                closeModal(event.target.id);
+            }
+        }
+    });
     
-const defaultPerfumes = [
+    const defaultPerfumes = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: false },
         { name: "Bavarria Man Intense", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: false },
         { name: "Brown Orchid Oud Edition", price: "N$ 400.00", salePrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "image/masculine/Brown_Orchid,_Oud_Edition_(100ml)[1].jpg", isNew: false },
@@ -762,7 +768,6 @@ const defaultPerfumes = [
         loading.style.display = "flex";
 
         try {
-            // FIXED: Removed 'no-cors' so the backend can actually process the data reliably
             await fetch(API_URL, {
                 method: 'POST',
                 body: JSON.stringify({
