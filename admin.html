@@ -303,10 +303,11 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE2sSErXpiuoCx9hS_HpdHbHPTpFs-L6xwjMglqTLCPQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
 
 (async function () {
-    const token = localStorage.getItem('adminToken');
+    // EMBEDDED ALTERATION: Check both storage types for the token
+    const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
 
     if (!token) {
         window.location.href = 'index.html';
@@ -327,10 +328,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE
 
         if (!data || data.valid !== true) {
             localStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminToken');
             window.location.href = 'index.html';
         }
     } catch (e) {
         localStorage.removeItem('adminToken');
+        sessionStorage.removeItem('adminToken');
         window.location.href = 'index.html';
     }
 })();
@@ -470,8 +473,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE
 </footer>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
-
     const MASTER_COLLECTION = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: "FALSE" },
         { name: "Bavarria Man Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: "FALSE" },
@@ -577,26 +578,25 @@ const API_URL = "https://script.google.com/macros/s/AKfycby03oeZ6-EzOc_ZwLdnV_rE
 
             if (missingFromSheet.length > 0) {
                 showLoader(`Syncing ${missingFromSheet.length} items...`);
-await fetch(API_URL, {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-        action: "BATCH_ADD_PRODUCTS",
-        sheet: "Inventory",
-        items: missingFromSheet.map(item => ([
-            item.name,
-            item.price,
-            item.sPrice,
-            item.onSale,
-            item.stock,
-            item.cat,
-            item.img,
-            item.isNew
-        ]))
-    })
-});
-
-return refreshData();
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "BATCH_ADD_PRODUCTS",
+                        sheet: "Inventory",
+                        items: missingFromSheet.map(item => ([
+                            item.name,
+                            item.price,
+                            item.sPrice,
+                            item.onSale,
+                            item.stock,
+                            item.cat,
+                            item.img,
+                            item.isNew
+                        ]))
+                    })
+                });
+                return refreshData();
             }
 
             perfumes = sheetItems;
@@ -631,23 +631,19 @@ return refreshData();
         `).join('');
     }
 
-async function globalUpdate(actionType, rowData) {
-    showLoader("Updating Cloud Data...");
+    async function globalUpdate(actionType, rowData) {
+        showLoader("Updating Cloud Data...");
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: actionType,
+                    ...rowData
+                })
+            });
 
-    try {
-        const res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                action: actionType,
-                ...rowData
-            })
-        });
-
-        const result = await res.json().catch(() => ({}));
-
-        if (actionType === "ADD_PRODUCT") {
-            if (rowData.data) {
+            if (actionType === "ADD_PRODUCT" && rowData.data) {
                 perfumes.push({
                     name: rowData.data[0],
                     price: rowData.data[1],
@@ -659,31 +655,27 @@ async function globalUpdate(actionType, rowData) {
                     isNew: rowData.data[7]
                 });
             }
-        }
 
-        if (actionType === "DELETE_PRODUCT") {
-            perfumes = perfumes.filter(p => (p.name || p.Name) !== rowData.identifier);
-        }
-
-        if (actionType === "UPDATE_PRODUCT_FULL") {
-            const p = perfumes.find(p => (p.name || p.Name) === rowData.identifier);
-            if (p) {
-                p.name = rowData.data.name;
-                p.price = rowData.data.price;
-                p.stock = rowData.data.stock;
-                if (rowData.data.img) p.img = rowData.data.img;
+            if (actionType === "DELETE_PRODUCT") {
+                perfumes = perfumes.filter(p => (p.name || p.Name) !== rowData.identifier);
             }
+
+            if (actionType === "UPDATE_PRODUCT_FULL") {
+                const p = perfumes.find(p => (p.name || p.Name) === rowData.identifier);
+                if (p) {
+                    p.name = rowData.data.name;
+                    p.price = rowData.data.price;
+                    p.stock = rowData.data.stock;
+                    if (rowData.data.img) p.img = rowData.data.img;
+                }
+            }
+            renderLists();
+        } catch (e) {
+            alert("Sync Failed.");
+        } finally {
+            hideLoader();
         }
-
-        renderLists();
-
-    } catch (e) {
-        alert("Sync Failed.");
-        console.error(e);
-    } finally {
-        hideLoader();
     }
-}
 
     function startPromotion() {
         const msg = document.getElementById('promoMsg').value;
@@ -795,6 +787,7 @@ async function globalUpdate(actionType, rowData) {
 
     function logout() {
         localStorage.removeItem('adminToken');
+        sessionStorage.removeItem('adminToken');
         window.location.href = 'index.html';
     }
 
@@ -834,7 +827,7 @@ async function globalUpdate(actionType, rowData) {
         }).join('') : '<p>No inventory items found.</p>';
 
         const ordDiv = document.getElementById('orderList');
-        ordDiv.innerHTML = orders.length ? orders.map(o => `
+        ordDiv.innerHTML = (orders && orders.length) ? orders.map(o => `
             <div class="order-item">
                 <div style="flex:1;">
                     <strong style="color:var(--purple);">${o.customer || o.Customer || 'Unknown'}</strong><br>
@@ -846,8 +839,9 @@ async function globalUpdate(actionType, rowData) {
         `).join('') : '<p>Queue is empty.</p>';
     }
 
-    window.onload = refreshData;
+    window.onload = async () => {
+        await refreshData();
+    };
 </script>
-
 </body>
 </html>
