@@ -547,11 +547,13 @@
 
             const data = await res.json();
 
+            // Dismiss loading before showing results
+            loading.style.display = "none";
+
             if (data.result === "success" && data.token) {
                 sessionStorage.setItem("adminToken", data.token);
                 window.location.replace("admin.html");
             } else {
-                loading.style.display = "none";
                 alert(data.message || "Invalid username or password");
                 loginBtn.disabled = false;
                 loginBtn.innerText = "Login";
@@ -562,6 +564,9 @@
             loginBtn.innerText = "Login";
             console.error("Login error:", err);
             alert("Login failed. Check your connection.");
+        } finally {
+            // Safety fallback
+            loading.style.display = "none";
         }
     }
 
