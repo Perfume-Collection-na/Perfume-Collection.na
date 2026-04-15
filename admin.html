@@ -13,6 +13,8 @@
             --purple: #800080;
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
             --transition: all 0.3s ease;
+            --danger: #ff4d4d;
+            --success: #2ecc71;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,11 +30,11 @@
             line-height: 1.6;
         }
 
-        /* --- LOADING SYSTEM --- */
+        /* --- LOADING OVERLAY --- */
         #globalLoader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(26, 26, 26, 0.95);
+            background: rgba(26, 26, 26, 0.96);
             display: none;
             flex-direction: column;
             align-items: center;
@@ -41,46 +43,47 @@
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(197, 160, 89, 0.1);
-            border-top: 4px solid var(--gold);
+            width: 65px;
+            height: 65px;
+            border: 5px solid rgba(197, 160, 89, 0.1);
+            border-top: 5px solid var(--gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .loader-text {
             color: var(--gold);
             text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 0.9rem;
-            font-weight: 700;
+            letter-spacing: 4px;
+            font-size: 0.85rem;
+            font-weight: 800;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- HEADER & NAVIGATION --- */
+        /* --- HEADER --- */
         header {
             background-color: var(--purple);
             color: var(--gold);
-            padding: 40px 15px;
+            padding: 35px 20px;
             text-align: center;
             border-bottom: 4px solid var(--gold);
             position: sticky;
             top: 0;
             z-index: 1001;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
         }
 
         .admin-logo {
-            font-size: clamp(1.4rem, 5vw, 2.2rem);
-            letter-spacing: 6px;
+            font-size: clamp(1.5rem, 6vw, 2.4rem);
+            letter-spacing: 8px;
             text-transform: uppercase;
             color: var(--gold);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: block;
             font-weight: 900;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
 
         nav.admin-nav {
@@ -88,50 +91,51 @@
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
         }
 
         nav.admin-nav a {
             color: var(--white);
             text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 8px 15px;
+            border-radius: 5px;
             transition: var(--transition);
+            letter-spacing: 1px;
         }
 
         nav.admin-nav a:hover { 
             color: var(--gold);
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.08);
         }
 
         .nav-separator {
-            width: 1px;
-            height: 15px;
+            width: 2px;
+            height: 18px;
             background-color: var(--gold);
             opacity: 0.3;
         }
 
-        /* --- PROMOTIONAL BANNER --- */
+        /* --- LIVE BANNER --- */
         #promoBanner {
             display: none;
             position: fixed;
-            top: 150px;
+            top: 155px;
             left: 0;
             width: 100%;
             background: var(--gold);
             color: var(--dark);
             text-align: center;
-            padding: 15px;
-            font-weight: 800;
+            padding: 18px;
+            font-weight: 900;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.4);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: slideDown 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            letter-spacing: 3px;
+            animation: slideDown 0.7s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         @keyframes slideDown {
@@ -139,190 +143,196 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .promo-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .promo-pulse { animation: pulse 2.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.75; } 100% { opacity: 1; } }
 
-        /* --- CONTAINERS --- */
+        /* --- MAIN UI CONTAINERS --- */
         .container { 
-            max-width: 1100px; 
+            max-width: 1200px; 
             width: 95%;
-            margin: 50px auto; 
+            margin: 60px auto; 
             background: var(--white); 
-            padding: 40px; 
-            border-radius: 12px; 
-            box-shadow: var(--shadow); 
-            border: 1px solid rgba(0,0,0,0.05);
+            padding: 45px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
         h2 { 
-            border-bottom: 3px solid var(--gold); 
-            padding-bottom: 15px; 
+            border-bottom: 4px solid var(--gold); 
+            padding-bottom: 18px; 
             color: var(--purple);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin-bottom: 35px;
+            font-size: 1.6rem;
+            font-weight: 800;
         }
 
-        /* --- MODALS --- */
+        /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
             position: fixed;
             z-index: 2000;
             left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(8px);
             align-items: center; justify-content: center;
         }
 
         .modal-content {
             background: white;
-            padding: 40px;
-            border-radius: 16px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
+            padding: 50px;
+            border-radius: 20px;
+            max-width: 650px;
+            width: 92%;
+            max-height: 85vh;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
         }
 
-        /* --- FORM STYLING --- */
-        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group { margin-bottom: 25px; text-align: left; }
         label { 
             display: block; 
-            margin-bottom: 8px; 
-            font-weight: 700; 
-            font-size: 0.85rem; 
+            margin-bottom: 10px; 
+            font-weight: 800; 
+            font-size: 0.8rem; 
             color: var(--purple);
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         input, select, textarea { 
             width: 100%; 
-            padding: 14px; 
-            border: 2px solid #eee; 
-            border-radius: 8px; 
-            background: #f9f9f9;
+            padding: 15px; 
+            border: 2px solid #f0f0f0; 
+            border-radius: 10px; 
+            background: #fbfbfb;
             transition: var(--transition);
             font-size: 1rem;
+            color: var(--dark);
         }
 
         input:focus, select:focus {
             outline: none;
             border-color: var(--gold);
             background: white;
+            box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1);
         }
 
         .checkbox-group { 
             display: flex; 
             align-items: center; 
-            gap: 12px; 
-            margin: 15px 0;
-            cursor: pointer;
+            gap: 15px; 
+            margin: 20px 0;
         }
-        .checkbox-group input { width: auto; height: 18px; width: 18px; }
+        .checkbox-group input { width: 20px; height: 20px; cursor: pointer; }
 
         .btn { 
             background: var(--purple); 
             color: white; 
             border: none; 
-            padding: 16px 24px; 
+            padding: 18px 30px; 
             cursor: pointer; 
-            border-radius: 8px; 
-            font-weight: 800; 
+            border-radius: 10px; 
+            font-weight: 900; 
             width: 100%; 
-            margin-top: 10px; 
+            margin-top: 15px; 
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             transition: var(--transition);
         }
 
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(128,0,128,0.3); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(128,0,128,0.3); }
         .btn-save { background: var(--gold); color: var(--dark); }
-        .btn-save:hover { box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4); }
+        .btn-save:hover { box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* --- LIST ITEMS --- */
+        /* --- DATA TABLES / LISTS --- */
         .product-item, .order-item { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 25px; 
-            border-bottom: 1px solid #f0f0f0; 
+            padding: 30px; 
+            border-bottom: 1px solid #f2f2f2; 
             flex-wrap: wrap; 
-            gap: 20px;
+            gap: 25px;
             transition: var(--transition);
         }
-        .product-item:hover { background: #fafafa; }
+        .product-item:hover { background: #fcfcfc; }
 
         .thumb {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             object-fit: cover;
-            border-radius: 10px;
-            margin-right: 20px;
-            border: 2px solid #eee;
+            border-radius: 12px;
+            margin-right: 25px;
+            border: 3px solid #eee;
             cursor: pointer;
             background: #fff;
+            transition: transform 0.2s;
         }
+        .thumb:hover { transform: scale(1.05); }
 
         .edit-controls {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             flex: 1;
         }
 
         .edit-controls input {
-            padding: 8px 12px;
-            font-size: 0.9rem;
+            padding: 10px 15px;
+            font-size: 0.95rem;
         }
 
         .stock-control {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: #f4f4f4;
-            padding: 10px 15px;
-            border-radius: 8px;
+            gap: 20px;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
         }
 
         .stock-input {
-            width: 70px;
-            padding: 8px;
+            width: 80px;
+            padding: 10px;
             text-align: center;
-            font-weight: bold;
+            font-weight: 800;
+            font-size: 1.1rem;
         }
 
         .delete-btn { 
-            background: #ffe5e5; 
-            color: #d63031; 
-            border: none; 
-            padding: 10px 18px; 
+            background: #fff5f5; 
+            color: var(--danger); 
+            border: 2px solid #ffebeb; 
+            padding: 12px 20px; 
             cursor: pointer; 
-            border-radius: 8px; 
-            font-size: 0.8rem;
-            font-weight: 700;
+            border-radius: 10px; 
+            font-size: 0.85rem;
+            font-weight: 800;
             text-transform: uppercase;
             transition: var(--transition);
         }
-        .delete-btn:hover { background: #d63031; color: white; }
+        .delete-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
         .action-group {
             display: flex;
-            gap: 12px;
+            gap: 15px;
         }
 
         #specificPerfumeList {
-            margin-top: 15px;
-            max-height: 250px;
+            margin-top: 20px;
+            max-height: 300px;
             overflow-y: auto;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 20px;
             display: none;
-            background: #fcfcfc;
+            background: #fafafa;
         }
 
         /* --- FOOTER --- */
@@ -330,28 +340,30 @@
             background-color: var(--purple);
             color: var(--gold);
             text-align: center;
-            padding: 50px 20px;
+            padding: 60px 20px;
             margin-top: auto;
-            border-top: 4px solid var(--gold);
+            border-top: 5px solid var(--gold);
         }
 
         .footer-logo {
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 15px;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
             display: block;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
-        section { scroll-margin-top: 180px; }
+        section { scroll-margin-top: 200px; }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .product-item { flex-direction: column; text-align: center; }
-            .thumb { margin-right: 0; margin-bottom: 15px; width: 120px; height: 120px; }
+        /* Media Queries */
+        @media (max-width: 850px) {
+            .product-item { flex-direction: column; text-align: center; padding: 40px 20px; }
+            .thumb { margin-right: 0; margin-bottom: 20px; width: 150px; height: 150px; }
             .action-group { width: 100%; justify-content: center; }
+            .stock-control { width: 100%; justify-content: center; }
             .btn { width: 100%; }
+            .container { padding: 25px; }
         }
     </style>
 </head>
@@ -359,7 +371,7 @@
 
 <div id="globalLoader">
     <div class="spinner"></div>
-    <div class="loader-text" id="loaderText">Establishing Connection...</div>
+    <div class="loader-text" id="loaderText">Synchronizing System...</div>
 </div>
 
 <div id="promoBanner">
@@ -369,88 +381,87 @@
 <header>
     <span class="admin-logo">PERFUME_COLLECTION_NA</span>
     <nav class="admin-nav">
-        <a href="#orders">Orders Management</a>
+        <a href="#orders">Order Queue</a>
         <div class="nav-separator"></div>
-        <a href="#inventory">Inventory Control</a>
+        <a href="#inventory">Inventory Manager</a>
         <div class="nav-separator"></div>
-        <a onclick="openModal('productModal')">Add Product</a>
+        <a onclick="openModal('productModal')">New Product</a>
         <div class="nav-separator"></div>
-        <a onclick="openModal('promoModal')">Campaigns</a>
+        <a onclick="openModal('promoModal')">Marketing</a>
         <div class="nav-separator"></div>
-        <a onclick="logout()" style="color: #ff7675;">Exit</a>
+        <a onclick="logout()" style="color: #ff7675;">Logout</a>
     </nav>
 </header>
 
 <div id="promoModal" class="modal">
     <div class="modal-content">
-        <h2>Campaign Manager</h2>
+        <h2>Campaign Management</h2>
         <div class="form-group">
-            <label>Headline Message</label>
-            <input type="text" id="promoMsg" placeholder="e.g., WINTER FLASH SALE - 20% OFF ALL ITEMS">
+            <label>Promo Headline</label>
+            <input type="text" id="promoMsg" placeholder="e.g. SUMMER LUXURY SALE - 15% OFF">
         </div>
         <div class="form-group">
-            <label>Discount Logic</label>
+            <label>Benefit Structure</label>
             <select id="promoType">
-                <option value="percent">Percentage Off (%)</option>
-                <option value="fixed">Fixed Amount Off (N$)</option>
+                <option value="percent">Percentage Discount (%)</option>
+                <option value="fixed">Fixed Reduction (N$)</option>
             </select>
         </div>
         <div class="form-group">
-            <label>Value</label>
-            <input type="number" id="promoVal" placeholder="e.g., 20">
+            <label>Reduction Value</label>
+            <input type="number" id="promoVal" placeholder="20">
         </div>
         <div class="form-group">
-            <label>Target Segment</label>
+            <label>Targeted Categories</label>
             <select id="promoTarget" onchange="toggleSpecificSelection()">
-                <option value="all">Entire Catalog</option>
-                <option value="feminine">Feminine Fragrances</option>
-                <option value="masculine">Masculine Fragrances</option>
-                <option value="unisex">Unisex Fragrances</option>
-                <option value="specific">Selected Items Only</option>
+                <option value="all">Entire Storefront</option>
+                <option value="feminine">Feminine Scents</option>
+                <option value="masculine">Masculine Scents</option>
+                <option value="unisex">Unisex Collection</option>
+                <option value="specific">Manual Selection...</option>
             </select>
         </div>
         
         <div id="specificPerfumeList"></div>
 
         <div class="form-group">
-            <label>Duration</label>
+            <label>Active Duration</label>
             <select id="promoPeriod">
-                <option value="1">24 Hours</option>
-                <option value="3">72 Hours</option>
-                <option value="7">1 Week</option>
-                <option value="30">1 Month</option>
+                <option value="1">24 Hour Flash</option>
+                <option value="3">3-Day Event</option>
+                <option value="7">Full Week</option>
             </select>
         </div>
-        <button class="btn btn-save" onclick="startPromotion()">Launch Campaign</button>
-        <button class="btn" style="background:none; color:#999;" onclick="closeModal('promoModal')">Close</button>
+        <button class="btn btn-save" onclick="startPromotion()">Activate Campaign</button>
+        <button class="btn" style="background:none; color:#bbb;" onclick="closeModal('promoModal')">Discard</button>
     </div>
 </div>
 
 <div id="productModal" class="modal">
     <div class="modal-content">
-        <h2>New Product Integration</h2>
+        <h2>Inventory Integration</h2>
         <div class="form-group">
-            <label>Product Identity</label>
-            <input type="text" id="pName" placeholder="Enter full perfume name">
+            <label>Full Product Title</label>
+            <input type="text" id="pName" placeholder="e.g. Dior Sauvage Elixir">
         </div>
         <div class="form-group">
-            <label>Base Price (N$)</label>
-            <input type="text" id="pPrice" placeholder="400.00">
+            <label>Standard Retail Price (N$)</label>
+            <input type="text" id="pPrice" placeholder="450.00">
         </div>
         <div class="checkbox-group">
             <input type="checkbox" id="pOnSale" onchange="toggleSaleField()">
-            <label for="pOnSale">Enable Discount Price?</label>
+            <label for="pOnSale">Apply Introductory Discount?</label>
         </div>
-        <div id="saleField" class="form-group" style="display:none; border-left: 4px solid var(--gold); padding-left: 15px;">
-            <label>Promotional Price (N$)</label>
-            <input type="text" id="pSalePrice" placeholder="350.00">
+        <div id="saleField" class="form-group" style="display:none; border-left: 5px solid var(--gold); padding-left: 20px;">
+            <label>Introductory Price (N$)</label>
+            <input type="text" id="pSalePrice" placeholder="400.00">
         </div>
         <div class="form-group">
-            <label>Product Imagery</label>
+            <label>Imagery Selection</label>
             <input type="file" id="pImageFile" accept="image/*">
         </div>
         <div class="form-group">
-            <label>Initial Stock Level</label>
+            <label>Starting Stock Level</label>
             <input type="number" id="pStock" value="1">
         </div>
         <div class="form-group">
@@ -462,14 +473,14 @@
             </select>
         </div>
         <div class="form-group">
-            <label>New Arrival Status</label>
+            <label>Badge as New Arrival?</label>
             <select id="pNew">
-                <option value="FALSE">Regular Inventory</option>
-                <option value="TRUE">New Arrival Badge</option>
+                <option value="FALSE">Standard Collection</option>
+                <option value="TRUE">Show 'New' Badge</option>
             </select>
         </div>
-        <button id="submitBtn" class="btn btn-save" onclick="addPerfume()">Commit to Inventory</button>
-        <button class="btn" style="background:none; color:#999;" onclick="closeModal('productModal')">Cancel</button>
+        <button id="submitBtn" class="btn btn-save" onclick="addPerfume()">Confirm Addition</button>
+        <button class="btn" style="background:none; color:#bbb;" onclick="closeModal('productModal')">Cancel</button>
     </div>
 </div>
 
@@ -477,36 +488,37 @@
 
 <div class="container" id="orders">
     <section>
-        <h2>Pending Orders Queue</h2>
+        <h2>Order Processing Queue</h2>
         <div id="orderList">
-            <p style="text-align:center; color:#999; padding:20px;">Checking for new orders...</p>
+            <p style="text-align:center; color:#bbb; padding:40px;">Requesting order data...</p>
         </div>
     </section>
 </div>
 
 <div class="container" id="inventory">
     <section>
-        <h2>Master Inventory Catalog</h2>
+        <h2>Active Inventory Management</h2>
         <div id="listItems">
-            <p style="text-align:center; color:#999; padding:20px;">Synchronizing inventory data...</p>
+            <p style="text-align:center; color:#bbb; padding:40px;">Accessing master database...</p>
         </div>
     </section>
 </div>
 
 <footer>
     <span class="footer-logo">PERFUME_COLLECTION_NA</span>
-    <p>Secure Administrator Terminal</p>
-    <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">Authorized Access Only. All transactions logged.</p>
-    <p style="margin-top: 20px;">&copy; 2026 Perfume Collection _na. Refined via Admin Project.</p>
+    <p>Administrative Control Terminal</p>
+    <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 15px;">Encrypted Session Active. Unauthorized access is prohibited.</p>
+    <p style="margin-top: 25px;">&copy; 2026 Perfume Collection _na.</p>
 </footer>
 
 <script>
-    /* CORE CONFIGURATION 
-       Ensure the API_URL matches your Google Apps Script Deployment
-    */
+    /**
+     * SYSTEM CONFIGURATION
+     * Reference to Google Apps Script Backend
+     */
     const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
     
-    // Comprehensive Data Snapshot
+    // THE MASTER CATALOG - Reference Point for Sync
     const MASTER_COLLECTION = [
         { name: "Aventos Blue For Him", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/AVENTOS_BLUE_FOR_HIM_(100ml)[1].jpg", isNew: "FALSE" },
         { name: "Bavarria Man Intense", price: "N$ 400.00", sPrice: "N$ 350.00", onSale: false, stock: 1, cat: "masculine", img: "masculine/BAVARRIA MAN INTENSE (100ml).jpg", isNew: "FALSE" },
@@ -561,8 +573,8 @@
     let perfumes = [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
 
-    // --- UI CONTROLS ---
-    function showLoader(text = "Synchronizing...") {
+    // --- INTERFACE CONTROL ---
+    function showLoader(text = "Processing...") {
         const loader = document.getElementById('globalLoader');
         const loaderText = document.getElementById('loaderText');
         loaderText.innerText = text;
@@ -580,21 +592,20 @@
     
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // --- INITIALIZATION & AUTH ---
+    // --- CORE HANDSHAKE & DATA SYNC ---
     async function initAdmin() {
-        // Verification phase
+        // Critical: Check session storage for the security token
         const token = sessionStorage.getItem("adminToken");
         
         if (!token) {
-            console.error("Authentication Missing");
+            console.error("No valid session token found.");
             window.location.replace("index.html");
             return;
         }
 
-        showLoader("Verifying Access Token...");
+        showLoader("Validating Session...");
         
         try {
-            // Attempt a POST verification
             const authResponse = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -604,49 +615,47 @@
             const authData = await authResponse.json();
 
             if (authData.result === "success") {
-                console.log("Authentication Confirmed.");
+                console.log("Access Granted.");
                 await refreshData();
             } else {
-                console.warn("Invalid Session Key");
+                console.warn("Session token rejected by server.");
                 sessionStorage.clear();
                 window.location.replace("index.html");
             }
         } catch (err) {
-            console.error("Handshake Failed:", err);
-            // On connection failure, attempt data refresh anyway in case of temporary lag
+            console.error("Critical Connection Error during Auth:", err);
+            // On fail, alert user but try to load anyway for safety
+            alert("Connection error. Attempting to restore database view.");
             await refreshData();
         }
     }
 
     async function refreshData() {
-        showLoader("Fetching Inventory & Orders...");
+        showLoader("Syncing Database...");
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
             
-            // Map incoming data
             const sheetItems = Array.isArray(data) ? data : (data.inventory || []);
-            
-            // Sync local state
             perfumes = sheetItems;
             
-            // Cross-check with MASTER_COLLECTION to find missing items
-            const missing = MASTER_COLLECTION.filter(m => 
-                !sheetItems.some(s => (s.name || s.Name) === m.name)
+            // Check for structural mismatch between sheet and MASTER catalog
+            const missingItems = MASTER_COLLECTION.filter(masterItem => 
+                !sheetItems.some(s => (s.name || s.Name) === masterItem.name)
             );
 
-            if (missing.length > 0) {
-                showLoader(`Provisioning ${missing.length} missing items...`);
+            if (missingItems.length > 0) {
+                showLoader(`Repairing ${missingItems.length} missing records...`);
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         action: "BATCH_ADD_PRODUCTS",
                         sheet: "Inventory",
-                        items: missing.map(i => [i.name, i.price, i.sPrice, i.onSale, i.stock, i.cat, i.img, i.isNew])
+                        items: missingItems.map(i => [i.name, i.price, i.sPrice, i.onSale, i.stock, i.cat, i.img, i.isNew])
                     })
                 });
-                return refreshData(); // Loop back once synced
+                return refreshData(); // Re-sync after repair
             }
 
             renderLists(data.orders || []);
@@ -660,12 +669,12 @@
         }
     }
 
-    // --- RENDER ENGINE ---
+    // --- RENDERING ENGINE ---
     function renderLists(orders = []) {
-        // Render Inventory
+        // Inventory Rendering
         const invDiv = document.getElementById('listItems');
         if (!perfumes || perfumes.length === 0) {
-            invDiv.innerHTML = '<p style="text-align:center; color:#999;">Inventory is currently empty.</p>';
+            invDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">The inventory is currently empty.</p>';
         } else {
             invDiv.innerHTML = perfumes.map((p) => {
                 const pName = p.name || p.Name;
@@ -679,49 +688,49 @@
                         <img src="${pImg}" class="thumb" 
                              data-perfume="${pName}" 
                              onclick="triggerImageEdit('${pName}')" 
-                             onerror="this.src='https://via.placeholder.com/80'">
+                             onerror="this.src='https://via.placeholder.com/100'">
                         <div class="edit-controls">
-                            <label>Product Label</label>
+                            <label>Product Designation</label>
                             <input type="text" class="edit-name" value="${pName}">
-                            <label>Unit Price (N$)</label>
+                            <label>Retail Price (N$)</label>
                             <input type="text" class="edit-price" value="${pPrice}">
                         </div>
                     </div>
                     <div class="stock-control">
                         <div>
-                            <label>Stock Qty</label>
+                            <label>Current Stock</label>
                             <input type="number" class="stock-input" value="${pStock}">
                         </div>
                     </div>
                     <div class="action-group">
-                        <button class="btn btn-save" style="margin:0; width:auto;" onclick="updateFullProduct('${pName}')">Sync</button>
-                        <button class="delete-btn" onclick="deletePerfume('${pName}')">Remove</button>
+                        <button class="btn btn-save" style="margin:0; width:auto;" onclick="updateFullProduct('${pName}')">Update</button>
+                        <button class="delete-btn" onclick="deletePerfume('${pName}')">Delete</button>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        // Render Orders
+        // Order Rendering
         const ordDiv = document.getElementById('orderList');
         if (!orders || orders.length === 0) {
-            ordDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">Queue is clear. No active orders.</p>';
+            ordDiv.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">No pending orders in the queue.</p>';
         } else {
             ordDiv.innerHTML = orders.map(o => `
                 <div class="order-item">
                     <div style="flex:1;">
-                        <strong style="color:var(--purple); font-size:1.1rem;">${o.customer || o.Customer || 'Guest'}</strong><br>
-                        <small style="color:#666;">${o.items || o.Items || 'No data'}</small><br>
-                        <span style="font-weight:bold; color:var(--gold); display:block; margin-top:5px;">${o.total || o.Total || 'N$ 0.00'}</span>
+                        <strong style="color:var(--purple); font-size:1.15rem;">${o.customer || o.Customer || 'Guest Customer'}</strong><br>
+                        <small style="color:#666;">${o.items || o.Items || 'Item detail missing'}</small><br>
+                        <span style="font-weight:bold; color:var(--gold); display:block; margin-top:8px;">Total: ${o.total || o.Total || 'N$ 0.00'}</span>
                     </div>
-                    <button class="btn btn-save" style="margin:0; width:auto;" onclick="clearOrder('${o.orderid || o.OrderID}')">Mark Delivered</button>
+                    <button class="btn btn-save" style="margin:0; width:auto;" onclick="clearOrder('${o.orderid || o.OrderID}')">Confirm Delivery</button>
                 </div>
             `).join('');
         }
     }
 
-    // --- DATA OPERATIONS ---
+    // --- TRANSACTIONAL METHODS ---
     async function globalUpdate(actionType, rowData) {
-        showLoader("Committing Changes...");
+        showLoader("Transmitting Changes...");
         try {
             const resp = await fetch(API_URL, {
                 method: 'POST',
@@ -729,11 +738,11 @@
                 body: JSON.stringify({ action: actionType, ...rowData })
             });
             const result = await resp.json();
-            console.log("Action Result:", result);
+            console.log("Transaction Result:", result);
             await refreshData();
         } catch (e) {
-            console.error("Cloud error:", e);
-            alert("Sync Failure. Changes might not be saved to Google Sheets.");
+            console.error("Update failed:", e);
+            alert("Database write error. Check your Apps Script logs.");
         } finally {
             hideLoader();
         }
@@ -749,7 +758,7 @@
         const onSale = document.getElementById('pOnSale').checked;
         const fileInput = document.getElementById('pImageFile');
 
-        if(!name || !price) return alert("Required fields (Name/Price) missing.");
+        if(!name || !price) return alert("Validation Failed: Name and Price are required.");
 
         if(fileInput.files[0]) {
             const reader = new FileReader();
@@ -788,18 +797,18 @@
     }
 
     async function deletePerfume(productName) {
-        if(confirm(`Are you sure you want to remove ${productName} permanently?`)) {
+        if(confirm(`Permanent Action: Are you sure you want to delete ${productName}?`)) {
             await globalUpdate("DELETE_PRODUCT", { sheet: "Inventory", identifier: productName });
         }
     }
 
     async function clearOrder(orderId) {
-        if(confirm("Mark this order as fulfilled?")) {
+        if(confirm("Confirm delivery and archive order?")) {
             await globalUpdate("COMPLETE_ORDER", { sheet: "Orders", identifier: orderId });
         }
     }
 
-    // --- PROMO ENGINE ---
+    // --- MARKETING LOGIC ---
     function toggleSaleField() {
         document.getElementById('saleField').style.display = document.getElementById('pOnSale').checked ? 'block' : 'none';
     }
@@ -814,7 +823,7 @@
         listDiv.innerHTML = perfumes.map(p => `
             <div class="checkbox-group">
                 <input type="checkbox" class="promo-choice" value="${p.name || p.Name}">
-                <label style="font-weight:normal; text-transform:none;">${p.name || p.Name}</label>
+                <label style="font-weight:normal; text-transform:none; font-size:0.9rem;">${p.name || p.Name}</label>
             </div>
         `).join('');
     }
@@ -826,12 +835,12 @@
         const target = document.getElementById('promoTarget').value;
         const days = parseFloat(document.getElementById('promoPeriod').value);
 
-        if(!msg || isNaN(val)) return alert("Campaign parameters are incomplete.");
+        if(!msg || isNaN(val)) return alert("Campaign definition incomplete.");
 
         let affected = [];
         if(target === 'specific') {
             document.querySelectorAll('.promo-choice:checked').forEach(cb => affected.push(cb.value));
-            if(affected.length === 0) return alert("Select at least one product for this campaign.");
+            if(affected.length === 0) return alert("Select at least one product for this manual campaign.");
         }
 
         activePromo = { 
@@ -843,7 +852,7 @@
         localStorage.setItem('activePromo', JSON.stringify(activePromo));
         checkActivePromo();
         closeModal('promoModal');
-        alert("Promotion is now ACTIVE across the site.");
+        alert("Global Marketing Campaign Triggered.");
     }
 
     function checkActivePromo() {
@@ -876,16 +885,17 @@
     }
 
     function logout() {
-        if(confirm("Terminate administrative session?")) {
+        if(confirm("Exit Administrative Portal?")) {
             sessionStorage.clear();
-            localStorage.removeItem('adminToken'); // Just in case
             window.location.href = 'index.html';
         }
     }
 
-    // Delay start to prevent session lookup race conditions
+    /** * Start the system after a brief delay to ensure 
+     * browser security tokens are fully readable.
+     */
     window.onload = () => {
-        setTimeout(initAdmin, 150);
+        setTimeout(initAdmin, 250);
     };
 </script>
 </body>
