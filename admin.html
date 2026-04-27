@@ -573,6 +573,41 @@
     let perfumes = [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
 
+    function parseApiInventory(payload) {
+        if (Array.isArray(payload)) return payload;
+        return payload?.inventory || payload?.Inventory || [];
+    }
+
+    function parseApiOrders(payload) {
+        if (Array.isArray(payload)) {
+            const looksLikeOrderRows = payload.some(item => Array.isArray(item) || item?.customer || item?.Customer || item?.orderid || item?.OrderID);
+            return looksLikeOrderRows ? payload : [];
+        }
+        return payload?.orders || payload?.Orders || [];
+    }
+
+    function normalizeOrderRecord(order, index) {
+        if (Array.isArray(order)) {
+            return {
+                orderId: order[0] || `row-${index + 1}`,
+                items: order[1] || 'Item detail missing',
+                customer: order[2] || 'Guest Customer',
+                contact: order[3] || '',
+                status: order[4] || 'New',
+                total: order[5] || ''
+            };
+        }
+
+        return {
+            orderId: order.orderid || order.OrderID || order.id || order.ID || `row-${index + 1}`,
+            items: order.items || order.Items || order.product || order.Product || 'Item detail missing',
+            customer: order.customer || order.Customer || 'Guest Customer',
+            contact: order.contact || order.Contact || order.phone || order.Phone || '',
+            status: order.status || order.Status || 'New',
+            total: order.total || order.Total || order.price || order.Price || ''
+        };
+    }
+
     // --- INTERFACE CONTROL ---
     function showLoader(text = "Processing...") {
         const loader = document.getElementById('globalLoader');
@@ -631,13 +666,26 @@
     async function refreshData() {
         showLoader("Syncing Database...");
         try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            
-            const sheetItems = Array.isArray(data) ? data : (data.inventory || []);
+            const inventoryResponse = await fetch(API_URL);
+            const inventoryPayload = await inventoryResponse.json();
+
+            let ordersPayload = inventoryPayload;
+            let orders = parseApiOrders(ordersPayload);
+
+            if (!orders.length) {
+                try {
+                    const fallbackOrdersResponse = await fetch(`${API_URL}?sheet=Orders`);
+                    ordersPayload = await fallbackOrdersResponse.json();
+                    orders = parseApiOrders(ordersPayload);
+                } catch (ordersErr) {
+                    console.warn('Orders fallback fetch failed:', ordersErr);
+                }
+            }
+
+            const sheetItems = parseApiInventory(inventoryPayload);
             perfumes = sheetItems;
-            
-            const missingItems = MASTER_COLLECTION.filter(masterItem => 
+
+            const missingItems = MASTER_COLLECTION.filter(masterItem =>
                 !sheetItems.some(s => (s.name || s.Name) === masterItem.name)
             );
 
@@ -652,10 +700,14 @@
                         items: missingItems.map(i => [i.name, i.price, i.sPrice, i.onSale, i.stock, i.cat, i.img, i.isNew])
                     })
                 });
-                return refreshData(); 
+                return refreshData();
             }
 
-            renderLists(data.orders || []);
+            const normalizedOrders = orders
+                .map(normalizeOrderRecord)
+                .filter(order => String(order.status).toLowerCase() !== 'completed');
+
+            renderLists(normalizedOrders);
             checkActivePromo();
         } catch (err) {
             console.error("Refresh cycle failed:", err);
@@ -710,14 +762,15 @@
         if (!orders || orders.length === 0) {
             ordDiv.innerHTML = '<p style="text-align:center; color:#999; padding:40px;">No pending orders in the queue.</p>';
         } else {
-            ordDiv.innerHTML = orders.map(o => `
+            ordDiv.innerHTML = orders.map((o) => `
                 <div class="order-item">
                     <div style="flex:1;">
-                        <strong style="color:var(--purple); font-size:1.15rem;">${o.customer || o.Customer || 'Guest Customer'}</strong><br>
-                        <small style="color:#666;">${o.items || o.Items || 'Item detail missing'}</small><br>
-                        <span style="font-weight:bold; color:var(--gold); display:block; margin-top:8px;">Total: ${o.total || o.Total || 'N$ 0.00'}</span>
+                        <strong style="color:var(--purple); font-size:1.15rem;">${o.customer || 'Guest Customer'}</strong><br>
+                        <small style="color:#666;">${o.items || 'Item detail missing'}</small><br>
+                        ${o.contact ? `<small style="color:#777; display:block; margin-top:4px;">Contact: ${o.contact}</small>` : ''}
+                        <span style="font-weight:bold; color:var(--gold); display:block; margin-top:8px;">Status: ${o.status || 'New'}</span>
                     </div>
-                    <button class="btn btn-save" style="margin:0; width:auto;" onclick="clearOrder('${o.orderid || o.OrderID}')">Confirm Delivery</button>
+                    <button class="btn btn-save" style="margin:0; width:auto;" onclick="clearOrder('${o.orderId}')">Confirm Delivery</button>
                 </div>
             `).join('');
         }
