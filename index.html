@@ -766,23 +766,30 @@
         }
     }
 
+// --- UI RENDERING LOGIC ---
     function createCardHTML(p, isPromoActive) {
-        const showSale = isPromoActive && p.onSale && p.salePrice;
-        const isOOS = p.stock <= 0;
+        const showSale = isPromoActive && p.onsale === "true" && p.saleprice;
+        const isOOS = parseInt(p.stock) <= 0;
+        
+        // Fix for image glitching: Ensure key matches your code.gs mapping
+        const imgSrc = p.img || p.productimage || p.image || 'https://via.placeholder.com/300x300?text=Perfume';
+
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
-                ${p.isNew ? '<div class="new-badge">New</div>' : ''}
-                <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
+                ${(p.isnew === "true" || p.isnew === true) ? '<div class="new-badge">New</div>' : ''}
+                <img src="${imgSrc}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
                 <h3>${p.name}</h3>
                 <div class="card-action-area">
                     <p class="price">
-                        ${showSale ? `<span class="old-price">${p.price}</span>` : ''}
-                        ${showSale ? p.salePrice : p.price}
+                        ${showSale ? `<span class="old-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.8em; margin-right: 5px;">${p.price}</span>` : ''}
+                        <span style="color: var(--purple); font-weight: bold;">${showSale ? p.saleprice : p.price}</span>
                     </p>
-                    <div class="stock-tag">
-                        ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label">Out of Stock</span>'}
+                    <div class="stock-tag" style="font-size: 0.8rem; margin: 5px 0;">
+                        ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label" style="color: red;">Out of Stock</span>'}
                     </div>
-                    <button ${isOOS ? 'disabled' : ''} onclick="openOrderModal('${p.name}', '${showSale ? p.salePrice : p.price}')">
+                    <button ${isOOS ? 'disabled' : ''} 
+                            style="${isOOS ? 'background: #ccc; cursor: not-allowed;' : ''}"
+                            onclick="openOrderModal('${p.name}', '${showSale ? p.saleprice : p.price}')">
                         ${isOOS ? 'Unavailable' : 'Order Now'}
                     </button>
                 </div>
@@ -792,40 +799,41 @@
 
     function renderNavigation() {
         const nav = document.getElementById('mainNav');
-        const hasNew = perfumes.some(p => p.isNew);
+        const hasNew = perfumes.some(p => p.isnew === "true" || p.isnew === true);
         const navLinks = [];
+        
         if (hasNew) navLinks.push({ href: "#new-section", text: "New Arrivals" });
         navLinks.push({ href: "#masculine", text: "Masculine" });
         navLinks.push({ href: "#feminine", text: "Feminine" });
         navLinks.push({ href: "#unisex", text: "Unisex" });
 
         nav.innerHTML = navLinks.map((link, index) => {
-            const linkHTML = `<a href="${link.href}">${link.text}</a>`;
-            const separator = (index < navLinks.length - 1) ? '<div class="nav-separator"></div>' : '';
+            const linkHTML = `<a href="${link.href}" style="text-decoration: none; color: inherit; padding: 0 10px;">${link.text}</a>`;
+            const separator = (index < navLinks.length - 1) ? '<span class="nav-separator">|</span>' : '';
             return linkHTML + separator;
         }).join('');
     }
 
     function renderProducts() {
-        const isPromoActive = checkPromo();
+        const isPromoActive = typeof checkPromo === 'function' ? checkPromo() : false;
         const cats = ['masculine', 'feminine', 'unisex'];
         renderNavigation();
 
-        const newItems = perfumes.filter(p => p.isNew);
+        const newItems = perfumes.filter(p => p.isnew === "true" || p.isnew === true);
         const newSection = document.getElementById('new-section');
         const newGrid = document.getElementById('grid-new');
 
-        if (newItems.length > 0) {
+        if (newItems.length > 0 && newSection && newGrid) {
             newSection.style.display = 'block';
             newGrid.innerHTML = newItems.map(p => createCardHTML(p, isPromoActive)).join('');
-        } else {
+        } else if (newSection) {
             newSection.style.display = 'none';
         }
 
         cats.forEach(cat => {
             const grid = document.getElementById(`grid-${cat}`);
             if (grid) {
-                const filtered = perfumes.filter(p => p.cat === cat);
+                const filtered = perfumes.filter(p => p.cat === cat || p.category === cat);
                 grid.innerHTML = filtered.map(p => createCardHTML(p, isPromoActive)).join('');
             }
         });
@@ -838,7 +846,7 @@
         document.getElementById('orderModal').style.display = "flex";
     }
 
-    // FIXED ORDER SUBMISSION logic
+    // --- ORDER SUBMISSION ---
     async function submitOrder() {
         const cName = document.getElementById('custName').value.trim();
         const cPhone = document.getElementById('custPhone').value.trim();
@@ -851,7 +859,7 @@
         loading.style.display = "flex";
 
         try {
-            // Log to sheet using no-cors to bypass security blocks
+            // Log to sheet using your ADD_PRODUCT logic
             await fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -876,19 +884,42 @@
                     loading.style.display = "none";
                     alert("Order Successful! We have received your order.");
                     closeModal('orderModal');
+                    btn.disabled = false;
                 }, function(error) {
                     loading.style.display = "none";
-                    alert("Something went wrong with the email, but your order was logged.");
+                    alert("Order logged, but notification failed.");
+                    btn.disabled = false;
                 });
         } catch(e) { 
             loading.style.display = "none";
             alert("Connection error occurred."); 
+            btn.disabled = false;
         }
+    }
+
+    // --- UTILS & INITIALIZATION ---
+    function checkPromo() {
+        // Fallback if promo logic isn't defined
+        return false; 
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    // Fix for Sticky Navigation
+    const nav = document.querySelector('nav');
+    if (nav) {
+        const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle('is-sticky', e.intersectionRatio < 1),
+            { threshold: [1] }
+        );
+        observer.observe(nav);
     }
 
     window.onload = () => {
         syncWithSheet();
-        setInterval(checkPromo, 30000);
+        if(typeof checkPromo === 'function') setInterval(checkPromo, 30000);
     };
 </script>
 </body>
