@@ -724,25 +724,37 @@
     }
 
     // --- TRANSACTIONAL METHODS ---
-    async function globalUpdate(actionType, rowData) {
-        showLoader("Transmitting Changes...");
-        try {
-            const resp = await fetch(API_URL, {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: actionType, ...rowData })
-            });
-            const result = await resp.json();
-            console.log("Transaction Result:", result);
-            await refreshData();
-        } catch (e) {
-            console.error("Update failed:", e);
-            alert("Database write error. Check your Apps Script logs.");
-        } finally {
-            hideLoader();
-        }
-    }
+async function globalUpdate(actionType, rowData) {
+    showLoader("Transmitting Changes...");
+    try {
+        const token = sessionStorage.getItem('adminToken');
+        const payload = { 
+            action: actionType, 
+            token: token, 
+            ...rowData 
+        };
 
+        // This mode: 'no-cors' and 'text/plain' combo is what stops the red errors
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(payload)
+        });
+
+        // Because no-cors doesn't let us read the response, 
+        // we wait 1.5 seconds then refresh the UI to show the change.
+        setTimeout(async () => {
+            await refreshData();
+            hideLoader();
+        }, 1500);
+
+    } catch (e) {
+        console.error("Update failed:", e);
+        hideLoader();
+        alert("Sync Error. Please check connection.");
+    }
+}
     async function addPerfume() {
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
