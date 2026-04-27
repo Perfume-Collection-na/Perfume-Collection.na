@@ -724,22 +724,28 @@
     let perfumes = JSON.parse(localStorage.getItem('perfumeData')) || defaultPerfumes;
     let selectedItem = { name: "", price: "" };
 
+    function normalizeProductRecord(rawProduct) {
+        return {
+            name: rawProduct.name || rawProduct.Name || '',
+            price: rawProduct.price || rawProduct.Price || '',
+            salePrice: rawProduct.salePrice || rawProduct.saleprice || rawProduct.SalePrice || '',
+            onSale: String(rawProduct.onSale ?? rawProduct.onsale ?? rawProduct.OnSale ?? false).toUpperCase() === "TRUE",
+            stock: parseInt(rawProduct.stock ?? rawProduct.Stock ?? 0) || 0,
+            cat: rawProduct.cat || rawProduct.category || rawProduct.Category || '',
+            img: rawProduct.img || rawProduct.imageurl || rawProduct.ImageURL || rawProduct.productimage || '',
+            isNew: String(rawProduct.isNew ?? rawProduct.isnew ?? rawProduct.featured ?? rawProduct.Featured ?? false).toUpperCase() === "TRUE"
+        };
+    }
+
     async function syncWithSheet() {
         renderProducts();
         try {
             const response = await fetch(API_URL);
-            const sheetData = await response.json();
-            if (sheetData && sheetData.length > 0) {
-                perfumes = sheetData.map(p => ({
-                    name: p.name,
-                    price: p.price,
-                    salePrice: p.saleprice,
-                    onSale: String(p.onsale).toUpperCase() === "TRUE",
-                    stock: parseInt(p.stock) || 0,
-                    cat: p.cat || p.category,
-                    img: p.img || p.imageurl,
-                    isNew: String(p.featured || p.isnew).toUpperCase() === "TRUE"
-                }));
+            const payload = await response.json();
+            const sheetData = Array.isArray(payload) ? payload : (payload.inventory || payload.Inventory || []);
+
+            if (Array.isArray(sheetData) && sheetData.length > 0) {
+                perfumes = sheetData.map(normalizeProductRecord);
                 localStorage.setItem('perfumeData', JSON.stringify(perfumes));
                 renderProducts();
             }
@@ -780,26 +786,29 @@
     }
 
     function createCardHTML(p, isPromoActive) {
-        const showSale = isPromoActive && p.onsale === "true" && p.saleprice;
+        const salePriceValue = p.salePrice || p.saleprice;
+        const isOnSale = p.onSale === true || String(p.onsale).toUpperCase() === "TRUE" || p.onsale === "true";
+        const showSale = isPromoActive && isOnSale && salePriceValue;
         const isOOS = parseInt(p.stock) <= 0;
         const imgSrc = normalizeImageSrc(p);
+        const isNewItem = p.isNew === true || p.isnew === true || String(p.isnew).toUpperCase() === "TRUE";
 
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
-                ${(p.isnew === "true" || p.isnew === true) ? '<div class="new-badge">New</div>' : ''}
+                ${isNewItem ? '<div class="new-badge">New</div>' : ''}
                 <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="if (this.dataset.fallbackApplied) return; this.dataset.fallbackApplied = 'true'; this.src='https://via.placeholder.com/300x300?text=Perfume';">
                 <h3>${p.name}</h3>
                 <div class="card-action-area">
                     <p class="price">
                         ${showSale ? `<span class="old-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.8em; margin-right: 5px;">${p.price}</span>` : ''}
-                        <span style="color: var(--purple); font-weight: bold;">${showSale ? p.saleprice : p.price}</span>
+                        <span style="color: var(--purple); font-weight: bold;">${showSale ? salePriceValue : p.price}</span>
                     </p>
                     <div class="stock-tag" style="font-size: 0.8rem; margin: 5px 0;">
                         ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label" style="color: red;">Out of Stock</span>'}
                     </div>
                     <button ${isOOS ? 'disabled' : ''} 
                             style="${isOOS ? 'background: #ccc; cursor: not-allowed;' : ''}"
-                            onclick="openOrderModal('${p.name}', '${showSale ? p.saleprice : p.price}')">
+                            onclick="openOrderModal('${p.name}', '${showSale ? salePriceValue : p.price}')">
                         ${isOOS ? 'Unavailable' : 'Order Now'}
                     </button>
                 </div>
