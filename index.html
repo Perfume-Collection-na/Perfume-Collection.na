@@ -612,7 +612,7 @@
         loginBtn.disabled = true;
 
         try {
-            // Using 'text/plain' allows simple POST without CORS issues
+            // Using 'text/plain' avoids preflight errors with Apps Script endpoints.
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain" },
@@ -623,14 +623,21 @@
                 })
             });
 
-            const data = await response.json();
+            const raw = await response.text();
+            let data = {};
+            try {
+                data = raw ? JSON.parse(raw) : {};
+            } catch (parseError) {
+                console.warn('Non-JSON login response:', raw);
+            }
+
             loading.style.display = "none";
 
-            if (data.result === "success") {
+            if (data.result === "success" && data.token) {
                 sessionStorage.setItem("adminToken", data.token);
                 window.location.replace("admin.html");
             } else {
-                alert(data.message || "Invalid credentials.");
+                alert(data.message || "Login failed. Please verify backend CORS/JSON response.");
                 loginBtn.disabled = false;
             }
         } catch (err) {
@@ -878,15 +885,17 @@
         loading.style.display = "flex";
 
         try {
-            // Log to sheet using your ADD_PRODUCT logic
+            // Log order into Orders sheet with backend header order:
+            // [Order ID, Customer, Contact Number, Items, Total]
+            const orderId = `ORD-${Date.now()}`;
             await fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({
                     sheet: "Orders",
-                    action: "ADD_PRODUCT", 
-                    data: [new Date().toLocaleString(), selectedItem.name, cName, cPhone, "New"]
+                    action: "ADD_ORDER",
+                    data: [orderId, cName, cPhone, `${selectedItem.name} (${selectedItem.price})`, selectedItem.price]
                 })
             });
             
