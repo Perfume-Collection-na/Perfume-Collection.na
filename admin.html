@@ -786,26 +786,46 @@ async function globalUpdate(actionType, rowData) {
     showLoader("Transmitting Changes...");
     try {
         const token = sessionStorage.getItem('adminToken');
-        const payload = { 
-            action: actionType, 
-            token: token, 
-            ...rowData 
+        if (!token) {
+            hideLoader();
+            alert('Your admin session expired. Please log in again.');
+            window.location.replace('index.html');
+            return;
+        }
+
+        const payload = {
+            action: actionType,
+            token,
+            ...rowData
         };
 
-        // This mode: 'no-cors' and 'text/plain' combo is what stops the red errors
-        await fetch(API_URL, {
+        const response = await fetch(API_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(payload)
         });
 
-        // Because no-cors doesn't let us read the response, 
-        // we wait 1.5 seconds then refresh the UI to show the change.
-        setTimeout(async () => {
-            await refreshData();
+        const raw = await response.text();
+        let result = {};
+        try {
+            result = raw ? JSON.parse(raw) : {};
+        } catch (parseError) {
+            console.warn('Non-JSON update response:', raw);
+        }
+
+        if (result.result && result.result !== 'success') {
             hideLoader();
-        }, 1500);
+            const msg = result.message || 'Update was rejected by backend.';
+            alert(msg);
+            if (String(msg).toLowerCase().includes('unauthorized')) {
+                sessionStorage.clear();
+                window.location.replace('index.html');
+            }
+            return;
+        }
+
+        await refreshData();
+        hideLoader();
 
     } catch (e) {
         console.error("Update failed:", e);
