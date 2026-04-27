@@ -588,19 +588,18 @@
 
     const API_URL = "https://script.google.com/macros/s/AKfycbzXmAGYoIpfoXwBJVUSd8F6mXatu94sGIo__sVZJw6lQR6TXjYPBxrkjRUGkV4S7Kay/exec";
 
-    // 👁️ TOGGLE PASSWORD VISIBILITY (Custom Icon Style)
     function togglePassword(container) {
         const passInput = document.getElementById('adminPass');
         if (passInput.type === 'password') {
             passInput.type = 'text';
-            container.classList.remove('hidden'); // Shows eyelid eye
+            container.classList.remove('hidden');
         } else {
             passInput.type = 'password';
-            container.classList.add('hidden'); // Adds slash (cancelled)
+            container.classList.add('hidden');
         }
     }
 
-    // 🔐 ADMIN AUTH LOGIC - FIXED FOR JSON PARSING
+    // FIXED LOGIN LOGIC
     async function login() {
         const user = document.getElementById('adminUser').value;
         const pass = document.getElementById('adminPass').value;
@@ -611,12 +610,12 @@
 
         loading.style.display = "flex";
         loginBtn.disabled = true;
-        loginBtn.innerText = "Authenticating...";
 
         try {
-            // We use POST with a simple JSON body
+            // Using 'text/plain' allows simple POST without CORS issues
             const response = await fetch(API_URL, {
                 method: "POST",
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({
                     action: "ADMIN_LOGIN",
                     username: user,
@@ -625,28 +624,22 @@
             });
 
             const data = await response.json();
-
-            // Always hide loading modal before displaying results
             loading.style.display = "none";
 
-            if (data.result === "success" && data.token) {
+            if (data.result === "success") {
                 sessionStorage.setItem("adminToken", data.token);
                 window.location.replace("admin.html");
             } else {
-                alert(data.message || "Invalid credentials. Please check your username and password.");
+                alert(data.message || "Invalid credentials.");
                 loginBtn.disabled = false;
-                loginBtn.innerText = "Login";
             }
         } catch (err) {
             loading.style.display = "none";
             loginBtn.disabled = false;
-            loginBtn.innerText = "Login";
-            console.error("Login request failed:", err);
-            alert("Connection error. Ensure your App Script is deployed correctly to 'Anyone'.");
+            alert("Network Error: Could not connect to the authentication server.");
         }
     }
 
-    // ⌨️ ENTER KEY LISTENERS
     document.getElementById('adminPass').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') login();
     });
@@ -845,6 +838,7 @@
         document.getElementById('orderModal').style.display = "flex";
     }
 
+    // FIXED ORDER SUBMISSION logic
     async function submitOrder() {
         const cName = document.getElementById('custName').value.trim();
         const cPhone = document.getElementById('custPhone').value.trim();
@@ -854,41 +848,42 @@
         if(!cName || !cPhone) return alert("Please fill in your details.");
 
         btn.disabled = true;
-        btn.innerText = "Processing...";
         loading.style.display = "flex";
 
         try {
+            // Log to sheet using no-cors to bypass security blocks
             await fetch(API_URL, {
                 method: 'POST',
+                mode: 'no-cors',
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({
                     sheet: "Orders",
                     action: "ADD_PRODUCT", 
                     data: [new Date().toLocaleString(), selectedItem.name, cName, cPhone, "New"]
                 })
             });
-        } catch(e) { console.error("Sheet Log Error:", e); }
+            
+            const templateParams = {
+                product_name: selectedItem.name,
+                price: selectedItem.price,
+                customer_name: cName,
+                customer_contact: cPhone,
+                order_date: new Date().toLocaleString()
+            };
 
-        const templateParams = {
-            product_name: selectedItem.name,
-            price: selectedItem.price,
-            customer_name: cName,
-            customer_contact: cPhone,
-            order_date: new Date().toLocaleString()
-        };
-
-        emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
-            .then(function() {
-                loading.style.display = "none";
-                alert("Order Successful! We have received your order and will contact you shortly.");
-                closeModal('orderModal');
-                btn.disabled = false;
-                btn.innerText = "Confirm Order";
-            }, function(error) {
-                loading.style.display = "none";
-                alert("Something went wrong. Please reach out to us on WhatsApp or Email directly!");
-                btn.disabled = false;
-                btn.innerText = "Confirm Order";
-            });
+            emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
+                .then(function() {
+                    loading.style.display = "none";
+                    alert("Order Successful! We have received your order.");
+                    closeModal('orderModal');
+                }, function(error) {
+                    loading.style.display = "none";
+                    alert("Something went wrong with the email, but your order was logged.");
+                });
+        } catch(e) { 
+            loading.style.display = "none";
+            alert("Connection error occurred."); 
+        }
     }
 
     window.onload = () => {
