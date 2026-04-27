@@ -690,19 +690,17 @@
             const sheetItems = parseApiInventory(inventoryPayload);
             perfumes = sheetItems;
 
-            const missingItems = MASTER_COLLECTION.filter(masterItem =>
-                !sheetItems.some(s => (s.name || s.Name) === masterItem.name)
-            );
-
-            if (missingItems.length > 0) {
-                showLoader(`Repairing ${missingItems.length} missing records...`);
+            // Only bootstrap when inventory is completely empty.
+            // Do NOT auto-repair "missing" products because that overrides intentional admin edits/deletes.
+            if (!sheetItems || sheetItems.length === 0) {
+                showLoader(`Initializing inventory with default catalog...`);
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         action: "BATCH_ADD_PRODUCTS",
                         sheet: "Inventory",
-                        items: missingItems.map(i => [i.name, i.price, i.sPrice, i.onSale, i.stock, i.cat, i.img, i.isNew])
+                        items: MASTER_COLLECTION.map(i => [i.name, i.price, i.sPrice, i.onSale, i.stock, i.cat, i.img, i.isNew])
                     })
                 });
                 return refreshData();
