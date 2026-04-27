@@ -43,7 +43,6 @@
             color: var(--dark);
             line-height: 1.6;
             scroll-behavior: smooth;
-            padding-top: 190px;
         }
 
         /* Promotion Banner */
@@ -115,10 +114,9 @@
         }
 
         nav {
-            position: fixed;
+            position: -webkit-sticky;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
             background: white;
             padding: 15px 20px;
             text-align: center;
@@ -156,7 +154,7 @@
         .container {
             width: 100%;
             max-width: 1200px;
-            margin: 20px auto;
+            margin: 40px auto;
             padding: 0 20px;
         }
 
@@ -937,27 +935,20 @@
         document.getElementById(id).style.display = "none";
     }
 
-    function updateNavOffset() {
-        const header = document.querySelector('header');
-        const nav = document.getElementById('mainNav');
-        const promoBanner = document.getElementById('promoBanner');
-        if (!header || !nav) return;
-
-        const promoHeight = promoBanner && promoBanner.style.display !== 'none' ? promoBanner.offsetHeight : 0;
-        nav.style.top = `${header.offsetHeight + promoHeight}px`;
-        document.body.style.paddingTop = `${header.offsetHeight + promoHeight + nav.offsetHeight + 20}px`;
+    // Fix for Sticky Navigation
+    const nav = document.querySelector('nav');
+    if (nav) {
+        const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle('is-sticky', e.intersectionRatio < 1),
+            { threshold: [1] }
+        );
+        observer.observe(nav);
     }
 
     window.onload = () => {
         syncWithSheet();
-        updateNavOffset();
-        if(typeof checkPromo === 'function') setInterval(() => {
-            checkPromo();
-            updateNavOffset();
-        }, 30000);
+        if(typeof checkPromo === 'function') setInterval(checkPromo, 30000);
     };
-
-    window.addEventListener('resize', updateNavOffset);
 </script>
 </body>
 </html>
