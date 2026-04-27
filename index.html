@@ -767,17 +767,27 @@
     }
 
 // --- UI RENDERING LOGIC ---
+    function normalizeImageSrc(product) {
+        const rawImg = product.img || product.productimage || product.image || '';
+        if (!rawImg) return 'https://via.placeholder.com/300x300?text=Perfume';
+
+        const imgPath = String(rawImg).trim();
+        if (imgPath.startsWith('image/masculine/') || imgPath.startsWith('image/feminine/') || imgPath.startsWith('image/unisex/')) {
+            return imgPath.replace(/^image\//, '');
+        }
+
+        return imgPath;
+    }
+
     function createCardHTML(p, isPromoActive) {
         const showSale = isPromoActive && p.onsale === "true" && p.saleprice;
         const isOOS = parseInt(p.stock) <= 0;
-        
-        // Fix for image glitching: Ensure key matches your code.gs mapping
-        const imgSrc = p.img || p.productimage || p.image || 'https://via.placeholder.com/300x300?text=Perfume';
+        const imgSrc = normalizeImageSrc(p);
 
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
                 ${(p.isnew === "true" || p.isnew === true) ? '<div class="new-badge">New</div>' : ''}
-                <img src="${imgSrc}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Perfume'">
+                <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="if (this.dataset.fallbackApplied) return; this.dataset.fallbackApplied = 'true'; this.src='https://via.placeholder.com/300x300?text=Perfume';">
                 <h3>${p.name}</h3>
                 <div class="card-action-area">
                     <p class="price">
@@ -809,7 +819,7 @@
 
         nav.innerHTML = navLinks.map((link, index) => {
             const linkHTML = `<a href="${link.href}" style="text-decoration: none; color: inherit; padding: 0 10px;">${link.text}</a>`;
-            const separator = (index < navLinks.length - 1) ? '<span class="nav-separator">|</span>' : '';
+            const separator = (index < navLinks.length - 1) ? '<span class="nav-separator" aria-hidden="true"></span>' : '';
             return linkHTML + separator;
         }).join('');
     }
@@ -916,6 +926,7 @@
         );
         observer.observe(nav);
     }
+
     window.onload = () => {
         syncWithSheet();
         if(typeof checkPromo === 'function') setInterval(checkPromo, 30000);
