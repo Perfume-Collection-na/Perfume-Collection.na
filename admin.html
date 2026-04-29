@@ -158,7 +158,6 @@
             border: 1px solid rgba(0,0,0,0.03);
         }
 
-        /* --- MODIFIED H2 (STICKY BAR) --- */
         h2 { 
             border-bottom: 4px solid var(--gold); 
             padding: 18px 20px; 
@@ -177,7 +176,6 @@
             align-items: center;
         }
 
-        /* --- SEARCH BAR --- */
         .inventory-search {
             padding: 10px 15px;
             border-radius: 8px;
@@ -186,7 +184,6 @@
             width: 250px;
         }
 
-        /* --- MODAL ARCHITECTURE --- */
         /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
@@ -516,7 +513,7 @@
 <div class="container" id="inventory">
     <section>
         <h2>Active Inventory Management</h2>
-        <div id="listItems">
+        <div id="listItems"> <input type="text" class="inventory-search" placeholder="Search inventory..." oninput="filterInventory(this.value)">
             <p style="text-align:center; color:#bbb; padding:40px;">Accessing master database...</p>
         </div>
     </section>
@@ -1006,6 +1003,49 @@ async function globalUpdate(actionType, rowData) {
     window.onload = () => {
         setTimeout(initAdmin, 250);
     };
+function filterInventory(query) {
+    const q = query.toLowerCase();
+    const filtered = perfumes.filter(p => (p.name || p.Name).toLowerCase().includes(q));
+    const invDiv = document.getElementById('listItems');
+
+    if (!filtered.length) {
+        invDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No matching products found.</p>';
+        return;
+    }
+
+    invDiv.innerHTML = filtered.map((p) => {
+        const pName = p.name || p.Name;
+        const pPrice = p.price || p.Price;
+        const pStock = p.stock || p.Stock;
+        const pImg = p.img || p.imageurl || p.ImageURL;
+
+        return `
+        <div class="product-item" data-row="${pName}">
+            <div style="display: flex; align-items: center; flex: 1; min-width: 300px;">
+                <img src="${pImg}" class="thumb" 
+                     data-perfume="${pName}" 
+                     onclick="triggerImageEdit('${pName}')" 
+                     onerror="this.src='https://via.placeholder.com/100'">
+                <div class="edit-controls">
+                    <label>Product Designation</label>
+                    <input type="text" class="edit-name" value="${pName}">
+                    <label>Retail Price (N$)</label>
+                    <input type="text" class="edit-price" value="${pPrice}">
+                </div>
+            </div>
+            <div class="stock-control">
+                <div>
+                    <label>Current Stock</label>
+                    <input type="number" class="stock-input" value="${pStock}">
+                </div>
+            </div>
+            <div class="action-group">
+                <button class="btn btn-save" style="margin:0; width:auto;" onclick="updateFullProduct('${pName}')">Update</button>
+                <button class="delete-btn" onclick="deletePerfume('${pName}')">Delete</button>
+            </div>
+        </div>`;
+    }).join('');
+}
 </script>
 </body>
 </html>
