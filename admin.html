@@ -161,22 +161,23 @@
 }
 
 h2 { 
+    position: -webkit-sticky; /* For Safari compatibility */
     position: sticky;
-    top: 155px; /* Adjust this to match the height of your header + banner */
-    background: var(--purple);
+    top: 151px; /* This MUST match the height of your purple header */
+    background: var(--purple); /* Solid background so content doesn't show behind it */
     color: var(--gold);
-    padding: 20px 35px;
+    padding: 15px 35px;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 800;
-    z-index: 100;
+    z-index: 100; /* Ensure it stays above product items */
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 3px solid var(--gold);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* Remove any border-radius here to make it look like a 'solid bar' when stuck */
 }
 
 /* Container padding moved to the content inside */
@@ -188,41 +189,33 @@ h2 {
 .search-container {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border: 1px solid var(--gold);
-    border-radius: 25px;
-    padding: 5px 15px;
-    width: 300px;
-    transition: var(--transition);
-}
-
-.search-container:focus-within {
-    background: rgba(255, 255, 255, 0.2);
-    width: 350px;
+    border-radius: 4px; /* Squared off slightly to match the 'bar' look */
+    padding: 4px 12px;
+    width: 280px;
 }
 
 .search-container input {
     background: transparent;
     border: none;
     color: white;
-    padding: 5px 10px;
-    font-size: 0.9rem;
+    padding: 5px;
+    font-size: 0.85rem;
     width: 100%;
 }
 
-.search-container input::placeholder {
-    color: rgba(197, 160, 89, 0.7);
-}
+.search-container input:focus { outline: none; }
 
-.search-container input:focus {
-    outline: none;
-    box-shadow: none;
-}
-
+/* The Magnifying Glass - Color Removed */
 .search-icon {
-    font-size: 1.1rem;
-    color: var(--gold);
+    font-size: 1rem;
+    color: #ffffff; /* Neutral white/no specific tint */
+    filter: grayscale(100%); /* Ensures no color remains */
+    margin-right: 8px;
+    opacity: 0.8;
 }
+
         /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
