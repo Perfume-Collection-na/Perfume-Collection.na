@@ -147,70 +147,28 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.75; } 100% { opacity: 1; } }
 
         /* --- MAIN UI CONTAINERS --- */
-/* --- UPDATED STICKY HEADERS --- */
-.container { 
-    max-width: 1200px; 
-    width: 95%;
-    margin: 40px auto; 
-    background: var(--white); 
-    padding: 0; /* Changed to 0 to allow titles to be full-width bars */
-    border-radius: 15px; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-    border: 1px solid rgba(0,0,0,0.03);
-    overflow: hidden; /* Keeps the bar corners rounded with the container */
-}
+        .container { 
+            max-width: 1200px; 
+            width: 95%;
+            margin: 60px auto; 
+            background: var(--white); 
+            padding: 45px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border: 1px solid rgba(0,0,0,0.03);
+        }
 
-/* --- FIXED STICKY HEADERS --- */
-h2 { 
-    position: -webkit-sticky; /* For Safari compatibility */
-    position: sticky;
-    top: 151px; /* This MUST match the height of your purple header */
-    background: var(--purple); /* Solid background so content doesn't show behind it */
-    color: var(--gold);
-    padding: 15px 35px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 800;
-    z-index: 100; /* Ensure it stays above product items */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid var(--gold);
-    /* Remove any border-radius here to make it look like a 'solid bar' when stuck */
-}
+        h2 { 
+            border-bottom: 4px solid var(--gold); 
+            padding-bottom: 18px; 
+            color: var(--purple);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 35px;
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
 
-/* --- SEARCH BAR (NO COLOR ICON) --- */
-.search-container {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid var(--gold);
-    border-radius: 4px; /* Squared off slightly to match the 'bar' look */
-    padding: 4px 12px;
-    width: 280px;
-}
-
-.search-container input {
-    background: transparent;
-    border: none;
-    color: white;
-    padding: 5px;
-    font-size: 0.85rem;
-    width: 100%;
-}
-
-.search-container input:focus { outline: none; }
-
-/* The Magnifying Glass - Color Removed */
-.search-icon {
-    font-size: 1rem;
-    color: #ffffff; /* Neutral white/no specific tint */
-    filter: grayscale(100%); /* Ensures no color remains */
-    margin-right: 8px;
-    opacity: 0.8;
-}
         /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
@@ -539,13 +497,7 @@ h2 {
 
 <div class="container" id="inventory">
     <section>
-        <h2>
-            <span>Active Inventory Management</span>
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="inventorySearch" placeholder="Quick search products..." onkeyup="filterInventory()">
-            </div>
-        </h2>
+        <h2>Active Inventory Management</h2>
         <div id="listItems">
             <p style="text-align:center; color:#bbb; padding:40px;">Accessing master database...</p>
         </div>
@@ -664,44 +616,6 @@ h2 {
         loader.style.display = "flex";
     }
 
-    /** * Real-time Inventory Filter
- * Hides/Shows product items based on search input
- */
-function filterInventory() {
-    const query = document.getElementById('inventorySearch').value.toLowerCase();
-    const items = document.querySelectorAll('.product-item');
-
-    items.forEach(item => {
-        // We look for the name within the 'edit-name' input field inside the item
-        const productName = item.querySelector('.edit-name').value.toLowerCase();
-        
-        if (productName.includes(query)) {
-            item.style.display = 'flex';
-        } else {
-            item.style.display = 'none';
-        }
-    });
-
-    // Handle "No Results Found"
-    const invDiv = document.getElementById('listItems');
-    const visibleItems = Array.from(items).filter(i => i.style.display !== 'none');
-    
-    // Remove existing "No results" msg if any
-    const existingMsg = document.getElementById('no-results-msg');
-    if (existingMsg) existingMsg.remove();
-
-    if (visibleItems.length === 0 && perfumes.length > 0) {
-        const msg = document.createElement('p');
-        msg.id = 'no-results-msg';
-        msg.style.cssText = "text-align:center; color:#999; padding:40px;";
-        msg.innerText = "No products match your search.";
-        invDiv.appendChild(msg);
-    }
-}
-// --- CORE HANDSHAKE & DATA SYNC ---
-async function initAdmin() {
-    // ... existing code ...
-}
     function hideLoader() {
         document.getElementById('globalLoader').style.display = "none";
     }
