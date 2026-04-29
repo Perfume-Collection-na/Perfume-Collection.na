@@ -147,28 +147,82 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.75; } 100% { opacity: 1; } }
 
         /* --- MAIN UI CONTAINERS --- */
-        .container { 
-            max-width: 1200px; 
-            width: 95%;
-            margin: 60px auto; 
-            background: var(--white); 
-            padding: 45px; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            border: 1px solid rgba(0,0,0,0.03);
-        }
+/* --- UPDATED STICKY HEADERS --- */
+.container { 
+    max-width: 1200px; 
+    width: 95%;
+    margin: 40px auto; 
+    background: var(--white); 
+    padding: 0; /* Changed to 0 to allow titles to be full-width bars */
+    border-radius: 15px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+    border: 1px solid rgba(0,0,0,0.03);
+    overflow: hidden; /* Keeps the bar corners rounded with the container */
+}
 
-        h2 { 
-            border-bottom: 4px solid var(--gold); 
-            padding-bottom: 18px; 
-            color: var(--purple);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 35px;
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
+h2 { 
+    position: sticky;
+    top: 155px; /* Adjust this to match the height of your header + banner */
+    background: var(--purple);
+    color: var(--gold);
+    padding: 20px 35px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
+/* Container padding moved to the content inside */
+#orderList, #listItems {
+    padding: 20px 45px 45px 45px;
+}
+
+/* --- SEARCH BAR DESIGN --- */
+.search-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--gold);
+    border-radius: 25px;
+    padding: 5px 15px;
+    width: 300px;
+    transition: var(--transition);
+}
+
+.search-container:focus-within {
+    background: rgba(255, 255, 255, 0.2);
+    width: 350px;
+}
+
+.search-container input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.search-container input::placeholder {
+    color: rgba(197, 160, 89, 0.7);
+}
+
+.search-container input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.search-icon {
+    font-size: 1.1rem;
+    color: var(--gold);
+}
         /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
@@ -497,7 +551,13 @@
 
 <div class="container" id="inventory">
     <section>
-        <h2>Active Inventory Management</h2>
+        <h2>
+            <span>Active Inventory Management</span>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="inventorySearch" placeholder="Quick search products..." onkeyup="filterInventory()">
+            </div>
+        </h2>
         <div id="listItems">
             <p style="text-align:center; color:#bbb; padding:40px;">Accessing master database...</p>
         </div>
@@ -616,6 +676,44 @@
         loader.style.display = "flex";
     }
 
+    /** * Real-time Inventory Filter
+ * Hides/Shows product items based on search input
+ */
+function filterInventory() {
+    const query = document.getElementById('inventorySearch').value.toLowerCase();
+    const items = document.querySelectorAll('.product-item');
+
+    items.forEach(item => {
+        // We look for the name within the 'edit-name' input field inside the item
+        const productName = item.querySelector('.edit-name').value.toLowerCase();
+        
+        if (productName.includes(query)) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    // Handle "No Results Found"
+    const invDiv = document.getElementById('listItems');
+    const visibleItems = Array.from(items).filter(i => i.style.display !== 'none');
+    
+    // Remove existing "No results" msg if any
+    const existingMsg = document.getElementById('no-results-msg');
+    if (existingMsg) existingMsg.remove();
+
+    if (visibleItems.length === 0 && perfumes.length > 0) {
+        const msg = document.createElement('p');
+        msg.id = 'no-results-msg';
+        msg.style.cssText = "text-align:center; color:#999; padding:40px;";
+        msg.innerText = "No products match your search.";
+        invDiv.appendChild(msg);
+    }
+}
+// --- CORE HANDSHAKE & DATA SYNC ---
+async function initAdmin() {
+    // ... existing code ...
+}
     function hideLoader() {
         document.getElementById('globalLoader').style.display = "none";
     }
