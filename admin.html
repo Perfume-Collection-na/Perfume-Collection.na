@@ -160,6 +160,7 @@
     overflow: hidden; /* Keeps the bar corners rounded with the container */
 }
 
+/* --- FIXED STICKY HEADERS --- */
 h2 { 
     position: -webkit-sticky; /* For Safari compatibility */
     position: sticky;
@@ -180,12 +181,7 @@ h2 {
     /* Remove any border-radius here to make it look like a 'solid bar' when stuck */
 }
 
-/* Container padding moved to the content inside */
-#orderList, #listItems {
-    padding: 20px 45px 45px 45px;
-}
-
-/* --- SEARCH BAR DESIGN --- */
+/* --- SEARCH BAR (NO COLOR ICON) --- */
 .search-container {
     display: flex;
     align-items: center;
@@ -215,7 +211,6 @@ h2 {
     margin-right: 8px;
     opacity: 0.8;
 }
-
         /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
