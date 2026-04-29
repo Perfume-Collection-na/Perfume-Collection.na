@@ -158,17 +158,35 @@
             border: 1px solid rgba(0,0,0,0.03);
         }
 
+        /* --- MODIFIED H2 (STICKY BAR) --- */
         h2 { 
             border-bottom: 4px solid var(--gold); 
-            padding-bottom: 18px; 
+            padding: 18px 20px; 
             color: var(--purple);
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 35px;
             font-size: 1.6rem;
             font-weight: 800;
+            background: var(--white);
+            position: sticky;
+            top: 120px;
+            z-index: 900;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
+        /* --- SEARCH BAR --- */
+        .inventory-search {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            font-size: 0.9rem;
+            width: 250px;
+        }
+
+        /* --- MODAL ARCHITECTURE --- */
         /* --- MODAL ARCHITECTURE --- */
         .modal {
             display: none;
