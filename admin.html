@@ -160,28 +160,13 @@
 
         h2 { 
             border-bottom: 4px solid var(--gold); 
-            padding: 18px 20px; 
+            padding-bottom: 18px; 
             color: var(--purple);
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 35px;
             font-size: 1.6rem;
             font-weight: 800;
-            background: var(--white);
-            position: sticky;
-            top: 120px;
-            z-index: 900;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .inventory-search {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 2px solid #eee;
-            font-size: 0.9rem;
-            width: 250px;
         }
 
         /* --- MODAL ARCHITECTURE --- */
@@ -370,6 +355,57 @@
         }
 
         section { scroll-margin-top: 200px; }
+        .section-heading {
+            position: sticky;
+            top: var(--section-sticky-top, 140px);
+            z-index: 90;
+            margin: -40px -40px 25px;
+            padding: 16px 40px;
+            background: var(--purple);
+            color: var(--gold);
+            border-bottom: 3px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .section-heading h2 {
+            margin: 0;
+            color: inherit;
+            font-size: 1.35rem;
+        }
+        .section-search {
+            width: min(360px, 100%);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.55);
+            background: rgba(255, 255, 255, 0.95);
+            color: #1f1f1f;
+            font-weight: 600;
+        }
+        .money-input-wrap {
+            display: flex;
+            align-items: center;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 0 12px;
+        }
+        .money-prefix {
+            color: #555;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        .money-input-wrap input {
+            border: 0;
+            box-shadow: none;
+            margin: 0;
+            padding-left: 0;
+        }
+        .money-input-wrap input:focus {
+            outline: none;
+            box-shadow: none;
+        }
 
         /* Media Queries */
         @media (max-width: 850px) {
@@ -379,6 +415,7 @@
             .stock-control { width: 100%; justify-content: center; }
             .btn { width: 100%; }
             .container { padding: 25px; }
+            .section-heading { margin: -25px -25px 20px; padding: 12px 25px; flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -424,7 +461,10 @@
         </div>
         <div class="form-group">
             <label>Reduction Value</label>
-            <input type="number" id="promoVal" placeholder="20">
+            <div class="money-input-wrap">
+                <span class="money-prefix">N$</span>
+                <input type="number" id="promoVal" placeholder="20">
+            </div>
         </div>
         <div class="form-group">
             <label>Targeted Categories</label>
@@ -461,7 +501,10 @@
         </div>
         <div class="form-group">
             <label>Standard Retail Price (N$)</label>
-            <input type="text" id="pPrice" placeholder="450.00">
+            <div class="money-input-wrap">
+                <span class="money-prefix">N$</span>
+                <input type="text" id="pPrice" placeholder="450.00">
+            </div>
         </div>
         <div class="checkbox-group">
             <input type="checkbox" id="pOnSale" onchange="toggleSaleField()">
@@ -469,7 +512,10 @@
         </div>
         <div id="saleField" class="form-group" style="display:none; border-left: 5px solid var(--gold); padding-left: 20px;">
             <label>Introductory Price (N$)</label>
-            <input type="text" id="pSalePrice" placeholder="400.00">
+            <div class="money-input-wrap">
+                <span class="money-prefix">N$</span>
+                <input type="text" id="pSalePrice" placeholder="400.00">
+            </div>
         </div>
         <div class="form-group">
             <label>Imagery Selection</label>
@@ -503,7 +549,9 @@
 
 <div class="container" id="orders">
     <section>
-        <h2>Order Processing Queue</h2>
+        <div class="section-heading">
+            <h2>Order Processing Queue</h2>
+        </div>
         <div id="orderList">
             <p style="text-align:center; color:#bbb; padding:40px;">Requesting order data...</p>
         </div>
@@ -512,8 +560,11 @@
 
 <div class="container" id="inventory">
     <section>
-        <h2>Active Inventory Management</h2>
-        <div id="listItems"> <input type="text" class="inventory-search" placeholder="Search inventory..." oninput="filterInventory(this.value)">
+        <div class="section-heading">
+            <h2>Active Inventory Management</h2>
+            <input id="inventorySearch" class="section-search" type="search" placeholder="Search products..." oninput="renderLists(lastRenderedOrders)">
+        </div>
+        <div id="listItems">
             <p style="text-align:center; color:#bbb; padding:40px;">Accessing master database...</p>
         </div>
     </section>
@@ -586,6 +637,7 @@
     ];
 
     let perfumes = [];
+    let lastRenderedOrders = [];
     let activePromo = JSON.parse(localStorage.getItem('activePromo')) || null;
 
     function parseApiInventory(payload) {
@@ -725,11 +777,13 @@
                 .map(normalizeOrderRecord)
                 .filter(order => String(order.status).toLowerCase() !== 'completed');
 
+            lastRenderedOrders = normalizedOrders;
             renderLists(normalizedOrders);
             checkActivePromo();
         } catch (err) {
             console.error("Refresh cycle failed:", err);
             perfumes = MASTER_COLLECTION;
+            lastRenderedOrders = [];
             renderLists([]);
         } finally {
             hideLoader();
@@ -738,11 +792,19 @@
 
     // --- RENDERING ENGINE ---
     function renderLists(orders = []) {
+        lastRenderedOrders = orders;
         const invDiv = document.getElementById('listItems');
+        const searchTerm = (document.getElementById('inventorySearch')?.value || '').trim().toLowerCase();
+        const filteredPerfumes = perfumes.filter((p) => {
+            const pName = String(p.name || p.Name || '').toLowerCase();
+            return !searchTerm || pName.includes(searchTerm);
+        });
         if (!perfumes || perfumes.length === 0) {
             invDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">The inventory is currently empty.</p>';
+        } else if (!filteredPerfumes.length) {
+            invDiv.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">No products match this search.</p>';
         } else {
-            invDiv.innerHTML = perfumes.map((p) => {
+            invDiv.innerHTML = filteredPerfumes.map((p) => {
                 const pName = p.name || p.Name;
                 const pPrice = p.price || p.Price;
                 const pStock = p.stock || p.Stock;
@@ -759,7 +821,10 @@
                             <label>Product Designation</label>
                             <input type="text" class="edit-name" value="${pName}">
                             <label>Retail Price (N$)</label>
-                            <input type="text" class="edit-price" value="${pPrice}">
+                            <div class="money-input-wrap">
+                                <span class="money-prefix">N$</span>
+                                <input type="text" class="edit-price" value="${String(pPrice).replace(/^N\\$\\s*/i, '')}">
+                            </div>
                         </div>
                     </div>
                     <div class="stock-control">
@@ -902,8 +967,30 @@ async function globalUpdate(actionType, rowData) {
 
     async function clearOrder(orderId) {
         if(confirm("Confirm delivery and archive order?")) {
+            const order = lastRenderedOrders.find((item) => item.orderId === orderId);
             await globalUpdate("COMPLETE_ORDER", { sheet: "Orders", identifier: orderId });
+            if (order?.items) {
+                await applyDeliveredStockUpdate(order.items);
+            }
         }
+    }
+    async function applyDeliveredStockUpdate(orderItemsText) {
+        const itemLabel = String(orderItemsText || '').trim();
+        if (!itemLabel) return;
+        const product = perfumes.find((entry) => {
+            const candidate = String(entry.name || entry.Name || '').toLowerCase();
+            return itemLabel.toLowerCase().includes(candidate);
+        });
+        if (!product) return;
+        const productName = product.name || product.Name;
+        const currentStock = parseInt(product.stock || product.Stock || 0, 10) || 0;
+        const nextStock = Math.max(0, currentStock - 1);
+        await globalUpdate("UPDATE_PRODUCT_FULL", {
+            sheet: "Inventory",
+            identifier: productName,
+            data: { name: productName, price: product.price || product.Price, stock: nextStock, img: null }
+        });
+        localStorage.setItem('inventoryLastUpdatedAt', Date.now().toString());
     }
 
     // --- MARKETING LOGIC ---
@@ -962,6 +1049,7 @@ async function globalUpdate(actionType, rowData) {
             localStorage.removeItem('activePromo');
             banner.style.display = 'none';
         }
+        updateSectionStickyOffset();
     }
 
     // --- UTILITIES ---
@@ -1002,50 +1090,16 @@ async function globalUpdate(actionType, rowData) {
      */
     window.onload = () => {
         setTimeout(initAdmin, 250);
+        updateSectionStickyOffset();
+        window.addEventListener('resize', updateSectionStickyOffset);
     };
-function filterInventory(query) {
-    const q = query.toLowerCase();
-    const filtered = perfumes.filter(p => (p.name || p.Name).toLowerCase().includes(q));
-    const invDiv = document.getElementById('listItems');
-
-    if (!filtered.length) {
-        invDiv.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No matching products found.</p>';
-        return;
+    function updateSectionStickyOffset() {
+        const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+        const promoBanner = document.getElementById('promoBanner');
+        const promoVisible = promoBanner && getComputedStyle(promoBanner).display !== 'none';
+        const promoHeight = promoVisible ? promoBanner.offsetHeight : 0;
+        document.documentElement.style.setProperty('--section-sticky-top', `${headerHeight + promoHeight}px`);
     }
-
-    invDiv.innerHTML = filtered.map((p) => {
-        const pName = p.name || p.Name;
-        const pPrice = p.price || p.Price;
-        const pStock = p.stock || p.Stock;
-        const pImg = p.img || p.imageurl || p.ImageURL;
-
-        return `
-        <div class="product-item" data-row="${pName}">
-            <div style="display: flex; align-items: center; flex: 1; min-width: 300px;">
-                <img src="${pImg}" class="thumb" 
-                     data-perfume="${pName}" 
-                     onclick="triggerImageEdit('${pName}')" 
-                     onerror="this.src='https://via.placeholder.com/100'">
-                <div class="edit-controls">
-                    <label>Product Designation</label>
-                    <input type="text" class="edit-name" value="${pName}">
-                    <label>Retail Price (N$)</label>
-                    <input type="text" class="edit-price" value="${pPrice}">
-                </div>
-            </div>
-            <div class="stock-control">
-                <div>
-                    <label>Current Stock</label>
-                    <input type="number" class="stock-input" value="${pStock}">
-                </div>
-            </div>
-            <div class="action-group">
-                <button class="btn btn-save" style="margin:0; width:auto;" onclick="updateFullProduct('${pName}')">Update</button>
-                <button class="delete-btn" onclick="deletePerfume('${pName}')">Delete</button>
-            </div>
-        </div>`;
-    }).join('');
-}
 </script>
 </body>
 </html>
