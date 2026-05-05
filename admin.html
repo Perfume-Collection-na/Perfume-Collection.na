@@ -913,8 +913,8 @@ async function globalUpdate(actionType, rowData) {
 }
     async function addPerfume() {
         const name = document.getElementById('pName').value;
-        const price = document.getElementById('pPrice').value;
-        const sPrice = document.getElementById('pSalePrice').value || "";
+        const price = toCurrencyValue(document.getElementById('pPrice').value);
+        const sPrice = document.getElementById('pSalePrice').value ? toCurrencyValue(document.getElementById('pSalePrice').value) : "";
         const stock = document.getElementById('pStock').value;
         const cat = document.getElementById('pCat').value;
         const isNew = document.getElementById('pNew').value;
@@ -951,7 +951,7 @@ async function globalUpdate(actionType, rowData) {
             identifier: oldName,
             data: {
                 name: container.querySelector('.edit-name').value,
-                price: container.querySelector('.edit-price').value,
+                price: toCurrencyValue(container.querySelector('.edit-price').value),
                 stock: container.querySelector('.stock-input').value,
                 img: imgEl.dataset.changed === "true" ? imgEl.src : null
             }
@@ -988,9 +988,14 @@ async function globalUpdate(actionType, rowData) {
         await globalUpdate("UPDATE_PRODUCT_FULL", {
             sheet: "Inventory",
             identifier: productName,
-            data: { name: productName, price: product.price || product.Price, stock: nextStock, img: null }
+            data: { name: productName, price: toCurrencyValue(product.price || product.Price), stock: nextStock, img: null }
         });
         localStorage.setItem('inventoryLastUpdatedAt', Date.now().toString());
+    }
+    function toCurrencyValue(input) {
+        const numeric = parseFloat(String(input || '').replace(/[^\d.]/g, ''));
+        const safeValue = Number.isFinite(numeric) ? numeric : 0;
+        return `N$ ${safeValue.toFixed(2)}`;
     }
 
     // --- MARKETING LOGIC ---
