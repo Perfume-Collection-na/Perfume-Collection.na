@@ -201,14 +201,14 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 16px;
             width: 100%;
         }
 
         .perfume-card {
             background: var(--white);
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             text-align: center;
             transition: transform 0.3s ease;
@@ -223,7 +223,7 @@
 
         .perfume-card img {
             width: 100%;
-            height: 250px;
+            height: 140px;
             object-fit: contain;
             margin-bottom: 15px;
             background: var(--white);
@@ -232,7 +232,7 @@
 
         .perfume-card h3 {
             font-size: 1rem;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             font-weight: 600;
             min-height: 2.5em;
             display: flex;
@@ -243,8 +243,8 @@
         .price { 
             font-weight: bold; 
             color: var(--purple);
-            font-size: 1.1rem; 
-            margin-bottom: 10px;
+            font-size: 1rem; 
+            margin-bottom: 6px;
         }
 
         .old-price {
@@ -278,7 +278,7 @@
             background: var(--purple);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 9px;
             cursor: pointer;
             width: 100%;
             border-radius: 4px;
@@ -493,8 +493,8 @@
         .quiver-footer-link img { width: 100%; height: auto; display: block; }
 
         @media (max-width: 768px) {
-            .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-            .perfume-card img { height: 200px; }
+            .grid { grid-template-columns: repeat(3, minmax(100px, 1fr)); gap: 10px; }
+            .perfume-card img { height: 95px; }
             nav { padding: 10px; gap: 10px; }
             nav a { font-size: 0.8rem; }
             .container { padding: 0 15px; }
@@ -1058,9 +1058,9 @@
         if (!header || !nav) return;
 
         const promoHeight = promoBanner && promoBanner.style.display !== 'none' ? promoBanner.offsetHeight : 0;
-        nav.style.top = `${promoHeight}px`;
+        nav.style.top = '0px';
         document.body.style.paddingTop = '0px';
-        document.documentElement.style.setProperty('--section-sticky-top', `${promoHeight + nav.offsetHeight}px`);
+        document.documentElement.style.setProperty('--section-sticky-top', `${nav.offsetHeight + promoHeight}px`);
     }
     let lastInventoryStamp = localStorage.getItem('inventoryLastUpdatedAt') || '';
     function syncIfInventoryUpdated() {
