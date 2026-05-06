@@ -29,6 +29,7 @@
             --browser-nav-offset: 0px;
             --nav-sticky-top: 0px;
             --section-sticky-top: 56px;
+            --nav-height: 56px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,7 +47,7 @@
             color: var(--dark);
             line-height: 1.6;
             scroll-behavior: smooth;
-            padding-top: 0;
+            padding-top: calc(var(--nav-sticky-top) + var(--nav-height));
         }
 
         /* Promotion Banner */
@@ -117,7 +118,7 @@
         }
 
         nav {
-            position: sticky;
+            position: fixed;
             top: var(--nav-sticky-top);
             left: 0;
             right: 0;
@@ -845,8 +846,11 @@
         const promoHeight = promoVisible ? promo.offsetHeight : 0;
         const navTop = promoHeight;
 
+        const navHeight = nav ? nav.offsetHeight : 0;
         root.style.setProperty('--nav-sticky-top', `${navTop}px`);
-        root.style.setProperty('--section-sticky-top', `${navTop + (nav ? nav.offsetHeight : 0)}px`);
+        root.style.setProperty('--nav-height', `${navHeight}px`);
+        root.style.setProperty('--section-sticky-top', `${navTop + navHeight}px`);
+        document.body.style.paddingTop = `${navTop + navHeight}px`;
     }
 
     function checkPromo() {
