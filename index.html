@@ -26,7 +26,9 @@
             --white: #ffffff;
             --purple: #800080;
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
-            --browser-nav-offset: 44px;
+            --browser-nav-offset: 0px;
+            --nav-sticky-top: 0px;
+            --section-sticky-top: 56px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -116,7 +118,7 @@
 
         nav {
             position: sticky;
-            top: var(--browser-nav-offset);
+            top: var(--nav-sticky-top);
             left: 0;
             right: 0;
             background: white;
@@ -189,13 +191,15 @@
         }
         .sticky-section-title {
             position: sticky;
-            top: var(--section-sticky-top, 130px);
+            top: var(--section-sticky-top, 56px);
             z-index: 900;
             background: var(--purple);
             color: var(--gold);
-            padding: 12px 15px;
+            padding: 8px 12px;
             border-bottom: 2px solid var(--gold);
-            margin: 0 0 20px;
+            margin: 0 0 12px;
+            min-height: 40px;
+            font-size: 1.1rem;
         }
 
         .section-divider {
@@ -510,6 +514,7 @@
 
         @media (max-width: 768px) {
             .grid { grid-template-columns: repeat(3, minmax(100px, 1fr)); gap: 10px; }
+            .sticky-section-title { padding: 6px 10px; min-height: 34px; font-size: 0.95rem; letter-spacing: 1px; }
             .perfume-card img { height: 95px; }
             nav { padding: 10px; gap: 10px; }
             nav a { font-size: 0.8rem; }
@@ -809,6 +814,19 @@
         }
     }
 
+    function updateStickyOffsets() {
+        const nav = document.getElementById('mainNav');
+        const promo = document.getElementById('promoBanner');
+        const root = document.documentElement;
+
+        const browserOffset = Math.max(window.visualViewport?.offsetTop || 0, 0);
+        const promoHeight = promo && getComputedStyle(promo).display !== 'none' ? promo.offsetHeight : 0;
+        const navTop = browserOffset + promoHeight;
+
+        root.style.setProperty('--nav-sticky-top', `${navTop}px`);
+        root.style.setProperty('--section-sticky-top', `${navTop + (nav ? nav.offsetHeight : 0)}px`);
+    }
+
     function checkPromo() {
         const promo = JSON.parse(localStorage.getItem('activePromo'));
         const banner = document.getElementById('promoBanner');
@@ -819,10 +837,12 @@
             banner.style.display = 'block';
             document.getElementById('promoText').innerText = promo.message;
             nav.classList.add('sticky-adjust');
+            updateStickyOffsets();
             return true;
         } else {
             banner.style.display = 'none';
             nav.classList.remove('sticky-adjust');
+            updateStickyOffsets();
             return false;
         }
     }
@@ -994,38 +1014,46 @@
                     data: [orderId, cName, formattedPhone, `${selectedItem.name} (${selectedItem.price})`, selectedItem.price]
                 })
             });
+            
+            const templateParams = {
+                product_name: selectedItem.name,
+                price: selectedItem.price,
+                customer_name: cName,
+                customer_contact: formattedPhone,
+                order_date: new Date().toLocaleString()
+            };
 
-            // Send WhatsApp-style alert copy confirmation fallback
-            alert(`Order confirmed for ${selectedItem.name}. We will contact you shortly on ${formattedPhone}.`);
-            closeModal('orderModal');
-            document.getElementById('custName').value = '';
-            document.getElementById('custPhone').value = '';
-        } catch (e) {
-            alert("Failed to submit order. Please try again.");
-        } finally {
-            btn.disabled = false;
+            emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
+                .then(function() {
+                    loading.style.display = "none";
+                    alert("Order Successful! We have received your order.");
+                    closeModal('orderModal');
+                    btn.disabled = false;
+                }, function(error) {
+                    loading.style.display = "none";
+                    alert("Order logged, but notification failed.");
+                    btn.disabled = false;
+                });
+        } catch(e) { 
             loading.style.display = "none";
+            alert("Connection error occurred."); 
+            btn.disabled = false;
         }
     }
-
     async function submitCartOrder() {
         const cName = document.getElementById('cartCustName').value.trim();
         const cPhone = document.getElementById('cartCustPhone').value.trim();
         const btn = document.getElementById('confirmCartOrderBtn');
         const loading = document.getElementById('loadingModal');
-        
-        if (!cart.length) return alert("Your cart is empty.");
-        if (!cName || !cPhone) return alert("Please fill in your details.");
-
+        if (!cart.length) return alert('Your cart is empty.');
+        if (!cName || !cPhone) return alert('Please fill in your details.');
         btn.disabled = true;
-        loading.style.display = "flex";
-
+        loading.style.display = 'flex';
         try {
-            const orderId = `ORD-${Date.now()}`;
             const formattedPhone = formatNamibianContact(cPhone);
-            const itemsSummary = cart.map(i => `${i.name} x${i.qty} (${i.price})`).join(', ');
-            const total = cart.reduce((sum, item) => sum + parseCurrency(item.price) * item.qty, 0).toFixed(2);
-
+            const orderId = `ORD-${Date.now()}`;
+            const itemsText = cart.map(item => `${item.name} x${item.qty} (${item.price})`).join(', ');
+            const total = cart.reduce((sum, item) => sum + parseCurrency(item.price) * item.qty, 0);
             await fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -1033,32 +1061,45 @@
                 body: JSON.stringify({
                     sheet: "Orders",
                     action: "ADD_ORDER",
-                    data: [orderId, cName, formattedPhone, itemsSummary, `N$ ${total}`]
+                    data: [orderId, cName, formattedPhone, itemsText, `N$ ${total.toFixed(2)}`]
                 })
             });
-
-            alert(`Cart order confirmed. Total: N$ ${total}. We'll contact you on ${formattedPhone}.`);
+            loading.style.display = 'none';
             cart = [];
             updateCartCount();
             closeModal('cartModal');
-            document.getElementById('cartCustName').value = '';
-            document.getElementById('cartCustPhone').value = '';
+            alert('Cart order submitted successfully.');
         } catch (e) {
-            alert("Failed to submit cart order. Please try again.");
+            loading.style.display = 'none';
+            alert('Connection error occurred.');
         } finally {
             btn.disabled = false;
-            loading.style.display = "none";
         }
     }
 
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) modal.style.display = "flex";
+    // --- UTILS & INITIALIZATION ---
+    let lastInventoryStamp = localStorage.getItem('inventoryLastUpdatedAt') || '';
+    function syncIfInventoryUpdated() {
+        const currentStamp = localStorage.getItem('inventoryLastUpdatedAt') || '';
+        if (currentStamp && currentStamp !== lastInventoryStamp) {
+            lastInventoryStamp = currentStamp;
+            syncWithSheet();
+        }
     }
 
-    // Initial render
-    syncWithSheet();
-</script>
+    window.onload = () => {
+        syncWithSheet();
+        updateStickyOffsets();
+        setInterval(syncIfInventoryUpdated, 2500);
+        window.addEventListener('focus', syncIfInventoryUpdated);
+        setInterval(() => {
+            checkPromo();
+            updateStickyOffsets();
+        }, 30000);
+    };
 
+    window.addEventListener('resize', updateStickyOffsets);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateStickyOffsets);
+</script>
 </body>
 </html>
