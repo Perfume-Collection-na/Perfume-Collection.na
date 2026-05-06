@@ -192,7 +192,7 @@
         }
         .sticky-section-title {
             position: sticky;
-            top: var(--section-sticky-top, 56px);
+            top: calc(var(--nav-sticky-top) + var(--nav-height));
             z-index: 900;
             background: var(--purple);
             color: var(--gold);
