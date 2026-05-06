@@ -133,9 +133,14 @@
             transition: top 0.3s ease;
         }
         .nav-shell { width: 100%; max-width: 1200px; position: relative; display: flex; justify-content: center; align-items: center; }
-        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+        .nav-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; padding-right: 52px; }
         .nav-cart-btn {
             border: none; background: transparent; cursor: pointer; font-size: 1.3rem; color: var(--purple); position: absolute; right: 12px; display: inline-flex; align-items: center; justify-content: center; line-height: 1;
+            width: auto;
+            padding: 0;
+            min-width: 32px;
+            min-height: 32px;
+            z-index: 2;
         }
         .cart-count {
             position: absolute; top: -8px; right: -10px; background: var(--gold); color: var(--dark); font-size: 0.7rem; font-weight: 700;
@@ -223,6 +228,13 @@
 
         .perfume-card:hover { transform: translateY(-5px); }
 
+        .card-action-area {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         .perfume-card img {
             width: 100%;
             height: 140px;
@@ -258,7 +270,7 @@
 
         .sale-active .price { color: #d9534f; }
 
-        .stock-tag { font-size: 0.85rem; margin: 10px 0; }
+        .stock-tag { font-size: 0.85rem; margin: 0; min-height: 1.5rem; display: flex; align-items: center; justify-content: center; }
         .out-of-stock { opacity: 0.5; filter: grayscale(1); }
         .oos-label { color: #d9534f; font-weight: bold; }
 
@@ -288,6 +300,8 @@
             text-transform: uppercase;
             transition: background 0.3s;
         }
+
+        .card-action-area button { min-height: 40px; }
 
         button:hover:not(:disabled) { background: var(--gold); color: var(--dark); }
         button:disabled { background: #ccc; cursor: not-allowed; }
@@ -844,7 +858,7 @@
                         ${showSale ? `<span class="old-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.8em; margin-right: 5px;">${p.price}</span>` : ''}
                         <span style="color: var(--purple); font-weight: bold;">${showSale ? salePriceValue : p.price}</span>
                     </p>
-                    <div class="stock-tag" style="font-size: 0.8rem; margin: 5px 0;">
+                    <div class="stock-tag" style="font-size: 0.8rem;">
                         ${!isOOS ? `Available: ${p.stock}` : '<span class="oos-label" style="color: red;">Out of Stock</span>'}
                     </div>
                     <button ${isOOS ? 'disabled' : ''} 
@@ -852,7 +866,7 @@
                             onclick="openOrderModal('${p.name}', '${showSale ? salePriceValue : p.price}')">
                         ${isOOS ? 'Unavailable' : 'Order Now'}
                     </button>
-                    <button ${isOOS ? 'disabled' : ''} style="margin-top:8px; ${isOOS ? 'background: #ccc; cursor: not-allowed;' : ''}" onclick="addToCart('${p.name.replace(/'/g, "\\'")}', '${(showSale ? salePriceValue : p.price).replace(/'/g, "\\'")}')">
+                    <button ${isOOS ? 'disabled' : ''} style="${isOOS ? 'background: #ccc; cursor: not-allowed;' : ''}" onclick="addToCart('${p.name.replace(/'/g, "\\'")}', '${(showSale ? salePriceValue : p.price).replace(/'/g, "\\'")}')">
                         ${isOOS ? 'Unavailable' : 'Add to Cart'}
                     </button>
                 </div>
@@ -980,46 +994,38 @@
                     data: [orderId, cName, formattedPhone, `${selectedItem.name} (${selectedItem.price})`, selectedItem.price]
                 })
             });
-            
-            const templateParams = {
-                product_name: selectedItem.name,
-                price: selectedItem.price,
-                customer_name: cName,
-                customer_contact: formattedPhone,
-                order_date: new Date().toLocaleString()
-            };
 
-            emailjs.send('service_mjgfqz6', 'template_6bwlc5o', templateParams)
-                .then(function() {
-                    loading.style.display = "none";
-                    alert("Order Successful! We have received your order.");
-                    closeModal('orderModal');
-                    btn.disabled = false;
-                }, function(error) {
-                    loading.style.display = "none";
-                    alert("Order logged, but notification failed.");
-                    btn.disabled = false;
-                });
-        } catch(e) { 
-            loading.style.display = "none";
-            alert("Connection error occurred."); 
+            // Send WhatsApp-style alert copy confirmation fallback
+            alert(`Order confirmed for ${selectedItem.name}. We will contact you shortly on ${formattedPhone}.`);
+            closeModal('orderModal');
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+        } catch (e) {
+            alert("Failed to submit order. Please try again.");
+        } finally {
             btn.disabled = false;
+            loading.style.display = "none";
         }
     }
+
     async function submitCartOrder() {
         const cName = document.getElementById('cartCustName').value.trim();
         const cPhone = document.getElementById('cartCustPhone').value.trim();
         const btn = document.getElementById('confirmCartOrderBtn');
         const loading = document.getElementById('loadingModal');
-        if (!cart.length) return alert('Your cart is empty.');
-        if (!cName || !cPhone) return alert('Please fill in your details.');
+        
+        if (!cart.length) return alert("Your cart is empty.");
+        if (!cName || !cPhone) return alert("Please fill in your details.");
+
         btn.disabled = true;
-        loading.style.display = 'flex';
+        loading.style.display = "flex";
+
         try {
-            const formattedPhone = formatNamibianContact(cPhone);
             const orderId = `ORD-${Date.now()}`;
-            const itemsText = cart.map(item => `${item.name} x${item.qty} (${item.price})`).join(', ');
-            const total = cart.reduce((sum, item) => sum + parseCurrency(item.price) * item.qty, 0);
+            const formattedPhone = formatNamibianContact(cPhone);
+            const itemsSummary = cart.map(i => `${i.name} x${i.qty} (${i.price})`).join(', ');
+            const total = cart.reduce((sum, item) => sum + parseCurrency(item.price) * item.qty, 0).toFixed(2);
+
             await fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -1027,65 +1033,32 @@
                 body: JSON.stringify({
                     sheet: "Orders",
                     action: "ADD_ORDER",
-                    data: [orderId, cName, formattedPhone, itemsText, `N$ ${total.toFixed(2)}`]
+                    data: [orderId, cName, formattedPhone, itemsSummary, `N$ ${total}`]
                 })
             });
-            loading.style.display = 'none';
+
+            alert(`Cart order confirmed. Total: N$ ${total}. We'll contact you on ${formattedPhone}.`);
             cart = [];
             updateCartCount();
             closeModal('cartModal');
-            alert('Cart order submitted successfully.');
+            document.getElementById('cartCustName').value = '';
+            document.getElementById('cartCustPhone').value = '';
         } catch (e) {
-            loading.style.display = 'none';
-            alert('Connection error occurred.');
+            alert("Failed to submit cart order. Please try again.");
         } finally {
             btn.disabled = false;
+            loading.style.display = "none";
         }
     }
 
-    // --- UTILS & INITIALIZATION ---
-    function checkPromo() {
-        // Fallback if promo logic isn't defined
-        return false; 
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = "flex";
     }
 
-    function closeModal(id) {
-        document.getElementById(id).style.display = "none";
-    }
-
-    function updateNavOffset() {
-        const header = document.querySelector('header');
-        const nav = document.getElementById('mainNav');
-        const promoBanner = document.getElementById('promoBanner');
-        if (!header || !nav) return;
-
-        const promoHeight = promoBanner && promoBanner.style.display !== 'none' ? promoBanner.offsetHeight : 0;
-        const browserOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--browser-nav-offset'), 10) || 0;
-        nav.style.top = `${browserOffset + promoHeight}px`;
-        document.body.style.paddingTop = '0px';
-        document.documentElement.style.setProperty('--section-sticky-top', `${browserOffset + promoHeight + nav.offsetHeight}px`);
-    }
-    let lastInventoryStamp = localStorage.getItem('inventoryLastUpdatedAt') || '';
-    function syncIfInventoryUpdated() {
-        const currentStamp = localStorage.getItem('inventoryLastUpdatedAt') || '';
-        if (currentStamp && currentStamp !== lastInventoryStamp) {
-            lastInventoryStamp = currentStamp;
-            syncWithSheet();
-        }
-    }
-
-    window.onload = () => {
-        syncWithSheet();
-        updateNavOffset();
-        setInterval(syncIfInventoryUpdated, 2500);
-        window.addEventListener('focus', syncIfInventoryUpdated);
-        if(typeof checkPromo === 'function') setInterval(() => {
-            checkPromo();
-            updateNavOffset();
-        }, 30000);
-    };
-
-    window.addEventListener('resize', updateNavOffset);
+    // Initial render
+    syncWithSheet();
 </script>
+
 </body>
 </html>
