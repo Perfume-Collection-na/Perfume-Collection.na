@@ -512,6 +512,26 @@
         .quiver-footer-link:hover { opacity: 1; }
         .quiver-footer-link img { width: 100%; height: auto; display: block; }
 
+
+        .quick-jump-btn {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            background: var(--purple);
+            color: var(--gold);
+            font-size: 1.25rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            z-index: 2100;
+        }
+        .quick-jump-btn:hover { background: var(--gold); color: var(--purple); }
+
         @media (max-width: 768px) {
             .grid { grid-template-columns: repeat(3, minmax(100px, 1fr)); gap: 10px; }
             .sticky-section-title { padding: 6px 10px; min-height: 34px; font-size: 0.95rem; letter-spacing: 1px; }
@@ -632,6 +652,8 @@
         <img src="image/quiver_digital_gold_icon.png" alt="Quiver Digital - Website Creator">
     </a>
 </footer>
+
+<button id="quickJumpBtn" class="quick-jump-btn" aria-label="Jump to footer">↓</button>
 
 <script>
     (function() {
@@ -819,9 +841,9 @@
         const promo = document.getElementById('promoBanner');
         const root = document.documentElement;
 
-        const browserOffset = Math.max(window.visualViewport?.offsetTop || 0, 0);
-        const promoHeight = promo && getComputedStyle(promo).display !== 'none' ? promo.offsetHeight : 0;
-        const navTop = browserOffset + promoHeight;
+        const promoVisible = promo && getComputedStyle(promo).display !== 'none';
+        const promoHeight = promoVisible ? promo.offsetHeight : 0;
+        const navTop = promoHeight;
 
         root.style.setProperty('--nav-sticky-top', `${navTop}px`);
         root.style.setProperty('--section-sticky-top', `${navTop + (nav ? nav.offsetHeight : 0)}px`);
@@ -1077,6 +1099,33 @@
         }
     }
 
+    function updateQuickJumpButton() {
+        const btn = document.getElementById('quickJumpBtn');
+        if (!btn) return;
+        const scrolled = window.scrollY || document.documentElement.scrollTop;
+        const nearBottom = window.innerHeight + scrolled >= document.documentElement.scrollHeight - 120;
+
+        if (scrolled < 220) {
+            btn.style.display = 'none';
+            return;
+        }
+
+        btn.style.display = 'flex';
+        btn.innerText = nearBottom ? '↑' : '↓';
+        btn.setAttribute('aria-label', nearBottom ? 'Back to top' : 'Jump to footer');
+    }
+
+    function handleQuickJump() {
+        const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 120;
+        const footer = document.querySelector('footer');
+
+        if (nearBottom) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (footer) {
+            footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
     // --- UTILS & INITIALIZATION ---
     let lastInventoryStamp = localStorage.getItem('inventoryLastUpdatedAt') || '';
     function syncIfInventoryUpdated() {
@@ -1096,10 +1145,14 @@
             checkPromo();
             updateStickyOffsets();
         }, 30000);
+
+        const quickJumpBtn = document.getElementById('quickJumpBtn');
+        if (quickJumpBtn) quickJumpBtn.addEventListener('click', handleQuickJump);
+        updateQuickJumpButton();
     };
 
-    window.addEventListener('resize', updateStickyOffsets);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateStickyOffsets);
+    window.addEventListener('resize', () => { updateStickyOffsets(); updateQuickJumpButton(); });
+    window.addEventListener('scroll', updateQuickJumpButton, { passive: true });
 </script>
 </body>
 </html>
