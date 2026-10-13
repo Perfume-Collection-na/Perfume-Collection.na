@@ -14,8 +14,6 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://perfume-collection-na.github.io/">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@600&family=Great+Vibes&display=swap" rel="stylesheet">
     
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -658,7 +656,7 @@
     <p>&copy; 2026 Perfume Collection _na. All rights reserved.</p>
     <a onclick="openAdminLogin()" class="admin-link">Admin Portal</a>
     <a href="https://quiverdigital.com" target="_blank" class="quiver-footer-link">
-        <img src="image/quiver_digital_gold_icon.png" alt="Quiver Digital - Website Creator" loading="lazy" decoding="async">
+        <img src="image/quiver_digital_gold_icon.png" alt="Quiver Digital - Website Creator">
     </a>
 </footer>
 
@@ -905,7 +903,7 @@
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
                 ${isNewItem ? '<div class="new-badge">New</div>' : ''}
-                <img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async" onerror="if (this.dataset.fallbackApplied) return; this.dataset.fallbackApplied = 'true'; this.src='https://via.placeholder.com/300x300?text=Perfume';">
+                <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="if (this.dataset.fallbackApplied) return; this.dataset.fallbackApplied = 'true'; this.src='https://via.placeholder.com/300x300?text=Perfume';">
                 <h3>${p.name}</h3>
                 <div class="card-action-area">
                     <p class="price">
