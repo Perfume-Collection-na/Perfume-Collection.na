@@ -903,7 +903,7 @@
         return `
             <div class="perfume-card ${isOOS ? 'out-of-stock' : ''} ${showSale ? 'sale-active' : ''}">
                 ${isNewItem ? '<div class="new-badge">New</div>' : ''}
-                <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="if (this.dataset.fallbackApplied) return; this.dataset.fallbackApplied = 'true'; this.src='https://via.placeholder.com/300x300?text=Perfume';">
+                <img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async" onerror="if (this.dataset.fallbackApplied) return; this.dataset.fallbackApplied = 'true'; this.src='https://via.placeholder.com/300x300?text=Perfume';">
                 <h3>${p.name}</h3>
                 <div class="card-action-area">
                     <p class="price">
