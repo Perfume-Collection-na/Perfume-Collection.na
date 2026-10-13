@@ -813,7 +813,7 @@
                 return `
                 <div class="product-item" data-row="${pName}">
                     <div style="display: flex; align-items: center; flex: 1; min-width: 300px;">
-                        <img src="${pImg}" class="thumb" 
+                        <img src="${pImg}" loading="lazy" decoding="async" class="thumb" 
                              data-perfume="${pName}" 
                              onclick="triggerImageEdit('${pName}')" 
                              onerror="this.src='https://via.placeholder.com/100'">
