@@ -1,0 +1,36 @@
+name: Image optimization
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'image/**'
+      - 'masculine/**'
+      - 'feminine/**'
+      - 'unisex/**'
+
+jobs:
+  optimize:
+    name: Convert images to WebP and resize
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick webp
+
+      - name: Make script executable
+        run: chmod +x scripts/convert-images.sh
+
+      - name: Run image conversion script
+        run: |
+          set -e
+          bash scripts/convert-images.sh
+
+      - name: Show git status
+        run: git status --porcelain
